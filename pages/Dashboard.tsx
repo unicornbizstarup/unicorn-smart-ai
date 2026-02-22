@@ -44,41 +44,41 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   return (
     <div className="space-y-8 animate-fade-in pb-10 px-2 lg:px-0">
       {/* 40+ Empathy Banner */}
-      <section className="bg-dark-gradient rounded-[3rem] p-10 lg:p-14 text-white relative overflow-hidden border border-white/10 shadow-2xl hover-shine transition-transform hover:scale-[1.01] duration-500">
+      <section className="bg-dark-gradient rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 lg:p-14 text-white relative overflow-hidden border border-white/10 shadow-2xl hover-shine transition-transform hover:scale-[1.01] duration-500">
         <div className="relative z-10 max-w-2xl">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/20 animate-pulse">
-              <Heart className="text-white fill-current" size={28} />
+          <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
+            <div className="w-10 h-10 md:w-14 md:h-14 bg-amber-500 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/20 animate-pulse">
+              <Heart className="text-white fill-current w-5 h-5 md:w-7 md:h-7" />
             </div>
             <div>
-              <p className="text-amber-400 font-black tracking-[0.2em] text-xs uppercase opacity-80">Unicorn Heart Culture</p>
-              <h2 className="text-2xl font-bold">ผู้นำที่ใช้ "หัวใจ" นำทาง</h2>
+              <p className="text-amber-400 font-black tracking-[0.2em] text-[10px] md:text-xs uppercase opacity-80">Unicorn Heart Culture</p>
+              <h2 className="text-xl md:text-2xl font-bold">ผู้นำที่ใช้ "หัวใจ" นำทาง</h2>
             </div>
           </div>
 
-          <h1 className="text-5xl lg:text-7xl font-black mb-8 leading-[1.15]">
+          <h1 className="text-3xl md:text-5xl lg:text-7xl font-black mb-6 md:mb-8 leading-[1.15]">
             รู้จริง <span className="text-amber-400 text-glitch">เข้าใจ</span> <br />
-            <span className="text-3xl lg:text-5xl opacity-80">สอนเป็นระบบ</span>
+            <span className="text-xl md:text-3xl lg:text-5xl opacity-80">สอนเป็นระบบ</span>
           </h1>
 
-          <p className="text-indigo-100/80 mb-10 text-xl font-light leading-relaxed max-w-lg">
+          <p className="text-indigo-100/80 mb-8 md:mb-10 text-base md:text-xl font-light leading-relaxed max-w-lg">
             ความสำเร็จที่ยั่งยืนเริ่มต้นจากการ "เข้าใจ" ทีมงาน
             และใช้ทักษะพื้นฐาน 10 ด้านในการขับเคลื่อนธุรกิจให้เติบโต
           </p>
 
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-3 md:gap-4">
             <button
               onClick={() => onNavigate(AppView.SYSTEM_456)}
               aria-label="เริ่มประเมินทักษะ ระบบ 4-5-6"
-              className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-10 py-5 rounded-[2rem] font-black text-xl flex items-center gap-3 transition-all shadow-xl shadow-amber-500/30 active:scale-95"
+              className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-6 py-4 md:px-10 md:py-5 rounded-2xl md:rounded-[2rem] font-black text-lg md:text-xl flex items-center gap-2 md:gap-3 transition-all shadow-xl shadow-amber-500/30 active:scale-95"
             >
               เริ่มประเมินทักษะ
-              <ChevronRight size={24} />
+              <ChevronRight size={20} className="md:w-[24px] md:h-[24px]" />
             </button>
             <button
               onClick={() => onNavigate(AppView.AI_COACH)}
               aria-label="พูดคุยกับโค้ชอัจฉริยะ AI"
-              className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-10 py-5 rounded-[2rem] font-bold border border-white/20 transition-all hover:border-white/40"
+              className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-6 py-4 md:px-10 md:py-5 rounded-2xl md:rounded-[2rem] font-bold border border-white/20 transition-all hover:border-white/40 text-sm md:text-base"
             >
               คุยกับโค้ช AI
             </button>
@@ -90,11 +90,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       </section>
 
       {/* Mastery Overview & Radar */}
-      <div className="grid lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 glass-card p-10 rounded-[3rem] flex flex-col md:flex-row items-center gap-12 group hover:shadow-2xl transition-all duration-500">
-          <div className="flex-1 text-center md:text-left">
-            <h3 className="text-3xl font-black text-slate-900 mb-2 group-hover:text-amber-600 transition-colors">ความเก่งรอบด้าน</h3>
-            <p className="text-slate-500 mb-8">วิเคราะห์สมดุลทักษะ 10 แกนหลักของคุณ</p>
+      <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="lg:col-span-2 glass-card p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] flex flex-col md:flex-row items-center gap-8 lg:gap-12 group hover:shadow-2xl transition-all duration-500">
+          <div className="flex-1 text-center md:text-left w-full">
+            <h3 className="text-2xl md:text-3xl font-black text-slate-900 mb-2 group-hover:text-amber-600 transition-colors">ความเก่งรอบด้าน</h3>
+            <p className="text-sm md:text-base text-slate-500 mb-6 md:mb-8">วิเคราะห์สมดุลทักษะ 10 แกนหลักของคุณ</p>
 
             <div className="space-y-6">
               {mastery_data.map(i => (
@@ -112,10 +112,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 </div>
               ))}
             </div>
-            <p className="text-sm text-slate-400 mt-8 italic border-t border-slate-100 pt-4">* แนะนำ: ฝึกทักษะ "Train the Trainer" เพิ่มเติมเพื่อขยายทีม</p>
+            <p className="text-xs text-slate-400 mt-6 md:mt-8 italic border-t border-slate-100 pt-4">* แนะนำ: ฝึกทักษะ "Train the Trainer" เพิ่มเติมเพื่อขยายทีม</p>
           </div>
 
-          <div className="relative w-72 h-72 bg-slate-50/50 rounded-full flex items-center justify-center p-4 shadow-inner group-hover:scale-110 transition-transform duration-700">
+          <div className="relative w-64 h-64 md:w-72 md:h-72 bg-slate-50/50 rounded-full flex items-center justify-center p-4 shadow-inner group-hover:scale-105 transition-transform duration-700">
             {/* Enhanced Radar SVG */}
             <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg">
               <circle cx="50" cy="50" r="45" fill="none" stroke="#e2e8f0" strokeWidth="1" strokeDasharray="2" />
@@ -143,11 +143,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        <div className="bg-slate-900 rounded-[3rem] p-10 text-white flex flex-col justify-between hover-shine shadow-2xl relative overflow-hidden group">
+        <div className="bg-slate-900 rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 text-white flex flex-col justify-between hover-shine shadow-2xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-500/20 transition-colors" />
           <div className="relative z-10">
-            <h4 className="text-2xl font-black mb-6 flex items-center gap-3">
-              <Rocket size={24} className="text-amber-400 animate-bounce" />
+            <h4 className="text-xl md:text-2xl font-black mb-4 md:mb-6 flex items-center gap-3">
+              <Rocket size={20} className="md:w-[24px] md:h-[24px] text-amber-400 animate-bounce" />
               ภารกิจเร่งด่วน
             </h4>
             <div className="space-y-4">
@@ -155,10 +155,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 <button
                   key={idx}
                   aria-label={`ภารกิจ: ${job.t}`}
-                  className="w-full text-left flex items-center gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 group/task cursor-pointer hover:bg-white/10 transition-all hover:translate-x-2"
+                  className="w-full text-left flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 group/task cursor-pointer hover:bg-white/10 transition-all hover:translate-x-2"
                 >
-                  <div className={`p-2 rounded-xl ${job.c}`}>
-                    <job.icon size={18} />
+                  <div className={`p-1.5 md:p-2 rounded-lg md:rounded-xl ${job.c}`}>
+                    <job.icon size={16} className="md:w-[18px] md:h-[18px]" />
                   </div>
                   <span className="text-sm font-bold flex-1">{job.t}</span>
                   <ChevronRight size={16} className="text-white/20 group-hover/task:text-amber-400 transition-colors" />
@@ -181,13 +181,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           <button
             key={stat.label}
             aria-label={`สถิติ ${stat.label}: ${stat.value}`}
-            className="glass-card p-8 rounded-[2.5rem] border border-white/50 shadow-sm hover:shadow-2xl transition-all group hover:-translate-y-2 duration-500 cursor-pointer text-left w-full"
+            className="glass-card p-5 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border border-white/50 shadow-sm hover:shadow-2xl transition-all group hover:-translate-y-2 duration-500 cursor-pointer text-left w-full"
           >
-            <div className={`${stat.bg} w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-sm`}>
-              <stat.icon size={32} className={stat.color} />
+            <div className={`${stat.bg} w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-sm`}>
+              <stat.icon size={24} className={`${stat.color} md:w-[32px] md:h-[32px]`} />
             </div>
-            <p className="text-slate-400 text-xs-plus font-black uppercase tracking-[0.2em] mb-2">{stat.label}</p>
-            <p className="text-4xl font-black text-slate-900 group-hover:text-amber-600 transition-colors">{stat.value}</p>
+            <p className="text-slate-400 text-[10px] md:text-xs-plus font-black uppercase tracking-[0.2em] mb-1 md:mb-2">{stat.label}</p>
+            <p className="text-2xl md:text-4xl font-black text-slate-900 group-hover:text-amber-600 transition-colors">{stat.value}</p>
           </button>
         ))}
       </div>

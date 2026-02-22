@@ -43,7 +43,7 @@ const App: React.FC = () => {
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
         lg:relative lg:translate-x-0 border-r border-white/5 shadow-2xl
       `}>
-        <div className="p-8 h-full flex flex-col">
+        <div className="p-6 lg:p-8 h-full flex flex-col">
           <div className="flex items-center gap-4 mb-12 group cursor-pointer">
             <div className="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center font-black text-2xl shadow-xl shadow-amber-500/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">U</div>
             <div>
@@ -96,8 +96,8 @@ const App: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Header */}
-        <header className="h-20 bg-white/70 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-8 shrink-0 z-30">
-          <div className="flex items-center gap-4">
+        <header className="h-16 lg:h-20 bg-white/70 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 lg:px-8 shrink-0 z-30">
+          <div className="flex items-center gap-3 lg:gap-4">
             <button
               onClick={() => setSidebarOpen(true)}
               aria-label="เปิดเมนูข้าง"
@@ -105,19 +105,19 @@ const App: React.FC = () => {
             >
               <Menu size={24} />
             </button>
-            <h2 className="text-xl font-black text-slate-900 tracking-tight">
+            <h2 className="text-lg lg:text-xl font-black text-slate-900 tracking-tight">
               {navigation.find(n => n.view === currentView)?.name}
             </h2>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 lg:gap-3">
             <button
               aria-label="แจ้งเตือน"
-              className="relative p-3 text-slate-500 hover:bg-slate-100 hover:text-amber-500 rounded-2xl transition-all group"
+              className="relative p-2 lg:p-3 text-slate-500 hover:bg-slate-100 hover:text-amber-500 rounded-2xl transition-all group"
             >
-              <div className="absolute top-3 right-3 w-2.5 h-2.5 bg-amber-500 rounded-full border-2 border-white animate-ping" />
-              <div className="absolute top-3 right-3 w-2.5 h-2.5 bg-amber-500 rounded-full border-2 border-white" />
-              <CalendarDays size={22} className="group-hover:rotate-12 transition-transform" />
+              <div className="absolute top-2.5 right-2.5 lg:top-3 lg:right-3 w-2 h-2 lg:w-2.5 lg:h-2.5 bg-amber-500 rounded-full border-2 border-white animate-ping" />
+              <div className="absolute top-2.5 right-2.5 lg:top-3 lg:right-3 w-2 h-2 lg:w-2.5 lg:h-2.5 bg-amber-500 rounded-full border-2 border-white" />
+              <CalendarDays size={20} className="lg:w-[22px] lg:h-[22px] group-hover:rotate-12 transition-transform" />
             </button>
             <div className="h-8 w-px bg-slate-200 mx-2 hidden sm:block" />
             <div className="hidden sm:flex items-center gap-3 pl-2">
@@ -131,7 +131,7 @@ const App: React.FC = () => {
         </header>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-4 lg:p-8">
+        <div className="flex-1 overflow-y-auto p-3 lg:p-8">
           <div className="max-w-6xl mx-auto h-full">
             {currentView === AppView.DASHBOARD && <Dashboard onNavigate={setCurrentView} />}
             {currentView === AppView.SYSTEM_456 && <System456 />}
