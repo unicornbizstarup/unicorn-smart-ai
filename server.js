@@ -1,7 +1,9 @@
-const express = require('express');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-const cors = require('cors');
-require('dotenv').config();
+import express from 'express';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -23,19 +25,19 @@ app.post('/api/chat', async (req, res) => {
       return res.status(500).json({ error: 'Gemini API Key is not configured on server' });
     }
 
-    const model = genAI.getGenerativeModel({ 
+    const model = genAI.getGenerativeModel({
       model: 'gemini-1.5-flash',
       systemInstruction: systemInstruction
     });
 
     // Transform messages for Gemini
     const history = messages.slice(0, -1).map(m => ({
-        role: m.role === 'user' ? 'user' : 'model',
-        parts: [{ text: m.text }]
+      role: m.role === 'user' ? 'user' : 'model',
+      parts: [{ text: m.text }]
     }));
 
     const chat = model.startChat({
-        history: history
+      history: history
     });
 
     const lastMessage = messages[messages.length - 1].text;
@@ -52,7 +54,7 @@ app.post('/api/chat', async (req, res) => {
 
 // Health check
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', message: 'Uni Smart AI Backend is running' });
+  res.json({ status: 'ok', message: 'Uni Smart AI Backend is running' });
 });
 
 app.listen(port, '0.0.0.0', () => {
