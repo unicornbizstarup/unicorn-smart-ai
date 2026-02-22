@@ -6,8 +6,8 @@
   --unicorn-gold-dark: #d97706;
   --unicorn-slate: #0f172a;
   --unicorn-slate-light: #1e293b;
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.4);
 }
 
 body {
@@ -31,10 +31,11 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 10px;
+  transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #f59e0b;
 }
 
 /* Glassmorphism Utilities */
@@ -110,4 +111,18 @@ body {
 
 .hover-shine:hover::after {
   transform: rotate(-30deg) translate(80%, 80%);
+}
+
+.clickable-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.clickable-hover:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.text-xs-plus {
+  font-size: 0.75rem; /* 12px */
+  line-height: 1rem;
 }

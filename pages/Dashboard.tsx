@@ -19,13 +19,27 @@ interface DashboardProps {
   onNavigate: (view: AppView) => void;
 }
 
+const stats_data = [
+  { label: 'คอนเนคใจทีม', value: '18', icon: Heart, color: 'text-rose-500', bg: 'bg-rose-50' },
+  { label: 'เคสลงพื้นที่', value: '12', icon: MapPin, color: 'text-blue-500', bg: 'bg-blue-50' },
+  { label: 'นำคนเข้าฟังชั่น', value: '5', icon: CalendarCheck, color: 'text-amber-500', bg: 'bg-amber-50' },
+  { label: 'ระดับการสอน', value: 'Expert', icon: Trophy, color: 'text-purple-500', bg: 'bg-purple-50' },
+];
+
+const mastery_data = [
+  { label: 'ธุรกิจ & แผนรายได้', val: 85, color: 'bg-blue-500' },
+  { label: 'สินค้า & บริการ', val: 92, color: 'bg-emerald-500' },
+  { label: 'ทีม & การสอนงาน', val: 45, color: 'bg-amber-500' },
+  { label: 'ออนไลน์ & AI', val: 68, color: 'bg-indigo-600' },
+];
+
+const urgent_tasks = [
+  { t: 'ซ้อมสอนแผนรายได้ (Stage 4)', c: 'bg-blue-500/20 text-blue-300', icon: ShieldCheck },
+  { t: 'จัด House Meeting เย็นนี้', c: 'bg-amber-500/20 text-amber-300', icon: MapPin },
+  { t: 'ส่งทีมเข้า President Talk', c: 'bg-purple-500/20 text-purple-300', icon: Users },
+];
+
 const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
-  const stats = [
-    { label: 'คอนเนคใจทีม', value: '18', icon: Heart, color: 'text-rose-500', bg: 'bg-rose-50' },
-    { label: 'เคสลงพื้นที่', value: '12', icon: MapPin, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { label: 'นำคนเข้าฟังชั่น', value: '5', icon: CalendarCheck, color: 'text-amber-500', bg: 'bg-amber-50' },
-    { label: 'ระดับการสอน', value: 'Expert', icon: Trophy, color: 'text-purple-500', bg: 'bg-purple-50' },
-  ];
 
   return (
     <div className="space-y-8 animate-fade-in pb-10 px-2 lg:px-0">
@@ -55,6 +69,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           <div className="flex flex-wrap gap-4">
             <button
               onClick={() => onNavigate(AppView.SYSTEM_456)}
+              aria-label="เริ่มประเมินทักษะ ระบบ 4-5-6"
               className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-10 py-5 rounded-[2rem] font-black text-xl flex items-center gap-3 transition-all shadow-xl shadow-amber-500/30 active:scale-95"
             >
               เริ่มประเมินทักษะ
@@ -62,6 +77,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             </button>
             <button
               onClick={() => onNavigate(AppView.AI_COACH)}
+              aria-label="พูดคุยกับโค้ชอัจฉริยะ AI"
               className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-10 py-5 rounded-[2rem] font-bold border border-white/20 transition-all hover:border-white/40"
             >
               คุยกับโค้ช AI
@@ -81,12 +97,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             <p className="text-slate-500 mb-8">วิเคราะห์สมดุลทักษะ 10 แกนหลักของคุณ</p>
 
             <div className="space-y-6">
-              {[
-                { label: 'ธุรกิจ & แผนรายได้', val: 85, color: 'bg-blue-500' },
-                { label: 'สินค้า & บริการ', val: 92, color: 'bg-emerald-500' },
-                { label: 'ทีม & การสอนงาน', val: 45, color: 'bg-amber-500' },
-                { label: 'ออนไลน์ & AI', val: 68, color: 'bg-indigo-600' },
-              ].map(i => (
+              {mastery_data.map(i => (
                 <div key={i.label} className="group/item">
                   <div className="flex justify-between text-sm font-bold mb-2">
                     <span className="text-slate-600">{i.label}</span>
@@ -140,18 +151,18 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               ภารกิจเร่งด่วน
             </h4>
             <div className="space-y-4">
-              {[
-                { t: 'ซ้อมสอนแผนรายได้ (Stage 4)', c: 'bg-blue-500/20 text-blue-300', icon: ShieldCheck },
-                { t: 'จัด House Meeting เย็นนี้', c: 'bg-amber-500/20 text-amber-300', icon: MapPin },
-                { t: 'ส่งทีมเข้า President Talk', c: 'bg-purple-500/20 text-purple-300', icon: Users },
-              ].map((job, idx) => (
-                <div key={idx} className="flex items-center gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 group/task cursor-pointer hover:bg-white/10 transition-all hover:translate-x-2">
+              {urgent_tasks.map((job, idx) => (
+                <button
+                  key={idx}
+                  aria-label={`ภารกิจ: ${job.t}`}
+                  className="w-full text-left flex items-center gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 group/task cursor-pointer hover:bg-white/10 transition-all hover:translate-x-2"
+                >
                   <div className={`p-2 rounded-xl ${job.c}`}>
                     <job.icon size={18} />
                   </div>
                   <span className="text-sm font-bold flex-1">{job.t}</span>
                   <ChevronRight size={16} className="text-white/20 group-hover/task:text-amber-400 transition-colors" />
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -166,14 +177,18 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
       {/* Stats Table */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <div key={stat.label} className="glass-card p-8 rounded-[2.5rem] border border-white/50 shadow-sm hover:shadow-2xl transition-all group hover:-translate-y-2 duration-500 cursor-pointer">
+        {stats_data.map((stat) => (
+          <button
+            key={stat.label}
+            aria-label={`สถิติ ${stat.label}: ${stat.value}`}
+            className="glass-card p-8 rounded-[2.5rem] border border-white/50 shadow-sm hover:shadow-2xl transition-all group hover:-translate-y-2 duration-500 cursor-pointer text-left w-full"
+          >
             <div className={`${stat.bg} w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-sm`}>
               <stat.icon size={32} className={stat.color} />
             </div>
-            <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">{stat.label}</p>
+            <p className="text-slate-400 text-xs-plus font-black uppercase tracking-[0.2em] mb-2">{stat.label}</p>
             <p className="text-4xl font-black text-slate-900 group-hover:text-amber-600 transition-colors">{stat.value}</p>
-          </div>
+          </button>
         ))}
       </div>
     </div>

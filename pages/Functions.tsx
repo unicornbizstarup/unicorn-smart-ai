@@ -9,7 +9,7 @@ const Functions: React.FC = () => {
       <section className="text-center space-y-4">
         <div className="inline-flex items-center gap-2 px-5 py-2 bg-amber-100 rounded-full border border-amber-200 mb-2">
           <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-900">System Strategy</span>
+          <span className="text-xs-plus font-black uppercase tracking-[0.2em] text-amber-900">System Strategy</span>
         </div>
         <h2 className="text-5xl lg:text-7xl font-black text-slate-900 tracking-tighter italic">Function <span className="text-amber-500">to Function</span></h2>
         <p className="text-slate-500 text-xl font-bold max-w-2xl mx-auto leading-relaxed">การขับเคลื่อนคนผ่านงานกิจกรรม เพื่อสร้างการเติบโตอย่างเป็นระบบ</p>
@@ -19,13 +19,13 @@ const Functions: React.FC = () => {
         {FUNCTIONS.map((group) => (
           <div key={group.period} className="glass-card rounded-[3rem] border border-white/40 shadow-sm hover:shadow-2xl transition-all duration-500 group overflow-hidden flex flex-col hover:-translate-y-2">
             <div className={`p-8 text-center relative overflow-hidden ${group.period === 'DAY' ? 'bg-blue-600 text-white' :
-                group.period === 'WEEK' ? 'bg-amber-500 text-white' :
-                  group.period === 'MONTH' ? 'bg-purple-600 text-white' :
-                    'bg-indigo-900 text-white'
+              group.period === 'WEEK' ? 'bg-amber-500 text-white' :
+                group.period === 'MONTH' ? 'bg-purple-600 text-white' :
+                  'bg-indigo-900 text-white'
               }`}>
               <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
               <h3 className="font-black text-3xl tracking-tighter italic relative z-10">{group.period}</h3>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 mt-1 relative z-10">
+              <p className="text-xs-plus font-black uppercase tracking-[0.2em] opacity-80 mt-1 relative z-10">
                 {group.period === 'DAY' ? 'กิจกรรมรายวัน' :
                   group.period === 'WEEK' ? 'กิจกรรมรายสัปดาห์' :
                     group.period === 'MONTH' ? 'กิจกรรมรายเดือน' :
@@ -39,7 +39,7 @@ const Functions: React.FC = () => {
                   <div className="w-2 h-2 rounded-full bg-slate-200 mt-2.5 group-hover/item:bg-amber-500 group-hover/item:scale-150 transition-all duration-300"></div>
                   <div className="flex-1">
                     <p className="text-base font-black text-slate-800 group-hover/item:text-amber-600 transition-colors leading-snug">{item}</p>
-                    <div className="flex items-center gap-4 mt-2 text-[10px] text-slate-400 font-black uppercase tracking-widest opacity-60">
+                    <div className="flex items-center gap-4 mt-2 text-xs-plus text-slate-400 font-black uppercase tracking-widest opacity-60">
                       <span className="flex items-center gap-1.5"><Clock size={12} /> Zoom/Live</span>
                       <span className="flex items-center gap-1.5"><Users size={12} /> 10-100+</span>
                     </div>
@@ -49,7 +49,10 @@ const Functions: React.FC = () => {
             </div>
 
             <div className="p-6 border-t border-slate-50">
-              <button className="w-full py-4 bg-slate-50 hover:bg-slate-900 hover:text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] text-slate-600 flex items-center justify-center gap-3 transition-all active:scale-95">
+              <button
+                aria-label={`ดูปฏิทินงานสำหรับกิจกรรม ${group.period}`}
+                className="w-full py-4 bg-slate-50 hover:bg-slate-900 hover:text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] text-slate-600 flex items-center justify-center gap-3 transition-all active:scale-95"
+              >
                 ดูปฏิทินงาน <ExternalLink size={14} />
               </button>
             </div>
@@ -64,7 +67,7 @@ const Functions: React.FC = () => {
           <div className="md:w-1/2 space-y-8">
             <div className="inline-flex items-center gap-3 px-5 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10">
               <Users className="text-amber-400" size={16} />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-200">The Power of Crowd</span>
+              <span className="text-xs-plus font-black uppercase tracking-[0.2em] text-amber-200">The Power of Crowd</span>
             </div>
             <h3 className="text-4xl lg:text-5xl font-black italic tracking-tight">ทำไมต้อง <span className="text-amber-400 underline decoration-amber-400/30 underline-offset-8">Function?</span></h3>
             <p className="text-indigo-100/70 text-lg font-medium leading-relaxed">
@@ -78,7 +81,7 @@ const Functions: React.FC = () => {
                   <Users size={24} className="text-amber-400 group-hover/stat:text-white transition-colors" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-amber-200 opacity-60 uppercase tracking-widest">Community</p>
+                  <p className="text-xs-plus font-black text-amber-200 opacity-60 uppercase tracking-widest">Community</p>
                   <p className="text-lg font-black italic tracking-tight">รวมตัวคนมีฝัน</p>
                 </div>
               </div>
@@ -87,7 +90,7 @@ const Functions: React.FC = () => {
                   <MapPin size={24} className="text-blue-400 group-hover/stat:text-white transition-colors" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-blue-200 opacity-60 uppercase tracking-widest">Environment</p>
+                  <p className="text-xs-plus font-black text-blue-200 opacity-60 uppercase tracking-widest">Environment</p>
                   <p className="text-lg font-black italic tracking-tight">พลังของบรรยากาศ</p>
                 </div>
               </div>

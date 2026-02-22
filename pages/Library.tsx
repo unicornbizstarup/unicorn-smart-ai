@@ -18,6 +18,23 @@ import {
 } from 'lucide-react';
 import { LibraryItem } from '../types';
 
+const categories_data = [
+  { id: 'ALL', name: 'ทุกหมวดหมู่', icon: Filter },
+  { id: 'TEACHING', name: 'สื่อการสอน', icon: Play },
+  { id: 'DOCUMENTS', name: 'เอกสารการเรียนรู้', icon: FileText },
+  { id: 'MARKETING', name: 'สื่อการตลาด', icon: ImageIcon },
+  { id: 'CLIPS', name: 'คลิปสั้นเรียนรู้', icon: Video },
+  { id: 'GUIDELINES', name: 'แนวทางการใช้งาน', icon: LinkIcon },
+];
+
+const media_types_data = [
+  { id: 'ALL', name: 'ทุกรูปแบบ', icon: FileType },
+  { id: 'PDF', name: 'PDF Documents', icon: FileText },
+  { id: 'VIDEO', name: 'วิดีโอ', icon: MonitorPlay },
+  { id: 'IMAGE', name: 'รูปภาพ', icon: ImageIcon },
+  { id: 'LINK', name: 'ลิงก์ภายนอก', icon: LinkIcon },
+];
+
 const Library: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState<LibraryItem['category'] | 'ALL'>('ALL');
@@ -35,22 +52,6 @@ const Library: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const categories = [
-    { id: 'ALL', name: 'ทุกหมวดหมู่', icon: Filter },
-    { id: 'TEACHING', name: 'สื่อการสอน', icon: Play },
-    { id: 'DOCUMENTS', name: 'เอกสารการเรียนรู้', icon: FileText },
-    { id: 'MARKETING', name: 'สื่อการตลาด', icon: ImageIcon },
-    { id: 'CLIPS', name: 'คลิปสั้นเรียนรู้', icon: Video },
-    { id: 'GUIDELINES', name: 'แนวทางการใช้งาน', icon: LinkIcon },
-  ];
-
-  const mediaTypes = [
-    { id: 'ALL', name: 'ทุกรูปแบบ', icon: FileType },
-    { id: 'PDF', name: 'PDF Documents', icon: FileText },
-    { id: 'VIDEO', name: 'วิดีโอ', icon: MonitorPlay },
-    { id: 'IMAGE', name: 'รูปภาพ', icon: ImageIcon },
-    { id: 'LINK', name: 'ลิงก์ภายนอก', icon: LinkIcon },
-  ];
 
   const filteredItems = useMemo(() => {
     return LIBRARY_DATA.filter(item => {
@@ -118,6 +119,7 @@ const Library: React.FC = () => {
               <input
                 type="text"
                 placeholder="ค้นหาชื่อสื่อหรือเอกสาร..."
+                aria-label="ค้นชื่อสื่อหรือเอกสาร"
                 className="w-full pl-14 pr-12 py-5 bg-slate-50/50 backdrop-blur-md border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-amber-400 focus:ring-8 focus:ring-amber-500/5 transition-all font-black text-slate-800 shadow-inner group/input"
                 value={searchTerm}
                 onChange={(e) => {
@@ -129,6 +131,7 @@ const Library: React.FC = () => {
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm('')}
+                  aria-label="ล้างคำค้นหา"
                   className="absolute right-5 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-200/50 rounded-full text-slate-400 transition-all active:scale-90"
                 >
                   <X size={18} />
@@ -140,7 +143,7 @@ const Library: React.FC = () => {
             {showSuggestions && suggestions.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-4 bg-white/90 backdrop-blur-xl rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white overflow-hidden z-[60] animate-in fade-in zoom-in-95 duration-300">
                 <div className="p-3">
-                  <p className="px-5 py-3 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">แนะนำสำหรับคุณ</p>
+                  <p className="px-5 py-3 text-xs-plus font-black text-slate-400 uppercase tracking-[0.2em]">แนะนำสำหรับคุณ</p>
                   <div className="space-y-1">
                     {suggestions.map((s, idx) => (
                       <button
@@ -169,12 +172,13 @@ const Library: React.FC = () => {
         <div className="space-y-10 relative z-10">
           {/* Category Tabs */}
           <div className="space-y-4">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">หมวดหมู่เนื้อหา</p>
+            <p className="text-xs-plus font-black text-slate-400 uppercase tracking-[0.3em] ml-2">หมวดหมู่เนื้อหา</p>
             <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide px-2 -mx-2">
-              {categories.map((cat) => (
+              {categories_data.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id as any)}
+                  aria-label={`หมวดหมู่: ${cat.name}`}
                   className={`
                     px-8 py-4 rounded-[1.8rem] text-sm font-black flex items-center gap-3 transition-all duration-500 shrink-0 border
                     ${activeCategory === cat.id
@@ -191,12 +195,13 @@ const Library: React.FC = () => {
 
           {/* Media Type Tabs */}
           <div className="space-y-4">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">รูปแบบสื่อ</p>
+            <p className="text-xs-plus font-black text-slate-400 uppercase tracking-[0.3em] ml-2">รูปแบบสื่อ</p>
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide px-2 -mx-2">
-              {mediaTypes.map((type) => (
+              {media_types_data.map((type) => (
                 <button
                   key={type.id}
                   onClick={() => setActiveType(type.id as any)}
+                  aria-label={`รูปแบบ: ${type.name}`}
                   className={`
                     px-6 py-3 rounded-2xl text-[11px] font-black flex items-center gap-2.5 transition-all duration-300 shrink-0 border uppercase tracking-wider
                     ${activeType === type.id
@@ -232,7 +237,7 @@ const Library: React.FC = () => {
                     {getIcon(item.type)}
                   </div>
                 </div>
-                <div className="absolute top-6 right-6 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 border border-white shadow-sm">
+                <div className="absolute top-6 right-6 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-xs-plus font-black uppercase tracking-[0.2em] text-slate-600 border border-white shadow-sm">
                   {item.type}
                 </div>
               </div>
@@ -250,12 +255,15 @@ const Library: React.FC = () => {
 
                 <div className="flex items-center justify-between pt-8 border-t border-slate-50">
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] mb-1">หมวดหมู่</span>
+                    <span className="text-xs-plus font-black text-slate-300 uppercase tracking-[0.2em] mb-1">หมวดหมู่</span>
                     <span className="text-xs font-black text-slate-500 uppercase">
-                      {categories.find(c => c.id === item.category)?.name}
+                      {categories_data.find(c => c.id === item.category)?.name}
                     </span>
                   </div>
-                  <button className="flex items-center gap-3 bg-slate-950 text-white px-7 py-3.5 rounded-2xl text-sm font-black hover:bg-slate-800 transition-all active:scale-95 shadow-2xl shadow-slate-950/20 hover-shine overflow-hidden relative">
+                  <button
+                    aria-label={`${item.type === 'VIDEO' ? 'รับชม' : item.type === 'LINK' ? 'ไปที่ลิงก์' : 'ดาวน์โหลด'} ${item.title}`}
+                    className="flex items-center gap-3 bg-slate-950 text-white px-7 py-3.5 rounded-2xl text-sm font-black hover:bg-slate-800 transition-all active:scale-95 shadow-2xl shadow-slate-950/20 hover-shine overflow-hidden relative"
+                  >
                     {item.type === 'VIDEO' ? <Play size={18} fill="currentColor" /> : item.type === 'LINK' ? <LinkIcon size={18} /> : <Download size={18} />}
                     <span className="relative z-10">{item.type === 'VIDEO' ? 'รับชม' : item.type === 'LINK' ? 'ไปที่ลิงก์' : 'ดาวน์โหลด'}</span>
                   </button>
@@ -296,7 +304,10 @@ const Library: React.FC = () => {
             ลดความสับสน และสร้างความเป็นมืออาชีพให้กับองค์กร Unicorn ของคุณ
           </p>
         </div>
-        <button className="px-10 py-5 bg-white text-slate-950 rounded-[2rem] font-black text-lg hover:bg-amber-50 transition-all shadow-2xl shadow-black/20 whitespace-nowrap active:scale-95 relative z-10">
+        <button
+          aria-label="ดูคู่มือการใช้สื่อมาตรฐาน"
+          className="px-10 py-5 bg-white text-slate-950 rounded-[2rem] font-black text-lg hover:bg-amber-50 transition-all shadow-2xl shadow-black/20 whitespace-nowrap active:scale-95 relative z-10"
+        >
           ดูคู่มือการใช้สื่อ
         </button>
       </div>

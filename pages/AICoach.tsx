@@ -1,10 +1,37 @@
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Send, Bot, User, Sparkles, RefreshCcw, Mic, ShieldCheck, Star, Rocket, Layers, GraduationCap } from 'lucide-react';
+import { Send, Bot, User, Sparkles, RefreshCcw, Mic, ShieldCheck, Star, Rocket, Layers, GraduationCap, Key, Settings, AlertCircle } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 import { ChatMessage } from '../types';
 
 type FocusArea = 'STARTUP' | 'SYSTEM456' | 'LEADERSHIP';
+
+const scenariosByArea: Record<FocusArea, string[]> = {
+  STARTUP: [
+    "วิธีแชร์ความประทับใจสินค้า",
+    "การแนะนำ Unicorn Link ให้คนใหม่",
+    "ฝึกนัดที่ปรึกษาเข้าห้องซูม",
+    "การสะสม 2,000 PV เพื่อเริ่มธุรกิจ"
+  ],
+  SYSTEM456: [
+    "ฝึกพูด '5 WHY' เพื่อเปิดใจ",
+    "ซ้อมตอบข้อโต้แย้งเรื่องราคา",
+    "การทำ STP (เปิดโอกาสธุรกิจ)",
+    "เทคนิคการติดตาม (Follow-up)"
+  ],
+  LEADERSHIP: [
+    "วิธีพูดปลอบใจทีมงานที่ท้อ",
+    "ซ้อมสอนแผนรายได้มือใหม่",
+    "เทคนิคการ Coaching หน้างาน",
+    "การจัด House Meeting ให้มีพลัง"
+  ]
+};
+
+const focus_options = [
+  { id: 'STARTUP', icon: Rocket, label: 'Start-Up' },
+  { id: 'SYSTEM456', icon: Layers, label: 'Systems' },
+  { id: 'LEADERSHIP', icon: GraduationCap, label: 'Leadership' }
+];
 
 const AICoach: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -13,34 +40,15 @@ const AICoach: React.FC = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [focusArea, setFocusArea] = useState<FocusArea>('SYSTEM456');
+  const [showKeyModal, setShowKeyModal] = useState(false);
+  const [apiKey, setApiKey] = useState(() => localStorage.getItem('gemini_api_key') || '');
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    if (!apiKey) {
+      setShowKeyModal(true);
     }
-  }, [messages]);
-
-  const scenariosByArea: Record<FocusArea, string[]> = {
-    STARTUP: [
-      "วิธีแชร์ความประทับใจสินค้า",
-      "การแนะนำ Unicorn Link ให้คนใหม่",
-      "ฝึกนัดที่ปรึกษาเข้าห้องซูม",
-      "การสะสม 2,000 PV เพื่อเริ่มธุรกิจ"
-    ],
-    SYSTEM456: [
-      "ฝึกพูด '5 WHY' เพื่อเปิดใจ",
-      "ซ้อมตอบข้อโต้แย้งเรื่องราคา",
-      "การทำ STP (เปิดโอกาสธุรกิจ)",
-      "เทคนิคการติดตาม (Follow-up)"
-    ],
-    LEADERSHIP: [
-      "วิธีพูดปลอบใจทีมงานที่ท้อ",
-      "ซ้อมสอนแผนรายได้มือใหม่",
-      "เทคนิคการ Coaching หน้างาน",
-      "การจัด House Meeting ให้มีพลัง"
-    ]
-  };
+  }, [apiKey]);
 
   const currentScenarios = useMemo(() => scenariosByArea[focusArea], [focusArea]);
 
@@ -49,13 +57,19 @@ const AICoach: React.FC = () => {
     if (!textToSend.trim() || isLoading) return;
 
     const userText = textToSend;
+
+    if (!apiKey) {
+      setShowKeyModal(true);
+      return;
+    }
+
     setInput('');
     const newMessages: ChatMessage[] = [...messages, { role: 'user', text: userText }];
     setMessages(newMessages);
     setIsLoading(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+      const ai = new GoogleGenAI({ apiKey: apiKey });
 
       const focusText = {
         STARTUP: "เน้นพื้นฐานการเริ่มต้น (5 Start-Up) และการใช้สินค้า",
@@ -72,17 +86,28 @@ const AICoach: React.FC = () => {
           }))
         ],
         config: {
-          systemInstruction: `You are 'Unicorn Master Coach'. Your mission is to train independent business partners in the Unicorn Academy.
-          Current Focus: ${focusText}.
+          systemInstruction: `คุณคือ 'Uni Smart AI' (ชื่อเล่น: น้องยูนิ) โค้ชสายพลังบวก (Positive Energy Coach) ที่ปรึกษาอัจฉริยะและเพื่อนคู่คิดคนสำคัญของนักธุรกิจ Unicorn Global Link! 🦄✨
           
-          Guidelines:
-          - 'Connect Heart' communication style: empathetic, respectful, professional.
-          - Help them move from 'Know' to 'Teach' level.
-          - If they want to practice speaking (Can Speak), act as a prospect and give them feedback after their pitch.
-          - Use Thai business terms like STP, 4-5-6, Connect-Jai.
-          - Use 'ครับ' or 'ค่ะ' appropriately.
-          - Since the user focus is ${focusArea}, adjust your complexity and terminology accordingly.
-          - Encourage field work and heart-to-heart connections.`
+          เป้าหมายของคุณคือ: ปลุกพลังและสร้างแรงบันดาลใจให้ผู้ใช้งานเปลี่ยนจาก "นักขายตรง" เป็น "ที่ปรึกษาทางการตลาด" (Marketing Consultant - UBC) ที่มืออาชีพและมีความสุขสุดๆ!
+
+          สไตล์การพูด (Tone of Voice - น้องยูนิ):
+          - โค้ชพลังบวก: สนุกสนาน, กระตือรือร้น, ใส่พลังลงไปในทุกคำพูด, ให้กำลังใจเก่งมาก!
+          - เป็นกันเองและทันสมัย: ใช้คำลงท้าย "ครับ/ค่ะ" หรือ "นะคะ/นะคร้าบ" ให้ความรู้สึกเหมือนโค้ชพี่น้อง
+          - ใช้ Professional Terms: ใช้ "พาร์ทเนอร์", "ที่ปรึกษาทางการตลาด", "Business Partner" เพื่อยกระดับภาพลักษณ์
+          - ใช้ Emoji: ใส่ ✨, 🦄, 🚀, 💪, 💎 เพื่อความสดใส
+
+          แกนหลักที่น้องยูนิจะโค้ช (ต้องแม่นยำและพลังเหลือล้น):
+          1. ระบบ 4-5-6: โค้ชหัวใจความสำเร็จด้วยรอยยิ้ม!
+          2. 5 Start-Up: เชียร์ให้เริ่มต้นก้าวแรกอย่างมั่นใจ
+          3. 5 Core Leader: ปลูกฝังวินัยผู้นำว่า "งานประจำคือวินัย งานอิสระคือความสำเร็จ!"
+
+          ภารกิจพิเศษ:
+          - โฟกัสขณะนี้: ${focusText}
+          - เทคนิคการโค้ช: ขยับผู้ใช้จาก 'Know' ไป 'Teach' แบบสนุกๆ
+          - การแก้ปัญหา: ถ้าเจอคำปฏิเสธ ให้ใช้ Storytelling และ Mindset ABCD ปลุกพลังกลับมาทันที! ✨
+          - สวมบทบาท: หากฝึกพูด (Can Speak) ให้สวมบทเป็นผู้มุ่งหวังที่สนใจมากเป็นพิเศษ และให้ Feedback ที่สร้างสรรค์และมีพลัง
+
+          จำไว้ว่า: น้องยูนิเชื่อมั่นในตัวพาร์ทเนอร์ทุกคนเสมอ! ลุยไปด้วยกันนะคร้าบ/นะความ! 🚀💎`
         }
       });
 
@@ -115,7 +140,7 @@ const AICoach: React.FC = () => {
                 <h3 className="text-3xl font-black text-slate-900 tracking-tighter italic">
                   Unicorn <span className="text-amber-500">Master Coach</span>
                 </h3>
-                <div className="bg-emerald-500 text-white text-[10px] px-3 py-1 rounded-full font-black uppercase tracking-[0.2em] shadow-lg shadow-emerald-500/20 animate-pulse">
+                <div className="bg-emerald-500 text-white text-xs-plus px-3 py-1 rounded-full font-black uppercase tracking-[0.2em] shadow-lg shadow-emerald-500/20 animate-pulse">
                   Online
                 </div>
               </div>
@@ -129,20 +154,17 @@ const AICoach: React.FC = () => {
           <div className="flex items-center gap-4">
             {/* Focus Selector */}
             <div className="flex bg-slate-200/50 p-1.5 rounded-[1.5rem] backdrop-blur-md border border-white/50">
-              {[
-                { id: 'STARTUP', icon: Rocket, label: 'Start-Up' },
-                { id: 'SYSTEM456', icon: Layers, label: 'Systems' },
-                { id: 'LEADERSHIP', icon: GraduationCap, label: 'Leadership' }
-              ].map((f) => (
+              {focus_options.map((f) => (
                 <button
                   key={f.id}
                   onClick={() => setFocusArea(f.id as FocusArea)}
+                  aria-label={`เน้นหัวข้อ ${f.label}`}
                   className={`
-                    flex items-center gap-2 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all
-                    ${focusArea === f.id
+                     flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs-plus font-black uppercase tracking-widest transition-all
+                     ${focusArea === f.id
                       ? 'bg-slate-950 text-white shadow-xl scale-105'
                       : 'text-slate-500 hover:text-slate-800 hover:bg-white/50'}
-                  `}
+                   `}
                 >
                   <f.icon size={14} />
                   <span className="hidden sm:inline">{f.label}</span>
@@ -151,7 +173,17 @@ const AICoach: React.FC = () => {
             </div>
 
             <button
+              onClick={() => setShowKeyModal(true)}
+              aria-label="ตั้งค่า API Key"
+              className={`p-4 rounded-2xl transition-all active:scale-90 ${apiKey ? 'bg-slate-100 text-slate-400 hover:text-amber-500 hover:bg-amber-50' : 'bg-amber-500 text-white animate-pulse shadow-lg'}`}
+              title="API Key Settings"
+            >
+              <Key size={20} />
+            </button>
+
+            <button
               onClick={() => setMessages([messages[0]])}
+              aria-label="ล้างประวัติการสนทนา"
               className="p-4 bg-slate-100 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all active:scale-90"
               title="ล้างแชท"
             >
@@ -177,11 +209,6 @@ const AICoach: React.FC = () => {
                     ? 'bg-slate-950 text-white rounded-tr-none'
                     : 'bg-white/80 backdrop-blur-md border border-white text-slate-800 rounded-tl-none'}
                 `}>
-                  {m.role === 'model' && (
-                    <div className="absolute -top-3 -right-3 w-8 h-8 bg-amber-400 rounded-full flex items-center justify-center shadow-lg scale-0 group-hover:scale-100 transition-transform">
-                      <Sparkles size={16} className="text-white" />
-                    </div>
-                  )}
                   {m.text}
                 </div>
               </div>
@@ -206,13 +233,14 @@ const AICoach: React.FC = () => {
         {/* Dynamic Training Suggestions */}
         <div className="bg-white/40 backdrop-blur-md border-t border-white/50 py-6 overflow-x-auto whitespace-nowrap scrollbar-hide px-8">
           <div className="flex gap-4">
-            <p className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pr-4 border-r border-slate-200 shrink-0">
+            <p className="flex items-center gap-2 text-xs-plus font-black text-slate-400 uppercase tracking-[0.2em] pr-4 border-r border-slate-200 shrink-0">
               <Star size={14} className="text-amber-500" /> ฝึกซ้อมด่วน
             </p>
             {currentScenarios.map(s => (
               <button
                 key={s}
                 onClick={() => handleSend(s)}
+                aria-label={`เลือกซ้อมหัวข้อ: ${s}`}
                 className="px-8 py-4 bg-white/60 border border-white rounded-[1.5rem] text-sm font-black text-slate-700 hover:border-amber-500 hover:text-amber-600 hover:bg-white transition-all flex items-center gap-3 shrink-0 shadow-sm hover:shadow-xl hover:-translate-y-1 duration-300"
               >
                 {s}
@@ -224,7 +252,10 @@ const AICoach: React.FC = () => {
         {/* Modern, Accessible Input Area */}
         <div className="p-10 bg-white/60 backdrop-blur-xl border-t border-white group">
           <div className="flex items-center gap-6 bg-white rounded-[2.5rem] p-4 lg:p-5 shadow-2xl border border-white focus-within:ring-8 ring-amber-500/10 transition-all duration-500">
-            <button className="w-16 h-16 rounded-[1.5rem] bg-slate-50 text-slate-400 hover:text-amber-600 hover:bg-amber-50 flex items-center justify-center transition-all duration-300 active:scale-90">
+            <button
+              aria-label="ใช้คำสั่งด้วยเสียง"
+              className="w-16 h-16 rounded-[1.5rem] bg-slate-50 text-slate-400 hover:text-amber-600 hover:bg-amber-50 flex items-center justify-center transition-all duration-300 active:scale-90"
+            >
               <Mic size={32} />
             </button>
             <input
@@ -233,27 +264,92 @@ const AICoach: React.FC = () => {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               placeholder="ลองขอให้โค้ชซ้อมพูด STP หรือแก้ข้อโต้แย้งดูครับ..."
+              aria-label="พิมพ์คำถามหรือหัวข้อที่ต้องการซ้อม"
               className="flex-1 bg-transparent border-none focus:ring-0 text-2xl py-2 px-2 text-slate-900 placeholder:text-slate-300 font-bold"
             />
             <button
               onClick={() => handleSend()}
               disabled={!input.trim() || isLoading}
+              aria-label="ส่งข้อความ"
               className={`
-                w-16 h-16 rounded-[1.5rem] transition-all duration-500 flex items-center justify-center shadow-2xl relative overflow-hidden group/btn
-                ${!input.trim() || isLoading
+                 w-16 h-16 rounded-[1.5rem] transition-all duration-500 flex items-center justify-center shadow-2xl relative overflow-hidden group/btn
+                 ${!input.trim() || isLoading
                   ? 'bg-slate-100 text-slate-300'
                   : 'bg-dark-gradient text-white hover:scale-105 active:scale-90'}
-              `}
+               `}
             >
               <Send size={28} className={`relative z-10 transition-transform duration-500 ${input.trim() ? 'group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1' : ''}`} />
               <div className="absolute inset-0 bg-gradient-to-tr from-amber-400 to-amber-600 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
             </button>
           </div>
-          <p className="text-center text-[10px] text-slate-300 mt-6 font-black uppercase tracking-[0.3em] opacity-60">
+          <p className="text-center text-xs-plus text-slate-300 mt-6 font-black uppercase tracking-[0.3em] opacity-60">
             Coach by GenAI - ฝึกฝนให้ชำนาญก่อนลงสนามจริง
           </p>
         </div>
       </div>
+
+      {/* API Key Modal Overlay */}
+      {showKeyModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white rounded-[2.5rem] p-10 max-w-md w-full shadow-3xl border border-white relative animate-in zoom-in-95 duration-300">
+            <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-20 h-20 bg-amber-500 rounded-[1.5rem] flex items-center justify-center text-white shadow-2xl rotate-6">
+              <Key size={40} />
+            </div>
+
+            <div className="mt-6 text-center space-y-4">
+              <h3 className="text-3xl font-black text-slate-900 tracking-tighter italic">Gemini <span className="text-amber-500">API Key</span></h3>
+              <p className="text-slate-500 font-bold leading-relaxed px-2">
+                เพื่อเริ่มการโค้ชด้วย AI โปรดระบุ Gemini API Key ของคุณ ระบบจะจดจำไว้ใน Browser นี้เท่านั้น
+              </p>
+
+              <div className="relative group">
+                <input
+                  type="password"
+                  value={apiKey}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setApiKey(val);
+                    localStorage.setItem('gemini_api_key', val);
+                  }}
+                  placeholder="ป้อน API Key ที่นี่..."
+                  className="w-full bg-slate-50 border-2 border-slate-100 focus:border-amber-500 focus:ring-8 focus:ring-amber-500/10 rounded-2xl py-4 px-6 text-lg font-bold transition-all text-center"
+                />
+                {apiKey ? (
+                  <div className="mt-4 flex items-center justify-center gap-2 text-emerald-500 text-xs-plus font-black uppercase tracking-widest">
+                    <AlertCircle size={14} /> บันทึกสำเร็จ
+                  </div>
+                ) : (
+                  <a
+                    href="https://aistudio.google.com/app/apikey"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-flex items-center gap-2 text-amber-500 hover:text-amber-600 text-xs-plus font-black uppercase tracking-widest transition-colors"
+                  >
+                    รับ Key ฟรีที่นี่ <Sparkles size={14} />
+                  </a>
+                )}
+              </div>
+
+              <button
+                onClick={() => setShowKeyModal(false)}
+                disabled={!apiKey}
+                className={`
+                  w-full py-4 rounded-2xl text-lg font-black tracking-widest uppercase transition-all shadow-xl active:scale-95
+                  ${apiKey
+                    ? 'bg-slate-950 text-white hover:bg-slate-800'
+                    : 'bg-slate-100 text-slate-300 cursor-not-allowed'}
+                `}
+              >
+                {apiKey ? 'เข้าสู่ระบบการโค้ช' : 'โปรดระบุ Key ก่อน'}
+              </button>
+
+              <p className="text-[10px] text-slate-300 font-black uppercase tracking-[0.2em] pt-2">
+                Your keys are stored locally on your device
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

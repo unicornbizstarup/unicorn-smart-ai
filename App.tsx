@@ -22,18 +22,18 @@ import Functions from './pages/Functions';
 import AICoach from './pages/AICoach';
 import Library from './pages/Library';
 
+const navigation = [
+  { name: 'แดชบอร์ด', icon: LayoutDashboard, view: AppView.DASHBOARD },
+  { name: 'ระบบ 4-5-6', icon: Layers, view: AppView.SYSTEM_456 },
+  { name: '5 Start-Up', icon: Rocket, view: AppView.START_UP },
+  { name: 'คลังสื่อ/เอกสาร', icon: FolderOpen, view: AppView.LIBRARY },
+  { name: 'ฟังก์ชั่นการเรียนรู้', icon: CalendarDays, view: AppView.FUNCTIONS },
+  { name: 'โค้ชอัจฉริยะ AI', icon: Bot, view: AppView.AI_COACH },
+];
+
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>(AppView.DASHBOARD);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-
-  const navigation = [
-    { name: 'แดชบอร์ด', icon: LayoutDashboard, view: AppView.DASHBOARD },
-    { name: 'ระบบ 4-5-6', icon: Layers, view: AppView.SYSTEM_456 },
-    { name: '5 Start-Up', icon: Rocket, view: AppView.START_UP },
-    { name: 'คลังสื่อ/เอกสาร', icon: FolderOpen, view: AppView.LIBRARY },
-    { name: 'ฟังก์ชั่นการเรียนรู้', icon: CalendarDays, view: AppView.FUNCTIONS },
-    { name: 'โค้ชอัจฉริยะ AI', icon: Bot, view: AppView.AI_COACH },
-  ];
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -48,7 +48,7 @@ const App: React.FC = () => {
             <div className="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center font-black text-2xl shadow-xl shadow-amber-500/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">U</div>
             <div>
               <h1 className="text-xl font-black tracking-tighter">UNICORN</h1>
-              <p className="text-[10px] text-amber-500 font-bold tracking-[0.3em] uppercase opacity-80">Academy</p>
+              <p className="text-xs-plus text-amber-500 font-bold tracking-[0.3em] uppercase opacity-80">Academy</p>
             </div>
           </div>
 
@@ -60,6 +60,7 @@ const App: React.FC = () => {
                   setCurrentView(item.view);
                   setSidebarOpen(false);
                 }}
+                aria-label={`ไปที่หน้า ${item.name}`}
                 className={`
                   w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 group
                   ${currentView === item.view
@@ -76,14 +77,14 @@ const App: React.FC = () => {
 
           <div className="mt-auto pt-8">
             <div className="bg-white/5 rounded-[2rem] p-5 border border-white/10 hover:border-amber-500/30 transition-colors group cursor-pointer">
-              <p className="text-[10px] text-slate-500 mb-3 uppercase tracking-[0.2em] font-black">Business Star</p>
+              <p className="text-xs-plus text-slate-500 mb-3 uppercase tracking-[0.2em] font-black">Business Star</p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-400 via-amber-500 to-amber-600 shadow-lg group-hover:scale-110 transition-transform duration-500" />
                 <div>
                   <p className="text-sm font-bold tracking-tight">Kru Den Master Fa</p>
                   <div className="flex items-center gap-1">
                     <Trophy size={10} className="text-amber-500" />
-                    <p className="text-[10px] text-slate-400 font-bold uppercase">Super Star</p>
+                    <p className="text-xs-plus text-slate-400 font-bold uppercase">Super Star</p>
                   </div>
                 </div>
               </div>
@@ -99,6 +100,7 @@ const App: React.FC = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSidebarOpen(true)}
+              aria-label="เปิดเมนูข้าง"
               className="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
             >
               <Menu size={24} />
@@ -109,7 +111,10 @@ const App: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="relative p-3 text-slate-500 hover:bg-slate-100 hover:text-amber-500 rounded-2xl transition-all group">
+            <button
+              aria-label="แจ้งเตือน"
+              className="relative p-3 text-slate-500 hover:bg-slate-100 hover:text-amber-500 rounded-2xl transition-all group"
+            >
               <div className="absolute top-3 right-3 w-2.5 h-2.5 bg-amber-500 rounded-full border-2 border-white animate-ping" />
               <div className="absolute top-3 right-3 w-2.5 h-2.5 bg-amber-500 rounded-full border-2 border-white" />
               <CalendarDays size={22} className="group-hover:rotate-12 transition-transform" />
@@ -118,7 +123,7 @@ const App: React.FC = () => {
             <div className="hidden sm:flex items-center gap-3 pl-2">
               <div className="text-right">
                 <p className="text-xs font-black text-slate-900 leading-none">Business Partner</p>
-                <p className="text-[10px] text-amber-500 font-bold uppercase tracking-tighter">Diamond Executive</p>
+                <p className="text-xs-plus text-amber-500 font-bold uppercase tracking-tighter">Diamond Executive</p>
               </div>
               <div className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200" />
             </div>

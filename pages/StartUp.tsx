@@ -14,7 +14,7 @@ const StartUp: React.FC = () => {
           <div className="text-center md:text-left space-y-6">
             <div className="inline-flex items-center gap-2 px-5 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/10 mb-2">
               <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-200">Biz Start Up Platform</span>
+              <span className="text-xs-plus font-black uppercase tracking-[0.2em] text-amber-200">Biz Start Up Platform</span>
             </div>
             <h2 className="text-5xl lg:text-7xl font-black mb-4 tracking-tighter italic">5 <span className="text-amber-400">START-UP</span></h2>
             <p className="text-indigo-100/70 text-xl font-medium max-w-lg leading-relaxed">
@@ -55,12 +55,12 @@ const StartUp: React.FC = () => {
                 {idx < 2 ? (
                   <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full border border-emerald-100 shadow-sm">
                     <CheckCircle2 size={16} />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Completed</span>
+                    <span className="text-xs-plus font-black uppercase tracking-widest">Completed</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 px-4 py-1.5 bg-slate-50 text-slate-400 rounded-full border border-slate-100 opacity-50">
                     <Circle size={16} />
-                    <span className="text-[10px] font-black uppercase tracking-widest">To Do</span>
+                    <span className="text-xs-plus font-black uppercase tracking-widest">To Do</span>
                   </div>
                 )}
               </div>
@@ -70,11 +70,17 @@ const StartUp: React.FC = () => {
               </p>
 
               <div className="flex flex-wrap gap-4 pt-8 border-t border-slate-50/50">
-                <button className="flex items-center gap-3 bg-slate-950 text-white px-8 py-4 rounded-[1.5rem] text-sm font-black hover:bg-slate-800 transition-all active:scale-95 shadow-xl shadow-slate-900/10 hover-shine overflow-hidden relative">
+                <button
+                  aria-label="รับชมวิดีโอแนะนำขั้นตอนการเริ่มธุรกิจ"
+                  className="flex items-center gap-3 bg-slate-950 text-white px-8 py-4 rounded-[1.5rem] text-sm font-black hover:bg-slate-800 transition-all active:scale-95 shadow-xl shadow-slate-900/10 hover-shine overflow-hidden relative"
+                >
                   <Play size={18} fill="currentColor" className="text-amber-400" />
                   <span className="relative z-10 font-black">รับชมวิดีโอแนะนำ</span>
                 </button>
-                <button className="flex items-center gap-3 px-8 py-4 rounded-[1.5rem] text-sm font-black text-slate-600 hover:bg-slate-50 transition-all hover:text-slate-900">
+                <button
+                  aria-label={`อ่านรายละเอียดฉบับเต็มของ ${step.title}`}
+                  className="flex items-center gap-3 px-8 py-4 rounded-[1.5rem] text-sm font-black text-slate-600 hover:bg-slate-50 transition-all hover:text-slate-900"
+                >
                   อ่านรายละเอียดฉบับเต็ม <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>

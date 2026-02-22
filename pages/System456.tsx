@@ -28,20 +28,22 @@ import {
    Zap
 } from 'lucide-react';
 
+const iconMap: Record<string, any> = {
+   User, Star, Shield, Gem, Award, Crown
+};
+
+const masterySteps = [
+   { label: 'รู้', desc: 'มีข้อมูลพื้นฐาน' },
+   { label: 'เข้าใจ', desc: 'อธิบายเหตุผลได้' },
+   { label: 'พูดได้', desc: 'นำเสนอได้คล่องแคล่ว' },
+   { label: 'สอนเป็น', desc: 'ถ่ายทอดให้ทีมงานได้' },
+];
+
+const tabs_options = ['4-KNOW', '5-DO', '6-BE'] as const;
+
 const System456: React.FC = () => {
    const [activeTab, setActiveTab] = useState<'4-KNOW' | '5-DO' | '6-BE'>('4-KNOW');
    const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
-
-   const iconMap: Record<string, any> = {
-      User, Star, Shield, Gem, Award, Crown
-   };
-
-   const masterySteps = [
-      { label: 'รู้', desc: 'มีข้อมูลพื้นฐาน' },
-      { label: 'เข้าใจ', desc: 'อธิบายเหตุผลได้' },
-      { label: 'พูดได้', desc: 'นำเสนอได้คล่องแคล่ว' },
-      { label: 'สอนเป็น', desc: 'ถ่ายทอดให้ทีมงานได้' },
-   ];
 
    return (
       <div className="space-y-8 pb-20 animate-fade-in px-2 lg:px-0">
@@ -62,19 +64,20 @@ const System456: React.FC = () => {
                </div>
 
                <div className="flex bg-white/5 backdrop-blur-xl p-2 rounded-[2.5rem] border border-white/10 w-full md:w-auto shadow-2xl">
-                  {(['4-KNOW', '5-DO', '6-BE'] as const).map((tab) => (
+                  {tabs_options.map((tab) => (
                      <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
+                        aria-label={`สถาบัน ระบบ ${tab.split('-')[0]}`}
                         className={`
-                  flex-1 md:flex-none md:w-36 py-5 rounded-[2rem] text-lg font-black transition-all duration-500 flex flex-col items-center justify-center gap-1
-                  ${activeTab === tab
+                flex-1 md:flex-none md:w-36 py-5 rounded-[2rem] text-lg font-black transition-all duration-500 flex flex-col items-center justify-center gap-1
+                ${activeTab === tab
                               ? 'bg-amber-500 text-slate-950 shadow-2xl scale-105 shadow-amber-500/30'
                               : 'text-white/40 hover:text-white hover:bg-white/5'}
-                `}
+              `}
                      >
                         <span className="text-3xl font-black tracking-tighter">{tab.split('-')[0]}</span>
-                        <span className="text-[10px] uppercase tracking-[0.2em] font-black opacity-80">
+                        <span className="text-xs-plus uppercase tracking-[0.2em] font-black opacity-80">
                            {tab === '4-KNOW' ? 'รู้' : tab === '5-DO' ? 'ทำ' : 'เป็น'}
                         </span>
                      </button>
@@ -103,10 +106,11 @@ const System456: React.FC = () => {
 
                      <div className="grid gap-4">
                         {SYSTEM_4_KNOW.map((item, idx) => (
-                           <div
+                           <button
                               key={item.id}
                               onClick={() => setSelectedTopic(item.id)}
-                              className="glass-card p-7 rounded-[2.5rem] flex items-center justify-between hover:border-amber-400 cursor-pointer transition-all duration-500 group hover:-translate-y-1 hover:shadow-2xl"
+                              aria-label={`ดูรายละเอียด: ${item.title}`}
+                              className="glass-card p-7 rounded-[2.5rem] flex items-center justify-between hover:border-amber-400 cursor-pointer transition-all duration-500 group hover:-translate-y-1 hover:shadow-2xl text-left w-full"
                            >
                               <div className="flex items-center gap-6">
                                  <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-amber-100 group-hover:text-amber-600 group-hover:rotate-6 transition-all duration-500 shadow-inner">
@@ -123,7 +127,7 @@ const System456: React.FC = () => {
                               <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-all duration-500">
                                  <ChevronRight size={20} className="translate-x-0 group-hover:translate-x-0.5" />
                               </div>
-                           </div>
+                           </button>
                         ))}
                      </div>
                   </div>
@@ -229,9 +233,9 @@ const System456: React.FC = () => {
                                  {isGold && <div className="absolute -top-3 -right-3 w-8 h-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center animate-ping opacity-50" />}
                               </div>
                               <div className="text-center glass-card p-5 rounded-3xl w-full group-hover:border-amber-400 group-hover:shadow-2xl transition-all duration-500 scale-95 group-hover:scale-100">
-                                 <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">{step.title.split(':')[0]}</h4>
+                                 <h4 className="text-xs-plus font-black text-slate-400 uppercase tracking-[0.2em] mb-2">{step.title.split(':')[0]}</h4>
                                  <p className="text-sm font-black text-slate-900 mb-1 leading-tight tracking-tight">{step.title.split(':')[1]}</p>
-                                 <p className="text-[10px] font-black text-amber-600 uppercase tracking-tighter mt-1">{step.range}</p>
+                                 <p className="text-xs-plus font-black text-amber-600 uppercase tracking-tighter mt-1">{step.range}</p>
                               </div>
                            </div>
                         );
@@ -280,9 +284,9 @@ const System456: React.FC = () => {
                            ))}
                         </ul>
                         <div className="pt-10 border-t border-white/10 flex justify-center relative z-10">
-                           <div className="px-8 py-3 bg-white/10 hover:bg-amber-500 hover:text-slate-950 rounded-full text-[10px] font-black uppercase tracking-[0.3em] transition-all duration-500 border border-white/5 cursor-pointer shadow-lg">
+                           <button className="px-8 py-3 bg-white/10 hover:bg-amber-500 hover:text-slate-950 rounded-full text-xs-plus font-black uppercase tracking-[0.3em] transition-all duration-500 border border-white/5 cursor-pointer shadow-lg active:scale-95">
                               Biz Start Up Platform
-                           </div>
+                           </button>
                         </div>
                      </div>
                   </div>
@@ -305,7 +309,11 @@ const System456: React.FC = () => {
                            {SYSTEM_4_KNOW.find(t => t.id === selectedTopic)?.title}
                         </p>
                      </div>
-                     <button onClick={() => setSelectedTopic(null)} className="p-5 bg-slate-50 text-slate-400 rounded-3xl hover:bg-slate-100 hover:text-slate-900 transition-all active:scale-95 group">
+                     <button
+                        onClick={() => setSelectedTopic(null)}
+                        aria-label="ปิดหน้าต่าง"
+                        className="p-5 bg-slate-50 text-slate-400 rounded-3xl hover:bg-slate-100 hover:text-slate-900 transition-all active:scale-95 group"
+                     >
                         <ChevronRight size={32} className="rotate-180 group-hover:-translate-x-1 transition-transform" />
                      </button>
                   </div>
