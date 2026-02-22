@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "upweb": "npm run build && git add . && git commit -m \"update: automated web update 🦄✨\" && git push origin main"
   },
   "dependencies": {
     "react": "^19.2.3",
