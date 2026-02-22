@@ -11,9 +11,17 @@ import {
   Heart,
   MapPin,
   CalendarCheck,
-  Activity
+  Activity,
+  Award,
+  Star,
+  Zap,
+  Layout,
+  Zap,
+  Layout,
+  Bot,
+  MessageSquare
 } from 'lucide-react';
-import { AppView } from '../types';
+import { AppView, UBCLevel } from '../types';
 
 interface DashboardProps {
   onNavigate: (view: AppView) => void;
@@ -33,13 +41,36 @@ const mastery_data = [
   { label: 'ออนไลน์ & AI', val: 68, color: 'bg-indigo-600' },
 ];
 
-const urgent_tasks = [
-  { t: 'ซ้อมสอนแผนรายได้ (Stage 4)', c: 'bg-blue-500/20 text-blue-300', icon: ShieldCheck },
-  { t: 'จัด House Meeting เย็นนี้', c: 'bg-amber-500/20 text-amber-300', icon: MapPin },
-  { t: 'ส่งทีมเข้า President Talk', c: 'bg-purple-500/20 text-purple-300', icon: Users },
-];
+const level_data = {
+  [UBCLevel.UBC1_FOUNDATION]: {
+    title: 'UBC 1 - Foundation',
+    subtitle: 'รากฐานที่ปรึกษาและวินัยดิจิทัล',
+    color: 'text-amber-500',
+    bg: 'bg-amber-500/10',
+    icon: Star,
+    missions: [
+      { t: 'ตั้งค่า Digital Name Card', c: 'bg-amber-500/20 text-amber-300', icon: Layout },
+      { t: 'ซ้อมพูดแผน 4 รู้ กับ AI Coach', c: 'bg-blue-500/20 text-blue-300', icon: Bot },
+      { t: 'บันทึกการใช้สินค้า 100%', c: 'bg-emerald-500/20 text-emerald-300', icon: Activity }
+    ]
+  },
+  [UBCLevel.UBC2_SPECIALIST]: {
+    title: 'UBC 2 - Specialist',
+    subtitle: 'ผู้เชี่ยวชาญการตลาดดิจิทัล',
+    color: 'text-indigo-500',
+    bg: 'bg-indigo-500/10',
+    icon: Zap,
+    missions: [
+      { t: 'สร้างคลิป TikTok พร้อม One Link', c: 'bg-indigo-500/20 text-indigo-300', icon: Rocket },
+      { t: 'ฝึกแก้ข้อโต้แย้งหน้างาน (Storytelling)', c: 'bg-purple-500/20 text-purple-300', icon: MessageSquare },
+      { t: 'สร้าง Super Star ใหม่ในทีม', c: 'bg-amber-500/20 text-amber-300', icon: Trophy }
+    ]
+  }
+};
 
 const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
+  const [userLevel, setUserLevel] = React.useState<UBCLevel>(UBCLevel.UBC1_FOUNDATION);
+  const currentLevelInfo = level_data[userLevel] || level_data[UBCLevel.UBC1_FOUNDATION];
 
   return (
     <div className="space-y-8 animate-fade-in pb-10 px-2 lg:px-0">
@@ -146,12 +177,23 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         <div className="bg-slate-900 rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 text-white flex flex-col justify-between hover-shine shadow-2xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-500/20 transition-colors" />
           <div className="relative z-10">
-            <h4 className="text-xl md:text-2xl font-black mb-4 md:mb-6 flex items-center gap-3">
-              <Rocket size={20} className="md:w-[24px] md:h-[24px] text-amber-400 animate-bounce" />
-              ภารกิจเร่งด่วน
-            </h4>
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-1">
+                <div className={`px-3 py-1 rounded-full ${currentLevelInfo.bg} ${currentLevelInfo.color} text-[10px] font-black uppercase tracking-widest`}>
+                  Level {userLevel}
+                </div>
+                <currentLevelInfo.icon size={14} className={currentLevelInfo.color} />
+              </div>
+              <h4 className="text-xl md:text-2xl font-black">{currentLevelInfo.title}</h4>
+              <p className="text-slate-400 text-xs font-bold">{currentLevelInfo.subtitle}</p>
+            </div>
+
+            <h5 className="text-sm md:text-base font-black mb-4 flex items-center gap-3 text-amber-400">
+              ภารกิจสู่ความสำเร็จ
+            </h5>
+
             <div className="space-y-4">
-              {urgent_tasks.map((job, idx) => (
+              {currentLevelInfo.missions.map((job, idx) => (
                 <button
                   key={idx}
                   aria-label={`ภารกิจ: ${job.t}`}
