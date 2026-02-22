@@ -7,7 +7,6 @@ import {
   ChevronRight,
   Target,
   Rocket,
-  ShieldCheck,
   Heart,
   MapPin,
   CalendarCheck,
