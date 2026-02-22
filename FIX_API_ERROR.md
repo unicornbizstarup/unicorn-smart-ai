@@ -11,7 +11,7 @@
 ```nginx
 server {
     listen 80;
-    server_name cornsmartai.cloud; # หรือ IP ของคุณ
+    server_name unicornsmartai.cloud; # หรือ IP ของคุณ
 
     root /var/www/unicorn-smart-ai;
     index index.html;
