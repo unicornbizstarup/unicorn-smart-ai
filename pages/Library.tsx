@@ -101,26 +101,26 @@ const Library: React.FC = () => {
   return (
     <div className="space-y-8 animate-fade-in pb-20 px-2 lg:px-0">
       {/* Header & Search */}
-      <section className="glass-card rounded-[3rem] p-10 lg:p-14 border border-white/40 shadow-2xl relative overflow-hidden group">
+      <section className="glass-card rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 lg:p-14 border border-white/40 shadow-2xl relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-500/10 transition-colors duration-1000" />
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-10 mb-12 relative z-10">
-          <div className="space-y-3">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-10 mb-8 md:mb-12 relative z-10">
+          <div className="space-y-2 md:space-y-3">
             <div className="flex items-center gap-3">
-              <div className="h-1.5 w-10 bg-amber-500 rounded-full" />
-              <h2 className="text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">คลังสื่อและเอกสาร</h2>
+              <div className="h-1 md:h-1.5 w-8 md:w-10 bg-amber-500 rounded-full" />
+              <h2 className="text-2xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">คลังสื่อและเอกสาร</h2>
             </div>
-            <p className="text-slate-500 text-lg font-bold opacity-80">รวมสื่อการสอนและเครื่องมือทางการตลาดเพื่อนักธุรกิจ Unicorn</p>
+            <p className="text-slate-500 text-sm md:text-lg font-bold opacity-80 leading-tight">รวมสื่อการสอนและเครื่องมือทางการตลาดเพื่อนักธุรกิจ Unicorn</p>
           </div>
 
           <div className="relative w-full md:w-[400px]" ref={suggestionRef}>
             <div className="relative">
-              <Search className={`absolute left-5 top-1/2 -translate-y-1/2 transition-all duration-500 ${searchTerm ? 'text-amber-500 scale-110' : 'text-slate-400'}`} size={22} />
+              <Search size={20} className={`absolute left-4 md:left-5 top-1/2 -translate-y-1/2 transition-all duration-500 md:w-[22px] md:h-[22px] ${searchTerm ? 'text-amber-500 scale-110' : 'text-slate-400'}`} />
               <input
                 type="text"
                 placeholder="ค้นหาชื่อสื่อหรือเอกสาร..."
                 aria-label="ค้นชื่อสื่อหรือเอกสาร"
-                className="w-full pl-14 pr-12 py-5 bg-slate-50/50 backdrop-blur-md border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-amber-400 focus:ring-8 focus:ring-amber-500/5 transition-all font-black text-slate-800 shadow-inner group/input"
+                className="w-full pl-11 md:pl-14 pr-11 md:pr-12 py-3.5 md:py-5 bg-slate-50/50 backdrop-blur-md border-2 border-transparent rounded-2xl md:rounded-[2rem] focus:bg-white focus:border-amber-400 focus:ring-8 focus:ring-amber-500/5 transition-all font-black text-slate-800 shadow-inner group/input text-sm md:text-base"
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
@@ -132,9 +132,9 @@ const Library: React.FC = () => {
                 <button
                   onClick={() => setSearchTerm('')}
                   aria-label="ล้างคำค้นหา"
-                  className="absolute right-5 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-200/50 rounded-full text-slate-400 transition-all active:scale-90"
+                  className="absolute right-4 md:right-5 top-1/2 -translate-y-1/2 p-1.5 md:p-2 hover:bg-slate-200/50 rounded-full text-slate-400 transition-all active:scale-90"
                 >
-                  <X size={18} />
+                  <X size={16} className="md:w-[18px] md:h-[18px]" />
                 </button>
               )}
             </div>
@@ -180,13 +180,13 @@ const Library: React.FC = () => {
                   onClick={() => setActiveCategory(cat.id as any)}
                   aria-label={`หมวดหมู่: ${cat.name}`}
                   className={`
-                    px-8 py-4 rounded-[1.8rem] text-sm font-black flex items-center gap-3 transition-all duration-500 shrink-0 border
+                    px-5 md:px-8 py-3 md:py-4 rounded-[1.2rem] md:rounded-[1.8rem] text-xs md:text-sm font-black flex items-center gap-2 md:gap-3 transition-all duration-500 shrink-0 border
                     ${activeCategory === cat.id
-                      ? 'bg-slate-900 border-slate-900 text-white shadow-2xl scale-105 -translate-y-1'
+                      ? 'bg-slate-900 border-slate-900 text-white shadow-2xl scale-105 -translate-y-0.5 md:-translate-y-1'
                       : 'bg-white border-slate-100 text-slate-500 hover:border-amber-200 hover:bg-amber-50/50 hover:text-slate-900'}
                   `}
                 >
-                  <cat.icon size={20} className={`${activeCategory === cat.id ? 'text-amber-400' : 'text-slate-300'}`} />
+                  <cat.icon size={18} className={`md:w-[20px] md:h-[20px] ${activeCategory === cat.id ? 'text-amber-400' : 'text-slate-300'}`} />
                   {cat.name}
                 </button>
               ))}
@@ -243,28 +243,28 @@ const Library: React.FC = () => {
               </div>
 
               {/* Card Body */}
-              <div className="p-10 flex-1 flex flex-col justify-between">
+              <div className="p-6 md:p-8 lg:p-10 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-2xl font-black text-slate-900 mb-3 leading-tight group-hover:text-amber-600 transition-colors">
+                  <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-2 md:mb-3 leading-tight group-hover:text-amber-600 transition-colors">
                     <HighlightedText text={item.title} highlight={searchTerm} />
                   </h3>
-                  <p className="text-slate-500 text-base font-medium line-clamp-2 mb-8 opacity-80 leading-relaxed">
+                  <p className="text-slate-500 text-sm md:text-base font-medium line-clamp-2 mb-6 md:mb-8 opacity-80 leading-relaxed">
                     <HighlightedText text={item.description} highlight={searchTerm} />
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between pt-8 border-t border-slate-50">
+                <div className="flex items-center justify-between pt-6 md:pt-8 border-t border-slate-50">
                   <div className="flex flex-col">
-                    <span className="text-xs-plus font-black text-slate-300 uppercase tracking-[0.2em] mb-1">หมวดหมู่</span>
-                    <span className="text-xs font-black text-slate-500 uppercase">
+                    <span className="text-[10px] md:text-xs-plus font-black text-slate-300 uppercase tracking-[0.2em] mb-1 leading-none">หมวดหมู่</span>
+                    <span className="text-[10px] md:text-xs font-black text-slate-500 uppercase leading-none">
                       {categories_data.find(c => c.id === item.category)?.name}
                     </span>
                   </div>
                   <button
                     aria-label={`${item.type === 'VIDEO' ? 'รับชม' : item.type === 'LINK' ? 'ไปที่ลิงก์' : 'ดาวน์โหลด'} ${item.title}`}
-                    className="flex items-center gap-3 bg-slate-950 text-white px-7 py-3.5 rounded-2xl text-sm font-black hover:bg-slate-800 transition-all active:scale-95 shadow-2xl shadow-slate-950/20 hover-shine overflow-hidden relative"
+                    className="flex items-center gap-2 md:gap-3 bg-slate-950 text-white px-5 py-2.5 md:px-7 md:py-3.5 rounded-xl md:rounded-2xl text-[13px] md:text-sm font-black hover:bg-slate-800 transition-all active:scale-95 shadow-2xl shadow-slate-950/20 hover-shine overflow-hidden relative"
                   >
-                    {item.type === 'VIDEO' ? <Play size={18} fill="currentColor" /> : item.type === 'LINK' ? <LinkIcon size={18} /> : <Download size={18} />}
+                    {item.type === 'VIDEO' ? <Play size={16} fill="currentColor" className="md:w-[18px] md:h-[18px]" /> : item.type === 'LINK' ? <LinkIcon size={16} className="md:w-[18px] md:h-[18px]" /> : <Download size={16} className="md:w-[18px] md:h-[18px]" />}
                     <span className="relative z-10">{item.type === 'VIDEO' ? 'รับชม' : item.type === 'LINK' ? 'ไปที่ลิงก์' : 'ดาวน์โหลด'}</span>
                   </button>
                 </div>
@@ -291,22 +291,22 @@ const Library: React.FC = () => {
       </div>
 
       {/* Systematic Guidance Tip */}
-      <div className="bg-dark-gradient rounded-[4rem] p-12 lg:p-16 text-white shadow-3xl flex flex-col md:flex-row items-center gap-12 relative overflow-hidden group hover-shine">
+      <div className="bg-dark-gradient rounded-[3rem] md:rounded-[4rem] p-8 md:p-12 lg:p-16 text-white shadow-3xl flex flex-col md:flex-row items-center gap-8 md:gap-12 relative overflow-hidden group hover-shine">
         <div className="absolute top-1/2 left-0 w-64 h-64 bg-amber-500/10 rounded-full blur-[100px] -translate-y-1/2 -translate-x-1/2" />
 
-        <div className="w-28 h-28 bg-white/10 backdrop-blur-2xl rounded-[2.5rem] flex items-center justify-center shrink-0 border border-white/10 shadow-inner group-hover:scale-110 group-hover:rotate-6 transition-all duration-700">
-          <FolderOpen size={48} className="text-amber-400" />
+        <div className="w-20 h-20 md:w-28 md:h-28 bg-white/10 backdrop-blur-2xl rounded-2xl md:rounded-[2.5rem] flex items-center justify-center shrink-0 border border-white/10 shadow-inner group-hover:scale-110 group-hover:rotate-6 transition-all duration-700">
+          <FolderOpen size={40} className="md:w-[48px] md:h-[48px] text-amber-400" />
         </div>
         <div className="flex-1 text-center md:text-left relative z-10">
-          <h4 className="text-3xl lg:text-4xl font-black mb-4 italic tracking-tight">สื่อมาตรฐาน <span className="text-amber-400">เพื่อความเป็นหนึ่งเดียว</span></h4>
-          <p className="text-indigo-100/70 text-xl font-medium leading-relaxed max-w-2xl">
+          <h4 className="text-2xl md:text-3xl lg:text-4xl font-black mb-3 md:mb-4 italic tracking-tight">สื่อมาตรฐาน <span className="text-amber-400">เพื่อความเป็นหนึ่งเดียว</span></h4>
+          <p className="text-indigo-100/70 text-base md:text-lg lg:text-xl font-medium leading-relaxed max-w-2xl">
             การใช้สื่อชุดเดียวกันในการส่งต่อธุรกิจ จะช่วยให้ทีมงานทำงานง่าย
             ลดความสับสน และสร้างความเป็นมืออาชีพให้กับองค์กร Unicorn ของคุณ
           </p>
         </div>
         <button
           aria-label="ดูคู่มือการใช้สื่อมาตรฐาน"
-          className="px-10 py-5 bg-white text-slate-950 rounded-[2rem] font-black text-lg hover:bg-amber-50 transition-all shadow-2xl shadow-black/20 whitespace-nowrap active:scale-95 relative z-10"
+          className="px-8 py-4 md:px-10 md:py-5 bg-white text-slate-950 rounded-[1.5rem] md:rounded-[2rem] font-black text-base md:text-lg hover:bg-amber-50 transition-all shadow-2xl shadow-black/20 whitespace-nowrap active:scale-95 relative z-10 w-full md:w-auto"
         >
           ดูคู่มือการใช้สื่อ
         </button>
