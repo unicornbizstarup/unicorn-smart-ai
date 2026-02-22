@@ -16,10 +16,9 @@ import {
   Star,
   Zap,
   Layout,
-  Zap,
-  Layout,
   Bot,
-  MessageSquare
+  MessageSquare,
+  ShieldCheck
 } from 'lucide-react';
 import { AppView, UBCLevel } from '../types';
 
