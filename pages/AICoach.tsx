@@ -145,18 +145,18 @@ const AICoach: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-5.5rem)] md:h-[calc(100vh-12rem)] max-w-5xl mx-auto pb-2 md:pb-6 relative animate-fade-in px-1 lg:px-0">
+    <div className="flex flex-col h-[calc(100vh-5.5rem)] md:h-[calc(100vh-8rem)] max-w-[1400px] mx-auto pb-2 md:pb-6 relative animate-fade-in px-1 lg:px-4">
       {/* Decorative background elements */}
       <div className="absolute -top-20 -left-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] animate-pulse" />
       <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-amber-500/10 rounded-full blur-[100px] animate-pulse [animation-delay:1s]" />
 
       <div className="glass-card rounded-[1.5rem] md:rounded-[3rem] border border-white/50 shadow-3xl flex flex-col h-full overflow-hidden relative z-10">
         {/* Chat Header */}
-        <div className="p-3 md:p-8 lg:p-10 border-b border-white/40 bg-white/30 backdrop-blur-md flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-8">
+        <div className="p-3 md:p-6 lg:p-8 border-b border-white/40 bg-white/40 backdrop-blur-xl flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-8">
           <div className="flex items-center gap-3 md:gap-6">
-            <div className="w-10 h-10 md:w-20 md:h-20 bg-dark-gradient rounded-xl md:rounded-[2rem] flex items-center justify-center text-white shadow-2xl hover:scale-110 transition-transform duration-500 group relative flex-shrink-0">
-              <Bot size={20} className="md:w-[40px] md:h-[40px] relative z-10 group-hover:rotate-12 transition-transform" />
-              <div className="absolute inset-0 bg-amber-400 rounded-xl md:rounded-[2rem] opacity-0 group-hover:opacity-20 blur-xl transition-opacity" />
+            <div className="w-10 h-10 md:w-16 md:h-16 bg-dark-gradient rounded-xl md:rounded-2xl flex items-center justify-center text-white shadow-2xl hover:scale-110 transition-transform duration-500 group relative flex-shrink-0">
+              <Bot size={20} className="md:w-[32px] md:h-[32px] relative z-10 group-hover:rotate-12 transition-transform" />
+              <div className="absolute inset-0 bg-amber-400 rounded-xl md:rounded-2xl opacity-0 group-hover:opacity-20 blur-xl transition-opacity" />
             </div>
             <div>
               <div className="flex items-center gap-2 md:gap-3">
@@ -167,7 +167,7 @@ const AICoach: React.FC = () => {
                   Online
                 </div>
               </div>
-              <p className="text-slate-500 font-bold hidden md:flex items-center gap-1.5 mt-1 text-xs-plus md:text-base">
+              <p className="text-slate-500 font-bold hidden md:flex items-center gap-1.5 mt-1 text-xs-plus md:text-sm">
                 <Sparkles size={14} className="text-amber-400 shrink-0" />
                 เทคโนโลยี AI ล่าสุดเพื่อผู้นำยุคใหม่ 🦄
               </p>
@@ -217,7 +217,7 @@ const AICoach: React.FC = () => {
         {/* Chat Messages */}
         <div
           ref={scrollRef}
-          className="flex-1 overflow-y-auto p-4 md:p-10 space-y-6 md:space-y-10 bg-slate-50/10 custom-scrollbar"
+          className="flex-1 overflow-y-auto p-4 md:px-12 md:py-10 space-y-6 md:space-y-8 bg-slate-50/10 custom-scrollbar"
         >
           {messages.map((m, idx) => (
             <div key={idx} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-4 duration-500`}>
@@ -226,10 +226,10 @@ const AICoach: React.FC = () => {
                   {m.role === 'user' ? <User size={16} className="md:w-[24px] md:h-[24px]" /> : <Shield size={16} className="md:w-[24px] md:h-[24px]" />} {/* Changed icon to Shield */}
                 </div>
                 <div className={`
-                  rounded-2xl md:rounded-[2.5rem] p-3 md:p-8 shadow-xl text-sm md:text-lg leading-relaxed font-medium relative group
+                  rounded-2xl md:rounded-[2rem] p-3 md:px-8 md:py-5 shadow-xl text-sm md:text-xl leading-relaxed font-medium relative group
                   ${m.role === 'user'
-                    ? 'bg-slate-950 text-white rounded-tr-none'
-                    : 'bg-white/80 backdrop-blur-md border border-white text-slate-800 rounded-tl-none'}
+                    ? 'bg-slate-950 text-white rounded-tr-none border border-slate-800'
+                    : 'bg-white/90 backdrop-blur-md border border-white text-slate-800 rounded-tl-none'}
                 `}>
                   {m.text}
                 </div>
@@ -241,11 +241,11 @@ const AICoach: React.FC = () => {
               <div className="w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-2xl bg-slate-900 flex items-center justify-center shadow-lg animate-pulse">
                 <Bot size={16} className="text-white md:w-[24px] md:h-[24px]" />
               </div>
-              <div className="bg-white/80 backdrop-blur-md border border-white p-4 md:p-8 rounded-2xl md:rounded-[2.5rem] rounded-tl-none shadow-xl">
+              <div className="bg-white/90 backdrop-blur-md border border-white px-6 py-4 md:px-10 md:py-6 rounded-2xl md:rounded-[2rem] rounded-tl-none shadow-xl">
                 <div className="flex gap-2">
-                  <div className="w-2 h-2 md:w-3 md:h-3 bg-indigo-500 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 md:w-3 md:h-3 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.2s]"></div>
-                  <div className="w-2 h-2 md:w-3 md:h-3 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+                  <div className="w-2 h-2 md:w-3 md:h-3 bg-amber-500 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 md:w-3 md:h-3 bg-amber-500 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                  <div className="w-2 h-2 md:w-3 md:h-3 bg-amber-500 rounded-full animate-bounce [animation-delay:0.4s]"></div>
                 </div>
               </div>
             </div>
@@ -272,7 +272,7 @@ const AICoach: React.FC = () => {
         </div>
 
         {/* Modern, Accessible Input Area */}
-        <div className="p-2 md:p-6 lg:p-10 bg-white/60 backdrop-blur-xl border-t border-white group">
+        <div className="p-3 md:p-8 lg:px-12 lg:py-8 bg-white/60 backdrop-blur-xl border-t border-white group">
           <div className="flex items-center gap-2 md:gap-6 bg-white rounded-xl md:rounded-[2.5rem] p-1.5 md:p-4 lg:p-5 shadow-2xl border border-white focus-within:ring-8 ring-amber-500/10 transition-all duration-500">
             <button
               aria-label="ใช้คำสั่งด้วยเสียง"

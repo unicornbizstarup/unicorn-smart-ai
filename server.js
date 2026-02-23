@@ -31,10 +31,14 @@ app.post('/api/chat', async (req, res) => {
     });
 
     // Transform messages for Gemini
-    const history = messages.slice(0, -1).map(m => ({
-      role: m.role === 'user' ? 'user' : 'model',
-      parts: [{ text: m.text }]
-    }));
+    // We skip the first assistant message if it's the welcome message because Gemini needs 'user' to start or a specific order
+    const history = messages
+      .filter((m, idx) => !(idx === 0 && m.role === 'assistant'))
+      .slice(0, -1)
+      .map(m => ({
+        role: m.role === 'user' ? 'user' : 'model',
+        parts: [{ text: m.text }]
+      }));
 
     const chat = model.startChat({
       history: history
@@ -47,8 +51,10 @@ app.post('/api/chat', async (req, res) => {
 
     res.json({ text });
   } catch (error) {
-    console.error('Gemini Proxy Error:', error);
-    res.status(500).json({ error: 'Failed to communicate with AI Coach' });
+    console.error('--- GEMINI PROXY ERROR ---');
+    console.error('Time:', new Date().toISOString());
+    console.error('Error Details:', error);
+    res.status(500).json({ error: 'Failed to communicate with AI Coach', details: error.message });
   }
 });
 
