@@ -15,7 +15,7 @@
 
     # ✅ 1. ตั้งค่า API Proxy (น้องยูนิ)
     location /api/ {
-        proxy_pass http://localhost:3000; # ส่งคำขอไปที่ Node.js server
+        proxy_pass http://localhost:5000; # ส่งคำขอไปที่ Node.js server
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -52,7 +52,7 @@ pm2 start server.js --name "unicorn-backend"
 
 ```env
 GEMINI_API_KEY=your_actual_api_key_here
-PORT=3000
+PORT=5000
 ```
 
 เมื่อทำครบถ้วนแล้ว ระบบ AI Coach จะสามารถสื่อสารได้ทันทีครับ! 🦄✨
