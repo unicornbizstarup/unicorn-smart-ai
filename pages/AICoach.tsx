@@ -136,7 +136,7 @@ const AICoach: React.FC = () => {
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
         role: 'assistant',
-        text: `Error: ${errorMessage}`,
+        text: `🆘 Error: ${errorMessage}`, // Added emoji and clearer text
         timestamp: new Date()
       }]);
     } finally {

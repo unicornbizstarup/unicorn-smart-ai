@@ -20,18 +20,20 @@ app.post('/api/chat', async (req, res) => {
   try {
     const { messages, focusArea, systemInstruction } = req.body;
 
-    if (!process.env.GEMINI_API_KEY) {
-      console.error('SERVER ERROR: GEMINI_API_KEY not found in .env');
-      return res.status(500).json({ error: 'Gemini API Key is not configured on server' });
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      console.error('SERVER ERROR: GEMINI_API_KEY is missing from .env');
+      return res.status(500).json({ error: 'API Key not found on server. Please check your .env file on VPS.' });
     }
 
+    // Initialize Gemini inside the handler to ensure fresh environment variables
+    const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
       model: 'gemini-1.5-flash',
       systemInstruction: systemInstruction
     });
 
     // Transform messages for Gemini
-    // We skip the first assistant message if it's the welcome message because Gemini needs 'user' to start or a specific order
     const history = messages
       .filter((m, idx) => !(idx === 0 && m.role === 'assistant'))
       .slice(0, -1)
@@ -53,8 +55,13 @@ app.post('/api/chat', async (req, res) => {
   } catch (error) {
     console.error('--- GEMINI PROXY ERROR ---');
     console.error('Time:', new Date().toISOString());
-    console.error('Error Details:', error);
-    res.status(500).json({ error: 'Failed to communicate with AI Coach', details: error.message });
+    console.error('Message:', error.message);
+    if (error.stack) console.error('Stack:', error.stack);
+
+    res.status(500).json({
+      error: 'Failed to communicate with AI Coach',
+      details: error.message
+    });
   }
 });
 
