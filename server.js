@@ -34,13 +34,14 @@ app.post('/api/chat', async (req, res) => {
     });
 
     // Transform messages for Gemini
-    const history = messages
-      .filter((m, idx) => !(idx === 0 && m.role === 'assistant'))
-      .slice(0, -1)
-      .map(m => ({
+    // CRITICAL: Gemini history MUST start with a 'user' message
+    const firstUserIndex = messages.findIndex(m => m.role === 'user');
+    const history = firstUserIndex !== -1
+      ? messages.slice(firstUserIndex, -1).map(m => ({
         role: m.role === 'user' ? 'user' : 'model',
         parts: [{ text: m.text }]
-      }));
+      }))
+      : [];
 
     const chat = model.startChat({
       history: history

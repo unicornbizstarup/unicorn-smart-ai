@@ -117,7 +117,7 @@ const AICoach: React.FC = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to get response from AI Coach');
+        throw new Error(errorData.details || errorData.error || `Server error: ${response.status}`);
       }
 
       const data = await response.json();
@@ -145,7 +145,7 @@ const AICoach: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-5.5rem)] md:h-[calc(100vh-8rem)] max-w-[1400px] mx-auto pb-2 md:pb-6 relative animate-fade-in px-1 lg:px-4">
+    <div className="flex flex-col h-[calc(100vh-5.5rem)] md:h-[calc(100vh-6rem)] max-w-full lg:max-w-[1600px] mx-auto pb-2 md:pb-4 relative animate-fade-in px-1 lg:px-6">
       {/* Decorative background elements */}
       <div className="absolute -top-20 -left-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] animate-pulse" />
       <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-amber-500/10 rounded-full blur-[100px] animate-pulse [animation-delay:1s]" />
@@ -221,12 +221,12 @@ const AICoach: React.FC = () => {
         >
           {messages.map((m, idx) => (
             <div key={idx} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-4 duration-500`}>
-              <div className={`flex gap-2 md:gap-5 max-w-[95%] md:max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex gap-2 md:gap-5 w-full ${m.role === 'user' ? 'justify-end flex-row-reverse' : 'justify-start'}`}>
                 <div className={`w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-2xl flex-shrink-0 flex items-center justify-center shadow-lg transform transition-transform hover:scale-110 mt-1 ${m.role === 'user' ? 'bg-amber-500 text-white rotate-6' : 'bg-slate-900 text-white -rotate-6'}`}>
-                  {m.role === 'user' ? <User size={16} className="md:w-[24px] md:h-[24px]" /> : <Shield size={16} className="md:w-[24px] md:h-[24px]" />} {/* Changed icon to Shield */}
+                  {m.role === 'user' ? <User size={16} className="md:w-[24px] md:h-[24px]" /> : <Shield size={16} className="md:w-[24px] md:h-[24px]" />}
                 </div>
                 <div className={`
-                  rounded-2xl md:rounded-[2rem] p-3 md:px-8 md:py-5 shadow-xl text-sm md:text-xl leading-relaxed font-medium relative group
+                  rounded-2xl md:rounded-[2rem] p-3 md:px-10 md:py-6 shadow-xl text-sm md:text-xl leading-relaxed font-medium relative group max-w-[92%] md:max-w-[80%]
                   ${m.role === 'user'
                     ? 'bg-slate-950 text-white rounded-tr-none border border-slate-800'
                     : 'bg-white/90 backdrop-blur-md border border-white text-slate-800 rounded-tl-none'}
@@ -311,7 +311,7 @@ const AICoach: React.FC = () => {
       </div>
 
       {/* API Key Modal Removed for Secure Backend */}
-    </div>
+    </div >
   );
 };
 
