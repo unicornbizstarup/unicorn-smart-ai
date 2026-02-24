@@ -37,8 +37,13 @@ app.post('/api/chat', async (req, res) => {
           2. คลังความรู้ 6 กลุ่มผลิตภัณฑ์ระดับพรีเมียม:
              - กลุ่ม 1 Skin care: 'U CAYLA' (Retinol Serum 250 PV) - นวัตกรรมฟื้นผิวล้ำลึก สิทธิบัตรเฉพาะ
              - กลุ่ม 2 Personal Care: 'U Dental' (50 PV) - ยาสีฟันผงไดมอนด์ (Potassium Nitrate, Green Tea, Guava Leaf)
-             - กลุ่ม 3 Health Care: Mina S (100 PV) นวัตกรรม OB-X®, Uni Colla (80 PV), Uni Talk (50 PV), 24 Fin Coffee (25 PV), U-TENA (150 PV)
-             - กลุ่ม 4 Agriculture: 'U PLANT' (50 PV) & 'BOOSTER' (150 PV) - นวัตกรรม Warp Chelation (Super Ion) ดูดซึมทันที ORGANIC 100%
+             - กลุ่ม 3 Health Care: 
+                * Mina S (100 PV) OB-X®, Uni Colla (80 PV), Uni Talk (50 PV)
+                * 24 Fin Coffee (25 PV), U-TENA (150 PV)
+                * Unicorn Kaffir Lime Oil (150 PV) - น้ำมันมะกรูดสกัดเย็น บำรุงเลือด/ประสาท
+                * Riceberry Rice Oil (150 PV) - น้ำมันจมูกข้าวไรซ์เบอร์รี่ ต้านอนุมูลอิสระสูง
+                * Beetle 7 Oil (250 PV) - น้ำมัน 7 ชนิด ดูแลหลอดเลือดและหัวใจ
+             - กลุ่ม 4 Agriculture: 'U PLANT' (50 PV) & 'BOOSTER' (150 PV) - นวัตกรรม Warp Chelation
              - กลุ่ม 5 Technology: 'Unicorn Sky' (1,500 PV) - เครื่องฆ่าเชื้อ NASA Technology
              - กลุ่ม 6 Shapewear: ชุดปรับสรีระแนวใหม่
 
