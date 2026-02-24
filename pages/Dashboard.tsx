@@ -234,24 +234,34 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           </div>
 
           <div className="relative w-64 h-64 md:w-72 md:h-72 bg-slate-50/50 rounded-full flex items-center justify-center p-4 shadow-inner group-hover:scale-105 transition-transform duration-700">
-            {/* Enhanced Radar SVG */}
-            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg">
-              <circle cx="50" cy="50" r="45" fill="none" stroke="#e2e8f0" strokeWidth="1" strokeDasharray="2" />
-              <circle cx="50" cy="50" r="30" fill="none" stroke="#e2e8f0" strokeWidth="1" strokeDasharray="2" />
-              <circle cx="50" cy="50" r="15" fill="none" stroke="#e2e8f0" strokeWidth="1" strokeDasharray="2" />
-              <path d="M50 5 L95 50 L50 95 L5 50 Z" fill="none" stroke="#cbd5e1" strokeWidth="0.5" />
+            {/* Enhanced Radar SVG with Gradients */}
+            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl">
+              <defs>
+                <radialGradient id="radarGrad" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.3" />
+                  <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.05" />
+                </radialGradient>
+              </defs>
+              <circle cx="50" cy="50" r="45" fill="none" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="3,3" />
+              <circle cx="50" cy="50" r="30" fill="none" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="3,3" />
+              <circle cx="50" cy="50" r="15" fill="none" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="3,3" />
+
+              {/* Reference Lines */}
+              <line x1="50" y1="5" x2="50" y2="95" stroke="#e2e8f0" strokeWidth="0.5" />
+              <line x1="5" y1="50" x2="95" y2="50" stroke="#e2e8f0" strokeWidth="0.5" />
+
               <polygon
-                points="50,15 80,40 60,85 15,50 30,20"
-                fill="rgba(245, 158, 11, 0.25)"
+                points="50,15 85,45 65,85 20,55 35,25"
+                fill="url(#radarGrad)"
                 stroke="#f59e0b"
-                strokeWidth="2.5"
+                strokeWidth="2"
                 className="animate-pulse"
               />
-              <circle cx="50" cy="15" r="3" fill="#f59e0b" className="animate-bounce" style={{ animationDelay: '0s' }} />
-              <circle cx="80" cy="40" r="3" fill="#f59e0b" className="animate-bounce" style={{ animationDelay: '0.2s' }} />
-              <circle cx="60" cy="85" r="3" fill="#f59e0b" className="animate-bounce" style={{ animationDelay: '0.4s' }} />
-              <circle cx="15" cy="50" r="3" fill="#f59e0b" className="animate-bounce" style={{ animationDelay: '0.6s' }} />
-              <circle cx="30" cy="20" r="3" fill="#f59e0b" className="animate-bounce" style={{ animationDelay: '0.8s' }} />
+              <circle cx="50" cy="15" r="2.5" fill="#f59e0b" className="animate-bounce" style={{ animationDelay: '0s' }} />
+              <circle cx="85" cy="45" r="2.5" fill="#f59e0b" className="animate-bounce" style={{ animationDelay: '0.2s' }} />
+              <circle cx="65" cy="85" r="2.5" fill="#f59e0b" className="animate-bounce" style={{ animationDelay: '0.4s' }} />
+              <circle cx="20" cy="55" r="2.5" fill="#f59e0b" className="animate-bounce" style={{ animationDelay: '0.6s' }} />
+              <circle cx="35" cy="25" r="2.5" fill="#f59e0b" className="animate-bounce" style={{ animationDelay: '0.8s' }} />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="w-14 h-14 bg-white rounded-full shadow-xl flex items-center justify-center border border-slate-50">
