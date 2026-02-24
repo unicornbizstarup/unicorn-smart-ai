@@ -131,8 +131,8 @@ const App: React.FC = () => {
         </header>
 
         {/* Content Area */}
-        <div className={`flex-1 overflow-y-auto ${currentView === AppView.AI_COACH ? 'p-0' : 'p-3'} lg:p-6`}>
-          <div className="max-w-full mx-auto h-full">
+        <div className={`flex-1 overflow-y-auto ${currentView === AppView.AI_COACH ? 'p-0' : 'p-3'} lg:p-4`}>
+          <div className="w-full h-full max-w-full">
             {currentView === AppView.DASHBOARD && <Dashboard onNavigate={setCurrentView} />}
             {currentView === AppView.SYSTEM_456 && <System456 />}
             {currentView === AppView.START_UP && <StartUp />}
