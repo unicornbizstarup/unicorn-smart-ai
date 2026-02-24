@@ -145,12 +145,12 @@ const AICoach: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-5rem)] md:h-[calc(100vh-5rem)] max-w-full lg:max-w-[1700px] mx-auto pb-1 md:pb-2 relative animate-fade-in px-1 lg:px-4">
+    <div className="flex flex-col h-[calc(100vh-2rem)] md:h-[calc(100vh-3rem)] w-full max-w-[1800px] mx-auto pb-0 relative animate-fade-in px-2 lg:px-6">
       {/* Decorative background elements */}
       <div className="absolute -top-20 -left-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] animate-pulse" />
       <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-amber-500/10 rounded-full blur-[100px] animate-pulse [animation-delay:1s]" />
 
-      <div className="glass-card rounded-[1.5rem] md:rounded-[3rem] border border-white/50 shadow-3xl flex flex-col h-full overflow-hidden relative z-10">
+      <div className="glass-card rounded-[1rem] md:rounded-[2rem] border border-white/50 shadow-3xl flex flex-col h-full overflow-hidden relative z-10">
         {/* Chat Header */}
         <div className="p-3 md:p-6 lg:p-8 border-b border-white/40 bg-white/40 backdrop-blur-xl flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-8">
           <div className="flex items-center gap-3 md:gap-6">
