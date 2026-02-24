@@ -66,9 +66,23 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Uni Smart AI Backend is running' });
+// Health check & DB connection test
+app.get('/api/health', async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT 1 as connection_test');
+    res.json({ 
+      status: 'ok', 
+      database: 'connected',
+      message: 'Uni Smart AI Backend & MySQL are running' 
+    });
+  } catch (error) {
+    res.json({ 
+      status: 'ok', 
+      database: 'error',
+      details: error.message,
+      message: 'Backend is up but MySQL connection failed' 
+    });
+  }
 });
 
 app.listen(port, '0.0.0.0', () => {
