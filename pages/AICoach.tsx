@@ -145,7 +145,7 @@ const AICoach: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-5.5rem)] md:h-[calc(100vh-6rem)] max-w-full lg:max-w-[1600px] mx-auto pb-2 md:pb-4 relative animate-fade-in px-1 lg:px-6">
+    <div className="flex flex-col h-[calc(100vh-5rem)] md:h-[calc(100vh-5rem)] max-w-full lg:max-w-[1700px] mx-auto pb-1 md:pb-2 relative animate-fade-in px-1 lg:px-4">
       {/* Decorative background elements */}
       <div className="absolute -top-20 -left-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] animate-pulse" />
       <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-amber-500/10 rounded-full blur-[100px] animate-pulse [animation-delay:1s]" />
@@ -226,7 +226,7 @@ const AICoach: React.FC = () => {
                   {m.role === 'user' ? <User size={16} className="md:w-[24px] md:h-[24px]" /> : <Shield size={16} className="md:w-[24px] md:h-[24px]" />}
                 </div>
                 <div className={`
-                  rounded-2xl md:rounded-[2rem] p-3 md:px-10 md:py-6 shadow-xl text-sm md:text-xl leading-relaxed font-medium relative group max-w-[92%] md:max-w-[80%]
+                  rounded-2xl md:rounded-[2rem] p-3 md:px-10 md:py-6 shadow-xl text-sm md:text-xl leading-relaxed font-medium relative group max-w-[95%] md:max-w-[85%]
                   ${m.role === 'user'
                     ? 'bg-slate-950 text-white rounded-tr-none border border-slate-800'
                     : 'bg-white/90 backdrop-blur-md border border-white text-slate-800 rounded-tl-none'}
