@@ -33,10 +33,10 @@ const stats_data = [
 ];
 
 const mastery_data = [
-  { label: 'ธุรกิจ & แผนรายได้', val: 85, color: 'bg-blue-500' },
-  { label: 'สินค้า & บริการ', val: 92, color: 'bg-emerald-500' },
-  { label: 'ทีม & การสอนงาน', val: 45, color: 'bg-amber-500' },
-  { label: 'ออนไลน์ & AI', val: 68, color: 'bg-indigo-600' },
+  { label: 'UBC 1: Digital Foundation', val: 95, color: 'bg-amber-500' },
+  { label: 'UBC 2: Video Marketing', val: 82, color: 'bg-blue-500' },
+  { label: 'UBC 3: Content Funnel', val: 45, color: 'bg-emerald-500' },
+  { label: 'UBC 4: Leadership System', val: 30, color: 'bg-rose-500' },
 ];
 
 const level_data = {
@@ -60,8 +60,32 @@ const level_data = {
     icon: Zap,
     missions: [
       { t: 'สร้างคลิป TikTok พร้อม One Link', c: 'bg-indigo-500/20 text-indigo-300', icon: Rocket },
-      { t: 'ฝึกแก้ข้อโต้แย้งหน้างาน (Storytelling)', c: 'bg-purple-500/20 text-purple-300', icon: MessageSquare },
+      { t: 'ฝึกแก้ข้อโต้แย้ง (Storytelling)', c: 'bg-purple-500/20 text-purple-300', icon: MessageSquare },
       { t: 'สร้าง Super Star ใหม่ในทีม', c: 'bg-amber-500/20 text-amber-300', icon: Trophy }
+    ]
+  },
+  [UBCLevel.UBC3_STRATEGIC]: {
+    title: 'UBC 3 - Strategic',
+    subtitle: 'นักกลยุทธ์หัวใจที่ปรึกษา',
+    color: 'text-emerald-500',
+    bg: 'bg-emerald-500/10',
+    icon: Target,
+    missions: [
+      { t: 'วิเคราะห์ Wealth DNA ของทีม', c: 'bg-emerald-500/20 text-emerald-300', icon: Activity },
+      { t: 'วางแผน Content Funnel 30 วัน', c: 'bg-blue-500/20 text-blue-300', icon: TrendingUp },
+      { t: 'บริหารฟังก์ชันอบรมรายสัปดาห์', c: 'bg-purple-500/20 text-purple-300', icon: CalendarCheck }
+    ]
+  },
+  [UBCLevel.UBC4_MASTER]: {
+    title: 'UBC 4 - Master',
+    subtitle: 'ปรมาจารย์สร้างผู้นำอัจฉริยะ',
+    color: 'text-rose-500',
+    bg: 'bg-rose-500/10',
+    icon: Award,
+    missions: [
+      { t: 'Mentoring ผู้นำระดับ Exclusive', c: 'bg-rose-500/20 text-rose-300', icon: Users },
+      { t: 'สร้างระบบ Training อัตโนมัติ', c: 'bg-amber-500/20 text-amber-300', icon: Zap },
+      { t: 'ขยายธุรกิจสู่ตลาดสากล', c: 'bg-indigo-500/20 text-indigo-300', icon: ShieldCheck }
     ]
   }
 };
@@ -72,49 +96,114 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
   return (
     <div className="space-y-8 animate-fade-in pb-10 px-2 lg:px-0">
-      {/* 40+ Empathy Banner */}
-      <section className="bg-dark-gradient rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 lg:p-14 text-white relative overflow-hidden border border-white/10 shadow-2xl hover-shine transition-transform hover:scale-[1.01] duration-500">
-        <div className="relative z-10 max-w-2xl">
-          <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
-            <div className="w-10 h-10 md:w-14 md:h-14 bg-amber-500 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/20 animate-pulse">
-              <Heart className="text-white fill-current w-5 h-5 md:w-7 md:h-7" />
+      {/* Premium Header Profile Section */}
+      <section className="flex flex-col lg:flex-row gap-6 items-start lg:items-stretch">
+        <div className="flex-1 bg-white/40 backdrop-blur-xl rounded-[2rem] md:rounded-[2.5rem] p-6 border border-white/60 shadow-xl flex items-center gap-6 group hover:border-amber-500/30 transition-all">
+          <div className="relative">
+            <div className="w-20 h-20 md:w-24 md:h-24 bg-dark-gradient rounded-3xl p-1 shadow-2xl overflow-hidden group-hover:rotate-3 transition-transform">
+              <img
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed=UnicornPartner"
+                alt="Partner Avatar"
+                className="w-full h-full object-cover rounded-[1.2rem]"
+              />
             </div>
+            <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-amber-500 rounded-full border-4 border-white flex items-center justify-center text-white shadow-lg">
+              <Trophy size={14} />
+            </div>
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter shadow-sm animate-pulse">Diamond Executive</span>
+              <span className="text-slate-400 text-[10px] font-bold">U-Partner ID: 9988-AIC</span>
+            </div>
+            <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Kru Den Master Fa</h2>
+            <div className="flex items-center gap-4 mt-2">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                <span className="text-xs font-bold text-slate-600">Online Coaching</span>
+              </div>
+              <div className="h-4 w-[1px] bg-slate-200" />
+              <div className="flex items-center gap-1.5">
+                <Star size={14} className="text-amber-500 fill-amber-500" />
+                <span className="text-xs font-black text-slate-900">Level {userLevel} Professional</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="w-full lg:w-72 bg-dark-gradient rounded-[2rem] md:rounded-[2.5rem] p-6 text-white flex flex-col justify-between shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+          <div className="relative z-10">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-1">Business Points</p>
+            <div className="flex items-end gap-2">
+              <p className="text-3xl font-black text-white">45,280</p>
+              <p className="text-xs font-bold text-amber-400 mb-1">+12%</p>
+            </div>
+          </div>
+          <div className="mt-4 pt-4 border-t border-white/10 flex justify-between items-center relative z-10">
+            <div className="flex -space-x-2">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="w-6 h-6 rounded-full border-2 border-slate-900 bg-slate-800 overflow-hidden shadow-lg">
+                  <img src={`https://i.pravatar.cc/100?u=${i + 20}`} alt="team" />
+                </div>
+              ))}
+              <div className="w-6 h-6 rounded-full border-2 border-slate-900 bg-amber-500 flex items-center justify-center text-[8px] font-black">+15</div>
+            </div>
+            <p className="text-[10px] font-bold text-white/60 uppercase">Team Growth</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 40+ Empathy Banner (Modified for better layout) */}
+      <section className="bg-white/40 backdrop-blur-md rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 lg:p-12 relative overflow-hidden border border-white/60 shadow-2xl group transition-all hover:border-amber-500/20">
+        <div className="relative z-10 max-w-2xl">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="flex -space-x-3">
+              {[UBCLevel.UBC1_FOUNDATION, UBCLevel.UBC2_SPECIALIST, UBCLevel.UBC3_STRATEGIC, UBCLevel.UBC4_MASTER].map((lvl) => (
+                <button
+                  key={lvl}
+                  onClick={() => setUserLevel(lvl)}
+                  className={`
+                    w-12 h-12 md:w-16 md:h-16 rounded-2xl md:rounded-[1.5rem] flex items-center justify-center border-4 border-white shadow-xl transition-all relative z-[${10 - lvl}]
+                    ${userLevel === lvl ? 'bg-amber-500 scale-110 rotate-3 z-50 text-white' : 'bg-slate-100 text-slate-400 hover:scale-105'}
+                  `}
+                >
+                  <span className="text-lg md:text-2xl font-black">{lvl}</span>
+                </button>
+              ))}
+            </div>
+            <div className="h-10 w-[1px] bg-slate-200 mx-2" />
             <div>
-              <p className="text-amber-400 font-black tracking-[0.2em] text-[10px] md:text-xs uppercase opacity-80">Unicorn Heart Culture</p>
-              <h2 className="text-xl md:text-2xl font-bold">ผู้นำที่ใช้ "หัวใจ" นำทาง</h2>
+              <p className="text-[10px] md:text-xs font-black text-amber-500 uppercase tracking-widest leading-none mb-1">Select Path</p>
+              <h3 className="text-xl md:text-2xl font-black text-slate-900">UBC Program Level</h3>
             </div>
           </div>
 
-          <h1 className="text-3xl md:text-5xl lg:text-7xl font-black mb-6 md:mb-8 leading-[1.15]">
-            รู้จริง <span className="text-amber-400 text-glitch">เข้าใจ</span> <br />
-            <span className="text-xl md:text-3xl lg:text-5xl opacity-80">สอนเป็นระบบ</span>
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-black mb-6 leading-[1.15] text-slate-900 uppercase">
+            {currentLevelInfo.title} <br />
+            <span className="text-amber-500">{currentLevelInfo.subtitle}</span>
           </h1>
-
-          <p className="text-indigo-100/80 mb-8 md:mb-10 text-base md:text-xl font-light leading-relaxed max-w-lg">
-            ความสำเร็จที่ยั่งยืนเริ่มต้นจากการ "เข้าใจ" ทีมงาน
-            และใช้ทักษะพื้นฐาน 10 ด้านในการขับเคลื่อนธุรกิจให้เติบโต
-          </p>
 
           <div className="flex flex-wrap gap-3 md:gap-4">
             <button
               onClick={() => onNavigate(AppView.SYSTEM_456)}
-              aria-label="เริ่มประเมินทักษะ ระบบ 4-5-6"
-              className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-6 py-4 md:px-10 md:py-5 rounded-2xl md:rounded-[2rem] font-black text-lg md:text-xl flex items-center gap-2 md:gap-3 transition-all shadow-xl shadow-amber-500/30 active:scale-95"
+              className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-4 md:px-10 md:py-5 rounded-2xl md:rounded-[2rem] font-black text-lg md:text-xl flex items-center gap-3 transition-all shadow-xl active:scale-95"
             >
-              เริ่มประเมินทักษะ
-              <ChevronRight size={20} className="md:w-[24px] md:h-[24px]" />
+              ประเมินทักษะ
+              <TrendingUp size={20} />
             </button>
             <button
               onClick={() => onNavigate(AppView.AI_COACH)}
-              aria-label="พูดคุยกับโค้ชอัจฉริยะ AI"
-              className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-6 py-4 md:px-10 md:py-5 rounded-2xl md:rounded-[2rem] font-bold border border-white/20 transition-all hover:border-white/40 text-sm md:text-base"
+              className="bg-white hover:bg-slate-50 text-slate-900 px-6 py-4 md:px-10 md:py-5 rounded-2xl md:rounded-[2rem] font-bold border border-slate-200 transition-all shadow-lg text-sm md:text-base"
             >
-              คุยกับโค้ช AI
+              ฝึกกับ AI Coach
             </button>
           </div>
         </div>
-        <div className="absolute top-0 right-0 w-2/5 h-full opacity-10 flex items-center justify-center animate-float-slow">
-          <Activity size={500} className="text-amber-400 translate-x-24" />
+
+        {/* Decorative dynamic icon based on level */}
+        <div className="absolute top-0 right-0 w-1/3 h-full opacity-[0.03] lg:opacity-[0.05] pointer-events-none flex items-center justify-center transition-all">
+          <currentLevelInfo.icon size={400} className="translate-x-1/4" />
         </div>
       </section>
 
