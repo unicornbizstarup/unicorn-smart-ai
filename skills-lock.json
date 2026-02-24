@@ -6,10 +6,20 @@
       "sourceType": "github",
       "computedHash": "516bd2154eb843a8240e43d5b285229129853114ad7075a5e141e1c08e408c84"
     },
+    "gemini-api-dev": {
+      "source": "google-gemini/gemini-skills",
+      "sourceType": "github",
+      "computedHash": "9bc5e171e7192ae36bb81950735ed729231870efa7750a30719f91c7ad31495a"
+    },
     "seo-audit": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "computedHash": "9ba943642a232ac724060f34c3981dd8c1f21226d5a42d611dda6b4368e07c2f"
+    },
+    "setup-api-key": {
+      "source": "elevenlabs/skills",
+      "sourceType": "github",
+      "computedHash": "737264e033277d1ffe7b25dad128ae799540880fb22545d395b7b0f39e5b1fac"
     },
     "ui-ux-pro-max": {
       "source": "nextlevelbuilder/ui-ux-pro-max-skill",
