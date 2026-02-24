@@ -145,7 +145,7 @@ const AICoach: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-1.5rem)] md:h-[calc(100vh-2rem)] w-full max-w-[1800px] mx-auto pb-0 relative animate-fade-in px-2 lg:px-6">
+    <div className="flex flex-col h-full w-full max-w-[1800px] mx-auto pb-0 relative animate-fade-in px-2 lg:px-6">
       {/* Decorative background elements */}
       <div className="absolute -top-20 -left-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] animate-pulse" />
       <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-amber-500/10 rounded-full blur-[100px] animate-pulse [animation-delay:1s]" />

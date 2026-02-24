@@ -29,7 +29,7 @@ app.post('/api/chat', async (req, res) => {
     // Initialize Gemini inside the handler to ensure fresh environment variables
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash', // กลับมาใช้รุ่นมาตรฐานที่เสถียรที่สุด
+      model: 'gemini-1.5-flash',
       systemInstruction: systemInstruction
     });
 
