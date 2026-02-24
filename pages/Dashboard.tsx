@@ -238,9 +238,21 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl">
               <defs>
                 <radialGradient id="radarGrad" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.05" />
+                  <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.4" />
+                  <stop offset="70%" stopColor="#f59e0b" stopOpacity="0.1" />
+                  <stop offset="100%" stopColor="#d97706" stopOpacity="0.02" />
                 </radialGradient>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
+                  <feMerge>
+                    <feMergeNode in="coloredBlur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+                <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#fbbf24" />
+                  <stop offset="100%" stopColor="#f59e0b" />
+                </linearGradient>
               </defs>
               <circle cx="50" cy="50" r="45" fill="none" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="3,3" />
               <circle cx="50" cy="50" r="30" fill="none" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="3,3" />
@@ -253,15 +265,18 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               <polygon
                 points="50,15 85,45 65,85 20,55 35,25"
                 fill="url(#radarGrad)"
-                stroke="#f59e0b"
-                strokeWidth="2"
+                stroke="url(#lineGrad)"
+                strokeWidth="2.5"
+                filter="url(#glow)"
                 className="animate-pulse"
+                style={{ strokeLinejoin: 'round' }}
               />
-              <circle cx="50" cy="15" r="2.5" fill="#f59e0b" className="animate-bounce" style={{ animationDelay: '0s' }} />
-              <circle cx="85" cy="45" r="2.5" fill="#f59e0b" className="animate-bounce" style={{ animationDelay: '0.2s' }} />
-              <circle cx="65" cy="85" r="2.5" fill="#f59e0b" className="animate-bounce" style={{ animationDelay: '0.4s' }} />
-              <circle cx="20" cy="55" r="2.5" fill="#f59e0b" className="animate-bounce" style={{ animationDelay: '0.6s' }} />
-              <circle cx="35" cy="25" r="2.5" fill="#f59e0b" className="animate-bounce" style={{ animationDelay: '0.8s' }} />
+              {/* Dynamic Points with Glow */}
+              <circle cx="50" cy="15" r="3" fill="#f59e0b" filter="url(#glow)" className="animate-bounce" style={{ animationDelay: '0s' }} />
+              <circle cx="85" cy="45" r="3" fill="#f59e0b" filter="url(#glow)" className="animate-bounce" style={{ animationDelay: '0.2s' }} />
+              <circle cx="65" cy="85" r="3" fill="#f59e0b" filter="url(#glow)" className="animate-bounce" style={{ animationDelay: '0.4s' }} />
+              <circle cx="20" cy="55" r="3" fill="#f59e0b" filter="url(#glow)" className="animate-bounce" style={{ animationDelay: '0.6s' }} />
+              <circle cx="35" cy="25" r="3" fill="#f59e0b" filter="url(#glow)" className="animate-bounce" style={{ animationDelay: '0.8s' }} />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="w-14 h-14 bg-white rounded-full shadow-xl flex items-center justify-center border border-slate-50">
