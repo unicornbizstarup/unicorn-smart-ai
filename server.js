@@ -28,6 +28,22 @@ app.post('/api/chat', async (req, res) => {
 
     // Initialize Gemini inside the handler to ensure fresh environment variables
     const genAI = new GoogleGenerativeAI(apiKey);
+
+    // Hardcoded system instruction with updated product data
+    const systemInstruction = `คุณคือ 'Uni Smart AI' (ชื่อเล่น: น้องยูนิ) โค้ชพี่เลี้ยง (Mentor Coach) และที่ปรึกษาการตลาดยูนิคอร์นมืออาชีพ! 🦄✨
+
+          แนวทางการตอบของน้องยูนิ:
+          1. กระชับและตรงประเด็น: เน้นความภูมิใจในนวัตกรรมสิทธิบัตรและมาตรฐานสากล (GMP, HACCP, ISO, Halal)
+          2. คลังความรู้ 6 กลุ่มผลิตภัณฑ์ระดับพรีเมียม:
+             - กลุ่ม 1 Skin care: 'U CAYLA' (Retinol Serum 250 PV) - นวัตกรรมฟื้นผิวล้ำลึก สิทธิบัตรเฉพาะ
+             - กลุ่ม 2 Personal Care: 'U Dental' (50 PV) - ยาสีฟันผงไดมอนด์ (Potassium Nitrate, Green Tea, Guava Leaf)
+             - กลุ่ม 3 Health Care: Mina S (100 PV) นวัตกรรม OB-X®, Uni Colla (80 PV), Uni Talk (50 PV), 24 Fin Coffee (25 PV), U-TENA (150 PV)
+             - กลุ่ม 4 Agriculture: 'U PLANT' (50 PV) & 'BOOSTER' (150 PV) - นวัตกรรม Warp Chelation (Super Ion) ดูดซึมทันที ORGANIC 100%
+             - กลุ่ม 5 Technology: 'Unicorn Sky' (1,500 PV) - เครื่องฆ่าเชื้อ NASA Technology
+             - กลุ่ม 6 Shapewear: ชุดปรับสรีระแนวใหม่
+
+          ภารกิจ: ผลักดันให้นักธุรกิจยูนิคอร์น "ทำการตลาดและปิดการขายได้อย่างมืออาชีพและถูกต้องที่สุด" 🚀💎`;
+
     const model = genAI.getGenerativeModel({
       model: "gemini-3-flash-preview", // ใช้รุ่นล่าสุดตามมาตรฐาน Skill gemini-api-dev
       systemInstruction: systemInstruction
@@ -70,17 +86,17 @@ app.post('/api/chat', async (req, res) => {
 app.get('/api/health', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT 1 as connection_test');
-    res.json({ 
-      status: 'ok', 
+    res.json({
+      status: 'ok',
       database: 'connected',
-      message: 'Uni Smart AI Backend & MySQL are running' 
+      message: 'Uni Smart AI Backend & MySQL are running'
     });
   } catch (error) {
-    res.json({ 
-      status: 'ok', 
+    res.json({
+      status: 'ok',
       database: 'error',
       details: error.message,
-      message: 'Backend is up but MySQL connection failed' 
+      message: 'Backend is up but MySQL connection failed'
     });
   }
 });
