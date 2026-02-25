@@ -16,7 +16,8 @@
     "express": "^4.21.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "@google/generative-ai": "^0.21.0"
+    "@google/generative-ai": "^0.21.0",
+    "@supabase/supabase-js": "^2.48.1"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
