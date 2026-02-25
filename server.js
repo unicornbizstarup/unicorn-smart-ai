@@ -70,11 +70,19 @@ app.post('/api/chat', async (req, res) => {
       systemInstruction: systemInstruction
     });
 
+    // 1. Transform messages to Gemini history format (excluding the last message)
+    // Gemini history expects: [{ role: 'user', parts: [{ text: '...' }] }, { role: 'model', parts: [{ text: '...' }] }]
+    const history = messages.slice(0, -1).map(msg => ({
+      role: msg.role === 'user' ? 'user' : 'model',
+      parts: [{ text: msg.text }]
+    }));
+
+    const lastMessage = messages[messages.length - 1].text;
+
     const chat = model.startChat({
       history: history
     });
 
-    const lastMessage = messages[messages.length - 1].text;
     const result = await chat.sendMessage(lastMessage);
     const response = await result.response;
     const text = response.text();
@@ -94,22 +102,11 @@ app.post('/api/chat', async (req, res) => {
 });
 
 // Health check & DB connection test
-app.get('/api/health', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT 1 as connection_test');
-    res.json({
-      status: 'ok',
-      database: 'connected',
-      message: 'Uni Smart AI Backend & MySQL are running'
-    });
-  } catch (error) {
-    res.json({
-      status: 'ok',
-      database: 'error',
-      details: error.message,
-      message: 'Backend is up but MySQL connection failed'
-    });
-  }
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'Uni Smart AI Backend is running'
+  });
 });
 
 app.listen(port, '0.0.0.0', () => {
