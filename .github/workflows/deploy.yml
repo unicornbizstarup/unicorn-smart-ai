@@ -29,14 +29,31 @@ jobs:
           strip_components: 1
           timeout: 60s
 
-      - name: Copy server files to VPS
+      - name: Copy server and data files to VPS
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: 22
-          source: "server.js,package.json"
+          source: "server.js,package.json,data/*"
           target: "/var/www/unicorn-smart-ai"
           strip_components: 0
           timeout: 60s
+
+      - name: Update Database and Restart System
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            cd /var/www/unicorn-smart-ai
+            # อัปเดตฐานข้อมูล (ถ้ามีไฟล์ .sql)
+            if [ -f "data/product_schema.sql" ]; then
+              mysql -u ${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }} ${{ secrets.DB_NAME }} < data/product_schema.sql
+            fi
+            # ติดตั้ง dependencies และ Restart PM2
+            npm install --production
+            pm2 restart unicorn-backend --update-env || pm2 start server.js --name unicorn-backend
