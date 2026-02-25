@@ -21,6 +21,7 @@ import StartUp from './pages/StartUp';
 import Functions from './pages/Functions';
 import AICoach from './pages/AICoach';
 import Library from './pages/Library';
+import Profile from './pages/Profile';
 
 const navigation = [
   { name: 'แดชบอร์ด', icon: LayoutDashboard, view: AppView.DASHBOARD },
@@ -44,13 +45,17 @@ const App: React.FC = () => {
         lg:relative lg:translate-x-0 border-r border-white/5 shadow-2xl
       `}>
         <div className="p-6 lg:p-8 h-full flex flex-col">
-          <div className="flex items-center gap-4 mb-12 group cursor-pointer">
+          <button 
+            className="flex items-center gap-4 mb-12 group cursor-pointer text-left focus:outline-none" 
+            onClick={() => setCurrentView(AppView.DASHBOARD)}
+            aria-label="ไปที่หน้าแดชบอร์ดหลัก"
+          >
             <div className="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center font-black text-2xl shadow-xl shadow-amber-500/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">U</div>
             <div>
-              <h1 className="text-xl font-black tracking-tighter">UNICORN</h1>
+              <h1 className="text-xl font-black tracking-tighter text-white">UNICORN</h1>
               <p className="text-xs-plus text-amber-500 font-bold tracking-[0.3em] uppercase opacity-80">Academy</p>
             </div>
-          </div>
+          </button>
 
           <nav className="space-y-2 flex-1">
             {navigation.map((item) => (
@@ -76,19 +81,29 @@ const App: React.FC = () => {
           </nav>
 
           <div className="mt-auto pt-8">
-            <div className="bg-white/5 rounded-[2rem] p-5 border border-white/10 hover:border-amber-500/30 transition-colors group cursor-pointer">
+            <button 
+              onClick={() => {
+                setCurrentView(AppView.PROFILE);
+                setSidebarOpen(false);
+              }}
+              aria-label="ดูข้อมูลส่วนตัวทางธุรกิจ"
+              className={`
+                w-full text-left bg-white/5 rounded-[2rem] p-5 border transition-all group focus:outline-none focus:ring-2 focus:ring-amber-500/50
+                ${currentView === AppView.PROFILE ? 'border-amber-500/50 bg-amber-500/10' : 'border-white/10 hover:border-amber-500/30'}
+              `}
+            >
               <p className="text-xs-plus text-slate-500 mb-3 uppercase tracking-[0.2em] font-black">Business Star</p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-400 via-amber-500 to-amber-600 shadow-lg group-hover:scale-110 transition-transform duration-500" />
                 <div>
-                  <p className="text-sm font-bold tracking-tight">Kru Den Master Fa</p>
+                  <p className="text-sm font-bold tracking-tight text-white">Kru Den Master Fa</p>
                   <div className="flex items-center gap-1">
                     <Trophy size={10} className="text-amber-500" />
                     <p className="text-xs-plus text-slate-400 font-bold uppercase">Super Star</p>
                   </div>
                 </div>
               </div>
-            </div>
+            </button>
           </div>
         </div>
       </aside>
@@ -106,7 +121,7 @@ const App: React.FC = () => {
               <Menu size={24} />
             </button>
             <h2 className="text-lg lg:text-xl font-black text-slate-900 tracking-tight">
-              {navigation.find(n => n.view === currentView)?.name}
+              {currentView === AppView.PROFILE ? 'ข้อมูลส่วนตัว' : navigation.find(n => n.view === currentView)?.name}
             </h2>
           </div>
 
@@ -120,12 +135,17 @@ const App: React.FC = () => {
               <CalendarDays size={20} className="lg:w-[22px] lg:h-[22px] group-hover:rotate-12 transition-transform" />
             </button>
             <div className="h-8 w-px bg-slate-200 mx-2 hidden sm:block" />
-            <div className="hidden sm:flex items-center gap-3 pl-2">
+            <div
+              className="hidden sm:flex items-center gap-3 pl-2 cursor-pointer group"
+              onClick={() => setCurrentView(AppView.PROFILE)}
+            >
               <div className="text-right">
-                <p className="text-xs font-black text-slate-900 leading-none">Business Partner</p>
+                <p className="text-xs font-black text-slate-900 leading-none group-hover:text-amber-600 transition-colors">Business Partner</p>
                 <p className="text-xs-plus text-amber-500 font-bold uppercase tracking-tighter">Diamond Executive</p>
               </div>
-              <div className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200" />
+              <div className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200 overflow-hidden group-hover:ring-2 group-hover:ring-amber-500/50 transition-all">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=UnicornPartner" alt="Avatar" className="w-full h-full object-cover" />
+              </div>
             </div>
           </div>
         </header>
@@ -139,6 +159,7 @@ const App: React.FC = () => {
             {currentView === AppView.FUNCTIONS && <Functions />}
             {currentView === AppView.AI_COACH && <AICoach />}
             {currentView === AppView.LIBRARY && <Library />}
+            {currentView === AppView.PROFILE && <Profile />}
           </div>
         </div>
       </main>

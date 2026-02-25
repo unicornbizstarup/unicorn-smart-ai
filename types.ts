@@ -5,7 +5,8 @@ export enum AppView {
   START_UP = 'START_UP',
   FUNCTIONS = 'FUNCTIONS',
   AI_COACH = 'AI_COACH',
-  LIBRARY = 'LIBRARY'
+  LIBRARY = 'LIBRARY',
+  PROFILE = 'PROFILE'
 }
 
 export enum UBCLevel {

@@ -17,7 +17,8 @@ import {
   Layout,
   Bot,
   MessageSquare,
-  ShieldCheck
+  ShieldCheck,
+  ArrowUpRight
 } from 'lucide-react';
 import { AppView, UBCLevel } from '../types';
 
@@ -90,218 +91,221 @@ const level_data = {
   }
 };
 
+const GrowthLineChart: React.FC = () => (
+  <svg viewBox="0 0 400 150" className="w-full h-full drop-shadow-lg overflow-visible">
+    <defs>
+      <linearGradient id="growthGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.4" />
+        <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.01" />
+      </linearGradient>
+      <filter id="lineGlow">
+        <feGaussianBlur stdDeviation="3" result="glow" />
+        <feComposite in="SourceGraphic" in2="glow" operator="over" />
+      </filter>
+    </defs>
+    {/* Grid Lines */}
+    <line x1="0" y1="120" x2="400" y2="120" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="4,4" />
+    <line x1="0" y1="80" x2="400" y2="80" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="4,4" />
+    <line x1="0" y1="40" x2="400" y2="40" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="4,4" />
+
+    {/* Area */}
+    <path
+      d="M 0,130 L 50,110 L 100,125 L 150,80 L 200,60 L 250,45 L 300,55 L 350,20 L 400,10 L 400,150 L 0,150 Z"
+      fill="url(#growthGrad)"
+    />
+
+    {/* Main Line */}
+    <path
+      d="M 0,130 L 50,110 L 100,125 L 150,80 L 200,60 L 250,45 L 300,55 L 350,20 L 400,10"
+      fill="none"
+      stroke="#f59e0b"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      filter="url(#lineGlow)"
+      className="animate-draw"
+    />
+
+    {/* Data Points */}
+    {[
+      { x: 50, y: 110 }, { x: 150, y: 80 }, { x: 250, y: 45 }, { x: 400, y: 10 }
+    ].map((p, i) => (
+      <circle
+        key={i}
+        cx={p.x} cy={p.y} r="5"
+        fill="#f59e0b"
+        stroke="white"
+        strokeWidth="2"
+        className="animate-pulse"
+      />
+    ))}
+  </svg>
+);
+
 const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
-  const [userLevel, setUserLevel] = React.useState<UBCLevel>(UBCLevel.UBC1_FOUNDATION);
+  const [userLevel, setUserLevel] = React.useState<UBCLevel>(UBCLevel.UBC4_MASTER);
   const currentLevelInfo = level_data[userLevel] || level_data[UBCLevel.UBC1_FOUNDATION];
 
   return (
     <div className="space-y-8 animate-fade-in pb-10 px-2 lg:px-0">
       {/* Premium Header Profile Section */}
       <section className="flex flex-col lg:flex-row gap-6 items-start lg:items-stretch">
-        <div className="flex-1 bg-white/40 backdrop-blur-xl rounded-[2rem] md:rounded-[2.5rem] p-6 border border-white/60 shadow-xl flex items-center gap-6 group hover:border-amber-500/30 transition-all">
+        <div className="flex-1 bg-white/40 backdrop-blur-xl rounded-[2.5rem] p-6 md:p-8 border border-white shadow-2xl flex items-center gap-6 group hover:border-amber-500/20 transition-all duration-500 overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
           <div className="relative">
-            <div className="w-20 h-20 md:w-24 md:h-24 bg-dark-gradient rounded-3xl p-1 shadow-2xl overflow-hidden group-hover:rotate-3 transition-transform">
+            <div className="w-20 h-20 md:w-28 md:h-28 bg-dark-gradient rounded-[2rem] p-1 shadow-2xl overflow-hidden group-hover:rotate-3 transition-transform duration-500">
               <img
                 src="https://api.dicebear.com/7.x/avataaars/svg?seed=UnicornPartner"
                 alt="Partner Avatar"
-                className="w-full h-full object-cover rounded-[1.2rem]"
+                className="w-full h-full object-cover rounded-[1.8rem]"
               />
             </div>
-            <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-amber-500 rounded-full border-4 border-white flex items-center justify-center text-white shadow-lg">
-              <Trophy size={14} />
+            <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-amber-500 rounded-full border-4 border-slate-50 flex items-center justify-center text-white shadow-xl">
+              <Trophy size={16} />
             </div>
           </div>
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter shadow-sm animate-pulse">Diamond Executive</span>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="bg-amber-500/10 text-amber-600 border border-amber-500/20 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-sm">Diamond Executive</span>
               <span className="text-slate-400 text-[10px] font-bold">U-Partner ID: 9988-AIC</span>
             </div>
-            <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Kru Den Master Fa</h2>
-            <div className="flex items-center gap-4 mt-2">
-              <div className="flex items-center gap-1.5">
+            <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight mb-1">Kru Den Master Fa</h2>
+            <div className="flex items-center gap-4 mt-3">
+              <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 rounded-full border border-emerald-100">
                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                <span className="text-xs font-bold text-slate-600">Online Coaching</span>
+                <span className="text-[10px] font-black text-emerald-600 uppercase tracking-tighter">Online Coaching</span>
               </div>
-              <div className="h-4 w-[1px] bg-slate-200" />
-              <div className="flex items-center gap-1.5">
-                <Star size={14} className="text-amber-500 fill-amber-500" />
-                <span className="text-xs font-black text-slate-900">Level {userLevel} Professional</span>
+              <div className="flex items-center gap-1.5 transition-transform hover:scale-105">
+                <Star size={16} className="text-amber-500 fill-amber-500" />
+                <span className="text-xs font-black text-slate-900 tracking-tight">Level {userLevel} Professional</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="w-full lg:w-72 bg-dark-gradient rounded-[2rem] md:rounded-[2.5rem] p-6 text-white flex flex-col justify-between shadow-2xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+        <div className="w-full lg:w-80 bg-slate-950 rounded-[2.5rem] p-8 text-white flex flex-col justify-between shadow-2xl relative overflow-hidden group border border-white/5">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-500/20 transition-all duration-700" />
           <div className="relative z-10">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-1">Business Points</p>
-            <div className="flex items-end gap-2">
-              <p className="text-3xl font-black text-white">45,280</p>
-              <p className="text-xs font-bold text-amber-400 mb-1">+12%</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2">My Business Valuation</p>
+            <div className="flex items-end gap-3 mb-4">
+              <p className="text-4xl font-black text-white tracking-tighter">45,280</p>
+              <div className="flex items-center gap-1 bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-lg text-xs font-black border border-emerald-500/20 mb-1.5">
+                <ArrowUpRight size={12} />
+                12%
+              </div>
+            </div>
+            <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+              <div className="h-full bg-amber-500 w-[72%] rounded-full shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
             </div>
           </div>
-          <div className="mt-4 pt-4 border-t border-white/10 flex justify-between items-center relative z-10">
-            <div className="flex -space-x-2">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="w-6 h-6 rounded-full border-2 border-slate-900 bg-slate-800 overflow-hidden shadow-lg">
-                  <img src={`https://i.pravatar.cc/100?u=${i + 20}`} alt="team" />
+          <div className="mt-6 pt-6 border-t border-white/5 flex justify-between items-center relative z-10">
+            <div className="flex -space-x-2.5">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-950 bg-slate-800 overflow-hidden shadow-xl transition-transform hover:scale-110 cursor-pointer">
+                  <img src={`https://i.pravatar.cc/100?u=${i + 40}`} alt="team" />
                 </div>
               ))}
-              <div className="w-6 h-6 rounded-full border-2 border-slate-900 bg-amber-500 flex items-center justify-center text-[8px] font-black">+15</div>
+              <div className="w-8 h-8 rounded-full border-2 border-slate-950 bg-amber-500 flex items-center justify-center text-[10px] font-black text-slate-950">+15</div>
             </div>
-            <p className="text-[10px] font-bold text-white/60 uppercase">Team Growth</p>
+            <p className="text-[10px] font-black text-white/50 uppercase tracking-widest">Team Growth</p>
           </div>
         </div>
       </section>
 
-      {/* 40+ Empathy Banner (Modified for better layout) */}
-      <section className="bg-white/40 backdrop-blur-md rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 lg:p-12 relative overflow-hidden border border-white/60 shadow-2xl group transition-all hover:border-amber-500/20">
-        <div className="relative z-10 max-w-2xl">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="flex -space-x-3">
-              {[UBCLevel.UBC1_FOUNDATION, UBCLevel.UBC2_SPECIALIST, UBCLevel.UBC3_STRATEGIC, UBCLevel.UBC4_MASTER].map((lvl) => (
-                <button
-                  key={lvl}
-                  onClick={() => setUserLevel(lvl)}
-                  className={`
-                    w-12 h-12 md:w-16 md:h-16 rounded-2xl md:rounded-[1.5rem] flex items-center justify-center border-4 border-white shadow-xl transition-all relative z-[${10 - lvl}]
-                    ${userLevel === lvl ? 'bg-amber-500 scale-110 rotate-3 z-50 text-white' : 'bg-slate-100 text-slate-400 hover:scale-105'}
-                  `}
-                >
-                  <span className="text-lg md:text-2xl font-black">{lvl}</span>
-                </button>
-              ))}
-            </div>
-            <div className="h-10 w-[1px] bg-slate-200 mx-2" />
-            <div>
-              <p className="text-[10px] md:text-xs font-black text-amber-500 uppercase tracking-widest leading-none mb-1">Select Path</p>
-              <h3 className="text-xl md:text-2xl font-black text-slate-900">UBC Program Level</h3>
-            </div>
-          </div>
-
-          <h1 className="text-2xl md:text-4xl lg:text-5xl font-black mb-6 leading-[1.15] text-slate-900 uppercase">
-            {currentLevelInfo.title} <br />
-            <span className="text-amber-500">{currentLevelInfo.subtitle}</span>
-          </h1>
-
-          <div className="flex flex-wrap gap-3 md:gap-4">
-            <button
-              onClick={() => onNavigate(AppView.SYSTEM_456)}
-              className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-4 md:px-10 md:py-5 rounded-2xl md:rounded-[2rem] font-black text-lg md:text-xl flex items-center gap-3 transition-all shadow-xl active:scale-95"
-            >
-              ประเมินทักษะ
-              <TrendingUp size={20} />
-            </button>
-            <button
-              onClick={() => onNavigate(AppView.AI_COACH)}
-              className="bg-white hover:bg-slate-50 text-slate-900 px-6 py-4 md:px-10 md:py-5 rounded-2xl md:rounded-[2rem] font-bold border border-slate-200 transition-all shadow-lg text-sm md:text-base"
-            >
-              ฝึกกับ AI Coach
-            </button>
-          </div>
-        </div>
-
-        {/* Decorative dynamic icon based on level */}
-        <div className="absolute top-0 right-0 w-1/3 h-full opacity-[0.03] lg:opacity-[0.05] pointer-events-none flex items-center justify-center transition-all">
-          <currentLevelInfo.icon size={400} className="translate-x-1/4" />
-        </div>
-      </section>
-
-      {/* Mastery Overview & Radar */}
-      <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
-        <div className="lg:col-span-2 glass-card p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] flex flex-col md:flex-row items-center gap-8 lg:gap-12 group hover:shadow-2xl transition-all duration-500">
-          <div className="flex-1 text-center md:text-left w-full">
-            <h3 className="text-2xl md:text-3xl font-black text-slate-900 mb-2 group-hover:text-amber-600 transition-colors">ความเก่งรอบด้าน</h3>
-            <p className="text-sm md:text-base text-slate-500 mb-6 md:mb-8">วิเคราะห์สมดุลทักษะ 10 แกนหลักของคุณ</p>
-
-            <div className="space-y-6">
-              {mastery_data.map(i => (
-                <div key={i.label} className="group/item">
-                  <div className="flex justify-between text-sm font-bold mb-2">
-                    <span className="text-slate-600">{i.label}</span>
-                    <span className="text-slate-900">{i.val}%</span>
-                  </div>
-                  <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner">
-                    <div
-                      className={`h-full ${i.color} transition-all duration-1000 ease-out group-hover/item:brightness-110`}
-                      style={{ width: `${i.val}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-            <p className="text-xs text-slate-400 mt-6 md:mt-8 italic border-t border-slate-100 pt-4">* แนะนำ: ฝึกทักษะ "Train the Trainer" เพิ่มเติมเพื่อขยายทีม</p>
-          </div>
-
-          <div className="relative w-64 h-64 md:w-72 md:h-72 bg-slate-50/50 rounded-full flex items-center justify-center p-4 shadow-inner group-hover:scale-105 transition-transform duration-700">
-            {/* Enhanced Radar SVG with Gradients */}
-            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl">
-              <defs>
-                <radialGradient id="radarGrad" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.4" />
-                  <stop offset="70%" stopColor="#f59e0b" stopOpacity="0.1" />
-                  <stop offset="100%" stopColor="#d97706" stopOpacity="0.02" />
-                </radialGradient>
-                <filter id="glow">
-                  <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
-                  <feMerge>
-                    <feMergeNode in="coloredBlur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-                <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#fbbf24" />
-                  <stop offset="100%" stopColor="#f59e0b" />
-                </linearGradient>
-              </defs>
-              <circle cx="50" cy="50" r="45" fill="none" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="3,3" />
-              <circle cx="50" cy="50" r="30" fill="none" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="3,3" />
-              <circle cx="50" cy="50" r="15" fill="none" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="3,3" />
-
-              {/* Reference Lines */}
-              <line x1="50" y1="5" x2="50" y2="95" stroke="#e2e8f0" strokeWidth="0.5" />
-              <line x1="5" y1="50" x2="95" y2="50" stroke="#e2e8f0" strokeWidth="0.5" />
-
-              <polygon
-                points="50,15 85,45 65,85 20,55 35,25"
-                fill="url(#radarGrad)"
-                stroke="url(#lineGrad)"
-                strokeWidth="2.5"
-                filter="url(#glow)"
-                className="animate-pulse"
-                style={{ strokeLinejoin: 'round' }}
-              />
-              {/* Dynamic Points with Glow */}
-              <circle cx="50" cy="15" r="3" fill="#f59e0b" filter="url(#glow)" className="animate-bounce" style={{ animationDelay: '0s' }} />
-              <circle cx="85" cy="45" r="3" fill="#f59e0b" filter="url(#glow)" className="animate-bounce" style={{ animationDelay: '0.2s' }} />
-              <circle cx="65" cy="85" r="3" fill="#f59e0b" filter="url(#glow)" className="animate-bounce" style={{ animationDelay: '0.4s' }} />
-              <circle cx="20" cy="55" r="3" fill="#f59e0b" filter="url(#glow)" className="animate-bounce" style={{ animationDelay: '0.6s' }} />
-              <circle cx="35" cy="25" r="3" fill="#f59e0b" filter="url(#glow)" className="animate-bounce" style={{ animationDelay: '0.8s' }} />
-            </svg>
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-14 h-14 bg-white rounded-full shadow-xl flex items-center justify-center border border-slate-50">
-                <Target size={24} className="text-amber-500 animate-spin-slow" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-slate-900 rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 text-white flex flex-col justify-between hover-shine shadow-2xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-500/20 transition-colors" />
+      {/* Main Path & Performance Section */}
+      <div className="grid lg:grid-cols-12 gap-6 lg:gap-8">
+        {/* Banner Section 改良 */}
+        <section className="lg:col-span-8 bg-white/40 backdrop-blur-md rounded-[3rem] p-8 md:p-12 relative overflow-hidden border border-white shadow-2xl group transition-all duration-500 hover:border-amber-500/10 flex flex-col justify-between min-h-[400px]">
           <div className="relative z-10">
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-1">
-                <div className={`px-3 py-1 rounded-full ${currentLevelInfo.bg} ${currentLevelInfo.color} text-[10px] font-black uppercase tracking-widest`}>
-                  Level {userLevel}
-                </div>
-                <currentLevelInfo.icon size={14} className={currentLevelInfo.color} />
+            <div className="flex items-center gap-5 mb-10">
+              <div className="flex bg-slate-950/5 p-1.5 rounded-[2rem] gap-1 border border-slate-200 shadow-inner">
+                {[1, 2, 3, 4].map((lvl) => (
+                  <button
+                    key={lvl}
+                    onClick={() => setUserLevel(lvl)}
+                    className={`
+                      w-10 h-10 md:w-14 md:h-14 rounded-[1.2rem] flex items-center justify-center transition-all duration-500 relative
+                      ${userLevel === lvl
+                        ? 'bg-slate-950 text-amber-500 shadow-2xl scale-110 z-10'
+                        : 'text-slate-400 hover:bg-white hover:text-slate-600'}
+                    `}
+                  >
+                    <span className="text-lg md:text-xl font-black">{lvl}</span>
+                  </button>
+                ))}
               </div>
-              <h4 className="text-xl md:text-2xl font-black">{currentLevelInfo.title}</h4>
-              <p className="text-slate-400 text-xs font-bold">{currentLevelInfo.subtitle}</p>
+              <div className="h-10 w-px bg-slate-200" />
+              <div>
+                <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest leading-none mb-1">Your Journey</p>
+                <h3 className="text-xl font-bold text-slate-900 tracking-tight">Level Selection</h3>
+              </div>
             </div>
 
-            <h5 className="text-sm md:text-base font-black mb-4 flex items-center gap-3 text-amber-400">
-              ภารกิจสู่ความสำเร็จ
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-8 leading-[1.1] text-slate-900">
+              {currentLevelInfo.title} <br />
+              <span className="text-amber-500 drop-shadow-sm">{currentLevelInfo.subtitle}</span>
+            </h1>
+
+            <div className="flex flex-wrap gap-4">
+              <button
+                onClick={() => onNavigate(AppView.SYSTEM_456)}
+                className="bg-slate-950 hover:bg-slate-900 text-white px-8 py-5 rounded-[2rem] font-black text-xl flex items-center gap-3 transition-all shadow-2xl shadow-slate-900/20 active:scale-95 group"
+              >
+                ประเมินทักษะ
+                <TrendingUp size={22} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              </button>
+              <button
+                onClick={() => onNavigate(AppView.AI_COACH)}
+                className="bg-white/80 hover:bg-white text-slate-950 px-8 py-5 rounded-[2rem] font-black text-lg border border-slate-200 transition-all shadow-xl hover:shadow-2xl active:scale-95 flex items-center gap-2"
+              >
+                <Bot size={22} className="text-amber-500" />
+                ฝึกกับ AI Coach
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-12 group/chart relative bg-white/30 rounded-[2.5rem] p-6 border border-white shadow-inner">
+            <div className="flex justify-between items-center mb-6">
+              <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
+                <Activity size={16} className="text-amber-500" />
+                อัตราการเติบโตธุรกิจ
+              </h4>
+              <div className="flex items-center gap-4 text-[10px] font-black uppercase text-slate-400">
+                <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]" /> Real-time</span>
+                <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-slate-300" /> Last Month</span>
+              </div>
+            </div>
+            <div className="h-32 md:h-40">
+              <GrowthLineChart />
+            </div>
+          </div>
+
+          {/* Decorative dynamic icon based on level */}
+          <div className="absolute top-1/2 right-0 w-1/2 h-1/2 opacity-[0.05] pointer-events-none flex items-center justify-center transition-all duration-700">
+            <currentLevelInfo.icon size={400} className="translate-x-1/4 -translate-y-1/4" />
+          </div>
+        </section>
+
+        {/* Missions Section 改良 */}
+        <div className="lg:col-span-4 bg-slate-950 rounded-[3rem] p-8 text-white flex flex-col justify-between hover-shine shadow-2xl relative overflow-hidden group border border-white/5">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-500/20 transition-all duration-700" />
+          <div className="relative z-10">
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-2">
+                <div className={`px-4 py-1.5 rounded-full ${currentLevelInfo.bg} ${currentLevelInfo.color} text-[10px] font-black uppercase tracking-[0.2em] border border-white/10`}>
+                  Level {userLevel} Path
+                </div>
+                <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-amber-500 shadow-xl border border-white/10">
+                  <currentLevelInfo.icon size={16} />
+                </div>
+              </div>
+              <h4 className="text-2xl md:text-3xl font-black tracking-tight">{currentLevelInfo.title}</h4>
+              <p className="text-white/40 text-xs font-bold leading-relaxed">{currentLevelInfo.subtitle}</p>
+            </div>
+
+            <h5 className="text-sm font-black mb-6 flex items-center gap-3 text-amber-400 uppercase tracking-widest">
+              Daily Missions
+              <div className="flex-1 h-px bg-amber-500/20" />
             </h5>
 
             <div className="space-y-4">
@@ -309,39 +313,149 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 <button
                   key={idx}
                   aria-label={`ภารกิจ: ${job.t}`}
-                  className="w-full text-left flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 group/task cursor-pointer hover:bg-white/10 transition-all hover:translate-x-2"
+                  className="w-full text-left flex items-center gap-4 p-5 rounded-[2rem] bg-white/5 border border-white/5 group/task cursor-pointer hover:bg-white/10 transition-all duration-300 hover:translate-x-1 active:scale-95 shadow-lg"
                 >
-                  <div className={`p-1.5 md:p-2 rounded-lg md:rounded-xl ${job.c}`}>
-                    <job.icon size={16} className="md:w-[18px] md:h-[18px]" />
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover/task:rotate-12 ${job.c} shadow-xl`}>
+                    <job.icon size={20} />
                   </div>
-                  <span className="text-sm font-bold flex-1">{job.t}</span>
-                  <ChevronRight size={16} className="text-white/20 group-hover/task:text-amber-400 transition-colors" />
+                  <div className="flex-1 overflow-hidden">
+                    <span className="text-sm font-bold block truncate">{job.t}</span>
+                    <span className="text-[10px] text-white/30 font-black uppercase tracking-tighter">+1,200 EXP</span>
+                  </div>
+                  <ChevronRight size={18} className="text-white/20 group-hover/task:text-amber-400 group-hover/task:translate-x-1 transition-all" />
                 </button>
               ))}
             </div>
           </div>
-          <div className="mt-8 relative z-10">
-            <div className="p-6 bg-white/5 rounded-3xl border border-white/10 text-center backdrop-blur-sm group-hover:border-amber-500/30 transition-colors">
-              <p className="text-xs text-slate-400 uppercase font-black mb-1 tracking-widest">Your Efficiency</p>
-              <p className="text-5xl font-black text-amber-400 drop-shadow-[0_0_15px_rgba(245,158,11,0.3)]">72%</p>
+          <div className="mt-10 relative z-10">
+            <div className="p-8 bg-white/5 rounded-[2.5rem] border border-white/10 text-center backdrop-blur-md group-hover:border-amber-500/20 transition-all duration-700 shadow-2xl">
+              <p className="text-[10px] text-white/40 uppercase font-black mb-1 tracking-[0.3em]">Skill Mastery</p>
+              <p className="text-6xl font-black text-amber-400 drop-shadow-[0_0_20px_rgba(245,158,11,0.4)] tracking-tighter">72<span className="text-2xl opacity-50">%</span></p>
+              <button
+                onClick={() => onNavigate(AppView.SYSTEM_456)}
+                className="mt-4 text-[10px] font-black uppercase tracking-widest text-white/60 hover:text-amber-400 transition-colors flex items-center justify-center gap-2 mx-auto"
+              >
+                View Full DNA Analysis <ArrowUpRight size={12} />
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Stats Table */}
+      {/* Mastery Radar Section */}
+      <section className="glass-card p-8 md:p-12 rounded-[3.5rem] flex flex-col md:flex-row items-center gap-12 group hover:shadow-2xl transition-all duration-700 border border-white shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+
+        <div className="flex-1 text-center md:text-left w-full relative z-10">
+          <div className="flex items-center gap-3 mb-4 justify-center md:justify-start">
+            <div className="w-10 h-10 bg-amber-500 rounded-2xl flex items-center justify-center shadow-lg transform -rotate-6 transition-transform group-hover:rotate-0">
+              <Zap size={24} className="text-white" />
+            </div>
+            <h3 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight group-hover:text-amber-600 transition-colors">วิเคราะห์ความเก่งรอบด้าน</h3>
+          </div>
+          <p className="text-slate-500 text-lg md:text-xl font-medium mb-10 leading-relaxed max-w-xl">วิเคราะห์สมดุลทักษะ 10 แกนหลักของคุณด้วยระบบ AI Radar Analysis เพื่อหาจุดแข็งและจุดที่ต้องพัฒนาครับ</p>
+
+          <div className="grid sm:grid-cols-2 gap-6 mb-10">
+            {mastery_data.map(i => (
+              <div key={i.label} className="group/item bg-white/50 p-6 rounded-[2rem] border border-white/60 shadow-sm transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1 duration-500">
+                <div className="flex justify-between items-end mb-3">
+                  <span className="text-sm font-black text-slate-600 tracking-tight">{i.label}</span>
+                  <span className="text-lg font-black text-slate-950">{i.val}%</span>
+                </div>
+                <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+                  <div
+                    className={`h-full ${i.color} transition-all duration-1000 ease-out group-hover/item:brightness-110 shadow-[0_0_10px_rgba(0,0,0,0.1)]`}
+                    style={{ width: `${i.val}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="inline-flex items-center gap-3 px-6 py-3 bg-slate-50 rounded-2xl border border-slate-100">
+            <MessageSquare size={18} className="text-amber-500" />
+            <p className="text-sm font-bold text-slate-600 italic">"คุณพี่อัปเลนเนอร์ด้าน Content ได้ดีมากครับ! แนะนำให้ฝึกสอนทีมเพิ่มเพื่อเป็น UBC 4 ครับ ✨"</p>
+          </div>
+        </div>
+
+        <div className="relative w-72 h-72 md:w-[450px] md:h-[450px] flex items-center justify-center p-8 group-hover:scale-105 transition-transform duration-1000 relative z-10">
+          {/* Background Rings */}
+          <div className="absolute inset-0 border-2 border-slate-100 rounded-full animate-spin-slow opacity-50" />
+          <div className="absolute inset-10 border border-slate-100 rounded-full animate-reverse-spin opacity-30" />
+
+          {/* Enhanced Radar SVG */}
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl">
+            <defs>
+              <radialGradient id="radarGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.5" />
+                <stop offset="60%" stopColor="#f59e0b" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#d97706" stopOpacity="0.05" />
+              </radialGradient>
+              <filter id="radarGlow">
+                <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+                <feMerge>
+                  <feMergeNode in="coloredBlur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            {/* Web Lines */}
+            {[10, 20, 30, 40, 50].map((r) => (
+              <circle key={r} cx="50" cy="50" r={r * 0.9} fill="none" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="2,2" />
+            ))}
+
+            {/* 5 Axis */}
+            {[0, 72, 144, 216, 288].map((angle) => {
+              const x = 50 + 45 * Math.cos((angle - 90) * (Math.PI / 180));
+              const y = 50 + 45 * Math.sin((angle - 90) * (Math.PI / 180));
+              return <line key={angle} x1="50" y1="50" x2={x} y2={y} stroke="#e2e8f0" strokeWidth="1" />;
+            })}
+
+            <polygon
+              points="50,15 88,42 75,85 25,80 15,35"
+              fill="url(#radarGrad)"
+              stroke="#f59e0b"
+              strokeWidth="2.5"
+              filter="url(#radarGlow)"
+              className="animate-float"
+              style={{ strokeLinejoin: 'round' }}
+            />
+
+            {/* Point Markers */}
+            {[
+              { x: 50, y: 15 }, { x: 88, y: 42 }, { x: 75, y: 85 }, { x: 25, y: 80 }, { x: 15, y: 35 }
+            ].map((p, i) => (
+              <g key={i} className="animate-pulse" style={{ animationDelay: `${i * 0.2}s` }}>
+                <circle cx={p.x} cy={p.y} r="3.5" fill="white" stroke="#f59e0b" strokeWidth="2" />
+                <circle cx={p.x} cy={p.y} r="8" fill="#f59e0b" fillOpacity="0.1" />
+              </g>
+            ))}
+          </svg>
+
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-20 h-20 bg-white rounded-[2rem] shadow-2xl flex items-center justify-center border border-slate-50 rotate-12 group-hover:rotate-0 transition-transform duration-700">
+              <Target size={32} className="text-amber-500" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Table Section */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         {stats_data.map((stat) => (
           <button
             key={stat.label}
             aria-label={`สถิติ ${stat.label}: ${stat.value}`}
-            className="glass-card p-5 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border border-white/50 shadow-sm hover:shadow-2xl transition-all group hover:-translate-y-2 duration-500 cursor-pointer text-left w-full"
+            className="glass-card p-6 md:p-10 rounded-[2.5rem] border border-white shadow-xl hover:shadow-2xl transition-all group hover:-translate-y-2 duration-700 cursor-pointer text-left w-full overflow-hidden relative"
           >
-            <div className={`${stat.bg} w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-sm`}>
-              <stat.icon size={24} className={`${stat.color} md:w-[32px] md:h-[32px]`} />
+            <div className="absolute top-0 right-0 w-24 h-24 bg-slate-900/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-500/10 transition-colors" />
+            <div className={`${stat.bg} w-16 h-16 rounded-[2rem] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-700 shadow-lg relative z-10`}>
+              <stat.icon size={32} className={`${stat.color}`} />
             </div>
-            <p className="text-slate-400 text-[10px] md:text-xs-plus font-black uppercase tracking-[0.2em] mb-1 md:mb-2">{stat.label}</p>
-            <p className="text-2xl md:text-4xl font-black text-slate-900 group-hover:text-amber-600 transition-colors">{stat.value}</p>
+            <p className="text-slate-400 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mb-2 relative z-10">{stat.label}</p>
+            <div className="flex items-end gap-2 relative z-10">
+              <p className="text-3xl md:text-5xl font-black text-slate-900 group-hover:text-amber-600 transition-colors tracking-tighter">{stat.value}</p>
+              <div className="text-[10px] font-black bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded-md mb-2 shadow-sm">+2</div>
+            </div>
           </button>
         ))}
       </div>
