@@ -11,13 +11,11 @@ import {
     Star,
     ShieldCheck,
     Briefcase,
-    Loader2
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 
 const Profile: React.FC = () => {
     const [isEditing, setIsEditing] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
     const [profile, setProfile] = useState({
         full_name: 'Kru Den Master Fa',
         email: 'kru.den@unicorn.com',
@@ -28,62 +26,12 @@ const Profile: React.FC = () => {
         points: 45280
     });
 
-    const fetchProfile = async () => {
-        setIsLoading(true);
-        try {
-            // ดึงข้อมูลจาก user ที่ login อยู่ (สมมติว่ามีระบบ Auth แล้ว)
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                const { data, error } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', user.id)
-                    .single();
-
-                if (data && !error) {
-                    setProfile({
-                        ...profile,
-                        ...data,
-                        email: user.email || profile.email
-                    });
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching profile:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    React.useEffect(() => {
-        fetchProfile();
-    }, []);
-
     const handleSave = async () => {
-        setIsLoading(true);
-        try {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) throw new Error('User not found');
-
-            const { error } = await supabase
-                .from('profiles')
-                .upsert({
-                    id: user.id,
-                    full_name: profile.full_name,
-                    bio: profile.bio,
-                    specialization: profile.specialization,
-                    contact_link: profile.contact_link,
-                    updated_at: new Date().toISOString()
-                });
-
-            if (error) throw error;
-            setIsEditing(false);
-        } catch (error) {
-            console.error('Error saving profile:', error);
-            alert('ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง');
-        } finally {
-            setIsLoading(false);
-        }
+        setIsSaving(true);
+        // Simulated save - Supabase will be connected in next phase
+        await new Promise(resolve => setTimeout(resolve, 800));
+        setIsSaving(false);
+        setIsEditing(false);
     };
 
     return (
@@ -110,7 +58,7 @@ const Profile: React.FC = () => {
                     </div>
                     <div className="flex-1 text-white pb-2">
                         <div className="flex items-center gap-2 mb-2">
-                            <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg">UBC Level 4 - Master</span>
+                            <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg">UBC Level {profile.ubc_level} - Master</span>
                         </div>
                         <h1 className="text-3xl md:text-4xl font-black tracking-tight">{profile.full_name}</h1>
                         <p className="text-white/60 font-bold text-sm tracking-wide mt-1 uppercase tracking-[0.2em]">{profile.specialization}</p>
@@ -166,10 +114,11 @@ const Profile: React.FC = () => {
                             ) : (
                                 <button
                                     onClick={handleSave}
-                                    className="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-full text-sm font-black transition-all flex items-center gap-2 shadow-lg shadow-amber-500/20"
+                                    disabled={isSaving}
+                                    className="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-full text-sm font-black transition-all flex items-center gap-2 shadow-lg shadow-amber-500/20 disabled:opacity-60"
                                 >
                                     <Save size={16} />
-                                    บันทึกข้อมูล
+                                    {isSaving ? 'กำลังบันทึก...' : 'บันทึกข้อมูล'}
                                 </button>
                             )}
                         </div>

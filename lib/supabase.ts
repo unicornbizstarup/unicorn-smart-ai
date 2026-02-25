@@ -1,10 +1,18 @@
-import { createClient } from '@supabase/supabase-js';
+// Supabase is temporarily disabled. Membership system will be integrated in the next phase.
+// lib/supabase.ts - Stub placeholder
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-
-if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('Supabase URL or Anon Key is missing. Please check your .env file.');
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = {
+    auth: {
+        getUser: async () => ({ data: { user: null }, error: null }),
+        signInWithPassword: async () => ({ data: null, error: { message: 'Auth not available' } }),
+        signOut: async () => ({ error: null }),
+    },
+    from: (_table: string) => ({
+        select: (_cols?: string) => ({
+            eq: (_col: string, _val: unknown) => ({
+                single: async () => ({ data: null, error: null }),
+            }),
+        }),
+        upsert: async (_data: unknown) => ({ error: null }),
+    }),
+};
