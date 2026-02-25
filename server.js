@@ -49,14 +49,15 @@ app.post('/api/chat', async (req, res) => {
                 * กลไก: ระบบ 6 กลไก (ลดกลิ่นปาก/คราบ/แบคทีเรีย/เสียวฟัน/ฟันสะอาด/เหงือกแข็งแรง)
                 * ส่วนประกอบ: Diamond Powder (ขัดฟันเงา), Potassium Nitrate (ลดเสียวฟันเห็นผลใน 2 สัปดาห์), Guava Leaf, Organic Green Tea, Hyaluronic Acid
              - กลุ่ม 3 Health Care: 
-                * Mina S (100 PV) นวัตกรรม OB-X® ลดไขมันช่องท้อง, Uni Colla (80 PV), Uni Talk Fiber (50 PV)
-                * 24 Fin Coffee (25 PV), U-TENA (150 PV) นวัตกรรม Nano สำหรับดวงตา
-                * Unicorn Kaffir Lime Oil (150 PV) - น้ำมันมะกรูดสกัดเย็น บำรุงเลือดและระบบประสาท
-                * Riceberry Rice Oil (150 PV) - น้ำมันจมูกข้าวไรซ์เบอร์รี่ ต้านอนุมูลอิสระสูง
-                * Beetle 7 Oil (250 PV) - น้ำมัน 7 ชนิด ดูแลหลอดเลือดและหัวใจ
-             - กลุ่ม 4 Agriculture: 'U PLANT' (50 PV) & 'BOOSTER' (150 PV) - นวัตกรรม Warp Chelation (Super Ion) ดูดซึมทันที
-             - กลุ่ม 5 Technology: 'Unicorn Sky' (1,500 PV) - เครื่องฆ่าเชื้อ NASA Technology
-             - กลุ่ม 6 Shapewear: ชุดปรับสรีระแนวใหม่ เปลี่ยนหุ่นสวยทันใจ
+                * GLUCONA (Deeze Shot) - นวัตกรรม FIR (Far Infrared) เพิ่มการดูดซึม, มะระขี้นก (อินซูลินธรรมชาติ) บำรุงตับอ่อน ลดภาวะดื้ออินซูลิน
+                * CHOLLESSNA (Deeze Shot) - ดูแลหลอดเลือด/หัวใจ, ลด LDL/ไตรกลีเซอไรด์, เพิ่ม Nitric Oxide ให้หลอดเลือดยืดหยุ่น
+                * IMUNA (Deeze Shot) - ฟื้นฟูภูมิคุ้มกันเชิงลึก (Immune Restoration), กระชายขาว & เบต้ากลูแคน
+                * MINA S (นวัตกรรมเกาหลี) - สารสกัด OB-X (เลม่อนบาล์ม/หม่อน/โกฐจุฬาลัมพา) **ลดไขมันช่องท้องได้ 20% ใน 12 สัปดาห์** (มีวิจัย RCT), ปลอดภัยต่อตับ/ลดไขมันพอกตับ
+                * BEETLE 7 OIL - น้ำมัน 7 ชนิด บำรุง 3 ระบบ (ต้านอักเสบ/คุมไขมัน/ภูมิคุ้มกัน), ผสมผักคาวตองลดไซโตไกน์
+                * UNI TALK FIBER - นวัตกรรม Synbiotic (Bacillus coagulans) ลำไส้แฮปปี้ ผิวใสจากภายใน
+                * UNI COLLA - คอลลาเจน 3 ชนิด (Tri/Di/Type II) บำรุงทั้งผิวและข้อต่อ
+             - กลุ่ม 4 Agriculture: 'U PLANT' & 'BOOSTER' - นวัตกรรม Warp Chelation (Super Ion) ดูดซึมทันที
+             ... (และกลุ่มอื่นๆ)
 
           ลำดับการใช้ที่แนะนำ:
           - ตอนเช้า: Foam -> Cream -> Sun Block
