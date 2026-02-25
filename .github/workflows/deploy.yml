@@ -27,6 +27,7 @@ jobs:
           source: "dist/*"
           target: "/var/www/unicorn-smart-ai"
           strip_components: 1
+          timeout: 60s
 
       - name: Copy server files to VPS
         uses: appleboy/scp-action@master
@@ -38,3 +39,4 @@ jobs:
           source: "server.js,package.json"
           target: "/var/www/unicorn-smart-ai"
           strip_components: 0
+          timeout: 60s
