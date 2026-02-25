@@ -12,20 +12,17 @@ async function listModels() {
 
     const genAI = new GoogleGenerativeAI(apiKey);
 
-    console.log('--- 🛡️ Unicorn Smart AI: Gemini Diagnostic ---');
+    console.log('--- 🛡️ Unicorn Smart AI: Gemini Diagnostic 2026 ---');
     console.log('Time:', new Date().toLocaleString());
 
     try {
-        // Test with v1 explicitly if v1beta fails in the SDK
         console.log('Checking available models...');
 
-        // Note: The SDK might not expose listModels directly in some versions
-        // So we try a simpler way: Test a few likely candidates
         const candidates = [
+            'gemini-3-flash',
+            'gemini-2.5-flash',
             'gemini-2.0-flash',
-            'gemini-2.0-flash-lite',
-            'gemini-1.5-flash',
-            'gemini-pro'
+            'gemini-1.5-flash'
         ];
 
         for (const modelName of candidates) {
