@@ -71,11 +71,19 @@ app.post('/api/chat', async (req, res) => {
     });
 
     // 1. Transform messages to Gemini history format (excluding the last message)
-    // Gemini history expects: [{ role: 'user', parts: [{ text: '...' }] }, { role: 'model', parts: [{ text: '...' }] }]
-    const history = messages.slice(0, -1).map(msg => ({
+    // CRITICAL: Gemini requires the history to START with a 'user' message.
+    let history = messages.slice(0, -1).map(msg => ({
       role: msg.role === 'user' ? 'user' : 'model',
       parts: [{ text: msg.text }]
     }));
+
+    // Find the index of the first 'user' message and skip everything before it
+    const firstUserIndex = history.findIndex(h => h.role === 'user');
+    if (firstUserIndex !== -1) {
+      history = history.slice(firstUserIndex);
+    } else {
+      history = []; // If no user message found in history, send empty history
+    }
 
     const lastMessage = messages[messages.length - 1].text;
 
