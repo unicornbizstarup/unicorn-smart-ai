@@ -30,12 +30,12 @@ export const SYSTEM_5_DO = [
 ];
 
 export const SYSTEM_6_BE = [
-  { id: 'b1', title: 'STEP 1: CORE LEADER', range: '4,000 - 10,000 บาท', icon: 'User' },
-  { id: 'b2', title: 'STEP 2: SUPER STAR', range: '10,000 - 60,000 บาท', icon: 'Star' },
-  { id: 'b3', title: 'STEP 3: DIRECTOR ZONE', range: '60,000 - 100,000 บาท', icon: 'Shield' },
-  { id: 'b4', title: 'STEP 4: DIAMOND ZONE', range: '100,000 - 300,000 บาท', icon: 'Gem' },
-  { id: 'b5', title: 'STEP 5: PRESIDENT ZONE', range: '400,000 - 800,000 บาท', icon: 'Award' },
-  { id: 'b6', title: 'STEP 6: CROWN ZONE', range: '1,000,000 - 3,000,000+ บาท', icon: 'Crown' }
+  { id: 'b1', title: 'STEP 1: Unicorn Business Consultant (UBC)', range: '500 - 5,000 บาท', icon: 'User' },
+  { id: 'b2', title: 'STEP 2: SUPER STAR ELITE', range: '5,000 - 15,000 บาท', icon: 'Star' },
+  { id: 'b3', title: 'STEP 3: DIRECTOR ZONE', range: '15,000 - 50,000 บาท', icon: 'Shield' },
+  { id: 'b4', title: 'STEP 4: DIAMOND ZONE', range: '50,000 - 300,000 บาท', icon: 'Gem' },
+  { id: 'b5', title: 'STEP 5: PRESIDENT ZONE', range: '300,000 - 700,000 บาท', icon: 'Award' },
+  { id: 'b6', title: 'STEP 6: CROWN ZONE', range: '700,000 - 3,000,000+ บาท', icon: 'Crown' }
 ];
 
 export const LIBRARY_DATA: LibraryItem[] = [

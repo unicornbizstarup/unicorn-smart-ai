@@ -257,7 +257,7 @@ const System456: React.FC = () => {
                         <p className="text-indigo-100/60 text-lg md:text-xl font-medium leading-relaxed max-w-md mx-auto lg:mx-0">
                            การเป็นต้นแบบที่ดีคือหัวใจของการสร้างผู้นำ!
                            หากคุณปฏิบัติครบ 5 ข้อนี้ คุณคือผู้นำระดับ
-                           <span className="text-white font-black italic ml-1">"CORE LEADER"</span>
+                           <span className="text-white font-black italic ml-1">"UBC"</span>
                         </p>
                      </div>
 
@@ -265,7 +265,7 @@ const System456: React.FC = () => {
                         <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover/list:bg-amber-500/20 transition-colors" />
                         <div className="flex items-center gap-3 md:gap-4 mb-4 relative z-10">
                            <div className="w-12 md:w-16 h-1 md:h-1.5 bg-amber-500 rounded-full"></div>
-                           <h4 className="text-lg md:text-2xl font-black text-white uppercase tracking-widest text-glitch">5 CORE LEADER</h4>
+                           <h4 className="text-lg md:text-2xl font-black text-white uppercase tracking-widest text-glitch">5 UBC CORE</h4>
                         </div>
                         <ul className="space-y-4 md:space-y-6 relative z-10">
                            {[
