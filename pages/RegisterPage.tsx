@@ -25,6 +25,7 @@ interface RegisterPageProps {
 const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister }) => {
     const [step, setStep] = useState<'details' | 'otp'>('details');
     const [fullName, setFullName] = useState('');
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
@@ -52,8 +53,13 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister }) =
         e.preventDefault();
         setError('');
 
-        if (!fullName || !email || !password || !confirmPassword) {
+        if (!fullName || !username || !email || !password || !confirmPassword) {
             setError('กรุณากรอกข้อมูลให้ครบทุกช่อง');
+            return;
+        }
+
+        if (username.length < 3) {
+            setError('Username ต้องมีอย่างน้อย 3 ตัวอักษร');
             return;
         }
 
@@ -108,6 +114,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister }) =
             const newUser: User & { password: string } = {
                 id: `user_${Date.now()}`,
                 fullName,
+                username: username.toLowerCase().replace(/\s+/g, ''),
                 email,
                 phone: phone || undefined,
                 password,
@@ -188,6 +195,20 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister }) =
                                             value={fullName}
                                             onChange={(e) => setFullName(e.target.value)}
                                             placeholder="สมชาย ใจดี"
+                                            className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 transition-all text-sm font-medium"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-[10px]">Username (สำหรับลิงก์แนะนำ)</label>
+                                    <div className="relative">
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm">@</div>
+                                        <input
+                                            type="text"
+                                            value={username}
+                                            onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s+/g, ''))}
+                                            placeholder="yourname"
                                             className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 transition-all text-sm font-medium"
                                         />
                                     </div>

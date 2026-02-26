@@ -18,8 +18,10 @@ export enum AppView {
 export interface User {
   id: string;
   fullName: string;
+  username: string; // Used for Referral Link
   email: string;
   phone?: string;
+  avatarUrl?: string; // Profile Image
   createdAt: string;
   birthDate?: string;
   wealthElement?: 'FIRE' | 'WATER' | 'EARTH' | 'AIR';

@@ -31,14 +31,15 @@ import {
     Bot
 } from 'lucide-react';
 import { WEALTH_ELEMENTS } from '../data/wealthDnaData';
-import { User as UserType } from '../types';
+import { User as UserType, AppView } from '../types';
 
 interface ProfileProps {
     currentUser: UserType | null;
     onUpdateUser: (user: UserType) => void;
+    onNavigate: (view: AppView) => void;
 }
 
-const Profile: React.FC<ProfileProps> = ({ currentUser }) => {
+const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [showCopiedToast, setShowCopiedToast] = useState(false);
@@ -71,8 +72,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser }) => {
     };
 
     const handleCopyLink = () => {
-        // Mock referral link
-        const referralLink = `https://unicorn.com/p/${profile.full_name.replace(/\s+/g, '').toLowerCase()}`;
+        const referralLink = `https://unicornsmartai.cloud/${currentUser?.username || 'user'}`;
         navigator.clipboard.writeText(referralLink);
         setShowCopiedToast(true);
         setTimeout(() => setShowCopiedToast(false), 3000);
@@ -133,13 +133,25 @@ const Profile: React.FC<ProfileProps> = ({ currentUser }) => {
                     <div className="relative group shrink-0">
                         <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-3xl p-1 shadow-2xl relative overflow-hidden">
                             <img
-                                src="https://api.dicebear.com/7.x/avataaars/svg?seed=UnicornPartner"
+                                src={currentUser?.avatarUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=UnicornPartner"}
                                 alt="Profile"
                                 className="w-full h-full object-cover rounded-2xl"
                             />
-                            <button className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                            <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white cursor-pointer">
                                 <Camera size={24} />
-                            </button>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file && currentUser) {
+                                            const url = URL.createObjectURL(file);
+                                            onUpdateUser({ ...currentUser, avatarUrl: url });
+                                        }
+                                    }}
+                                />
+                            </label>
                         </div>
                         <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-amber-500 rounded-full border-4 border-slate-900 flex items-center justify-center text-white shadow-lg">
                             <Award size={18} />
@@ -430,11 +442,11 @@ const Profile: React.FC<ProfileProps> = ({ currentUser }) => {
                                 <div className="p-6 pt-12 flex flex-col items-center text-center space-y-6">
 
                                     {/* Avatar */}
-                                    <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-amber-400 to-amber-600 shadow-xl mx-auto">
+                                    <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-amber-400 to-amber-600 shadow-xl mx-auto overflow-hidden">
                                         <img
-                                            src="https://api.dicebear.com/7.x/avataaars/svg?seed=UnicornPartner"
+                                            src={currentUser?.avatarUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=UnicornPartner"}
                                             alt="Profile"
-                                            className="w-full h-full object-cover rounded-full bg-slate-100"
+                                            className="w-full h-full object-cover rounded-full bg-slate-100 placeholder-slate-200"
                                         />
                                     </div>
 
@@ -518,9 +530,9 @@ const Profile: React.FC<ProfileProps> = ({ currentUser }) => {
                         <div className="text-center mt-6">
                             <button
                                 onClick={handleCopyLink}
-                                className="group relative bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 hover:text-slate-900 rounded-full pl-4 pr-3 py-2 text-xs font-bold font-mono inline-flex items-center gap-2 transition-colors transition-all focus:ring-4 ring-slate-200"
+                                className="group relative bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 hover:text-slate-900 rounded-full pl-4 pr-3 py-2 text-xs font-bold font-mono inline-flex items-center gap-2 transition-all focus:ring-4 ring-slate-200"
                             >
-                                <span className="opacity-60 group-hover:opacity-100">unicorn.com/p/kruden...</span>
+                                <span className="opacity-60 group-hover:opacity-100">unicornsmartai.cloud/{currentUser?.username || 'user'}</span>
                                 <div className="bg-white border border-slate-200 rounded-full p-1.5 shadow-sm group-hover:scale-110 transition-transform">
                                     <Copy size={12} className="text-slate-900" />
                                 </div>
