@@ -465,4 +465,23 @@ const MonitorSmartphone = ({ size }: { size: number }) => (
     </svg>
 )
 
-export default Profile;
+// Injecting utility styles for mockup experience
+const Style = () => (
+    <style dangerouslySetInnerHTML={{
+        __html: `
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    `}} />
+);
+
+export default () => (
+    <>
+        <Style />
+        <Profile />
+    </>
+);
