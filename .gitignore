@@ -1,4 +1,15 @@
-# Logs
+# ============================================
+# 🔐 Environment & Secrets — NEVER commit!
+# ============================================
+.env
+.env.local
+.env.development
+.env.production
+.env.staging
+
+# ============================================
+# 📦 Logs
+# ============================================
 logs
 *.log
 npm-debug.log*
@@ -7,18 +18,30 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# ============================================
+# 📦 Node.js
+# ============================================
 node_modules
 dist
 dist-ssr
-*.local
 
-# Editor directories and files
+# ============================================
+# 💻 Editor & OS Files
+# ============================================
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
+Thumbs.db
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# ============================================
+# 🔑 Keys & Certificates
+# ============================================
+*.pem
+*.key
+*.cert
