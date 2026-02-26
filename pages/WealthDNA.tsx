@@ -21,8 +21,9 @@ import { WEALTH_ELEMENTS } from '../data/wealthDnaData';
 
 const WealthDNA: React.FC<{
     onNavigate: (view: AppView) => void,
-    onUpdateUser: (user: User) => void
-}> = ({ onNavigate, onUpdateUser }) => {
+    onUpdateUser: (user: User) => void,
+    currentUser: User | null
+}> = ({ onNavigate, onUpdateUser, currentUser }) => {
     const [step, setStep] = useState<'intro' | 'form' | 'loading' | 'result'>('intro');
     const [birthDate, setBirthDate] = useState('');
     const [birthTime, setBirthTime] = useState('');
@@ -46,16 +47,12 @@ const WealthDNA: React.FC<{
             setAnalyzedElement(element);
             setStep('result');
 
-            // Save result to user session
-            const storedUser = localStorage.getItem('unicorn_current_user');
-            if (storedUser) {
-                const user = JSON.parse(storedUser) as User;
+            // Save result to user session & sync to DB via App.tsx
+            if (currentUser?.id) {
                 const updatedUser: User = {
-                    ...user,
-                    birthDate,
+                    ...currentUser,
                     wealthElement: element
                 };
-                localStorage.setItem('unicorn_current_user', JSON.stringify(updatedUser));
                 onUpdateUser(updatedUser);
             }
         }, 2500);

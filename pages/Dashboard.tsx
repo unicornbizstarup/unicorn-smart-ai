@@ -18,7 +18,8 @@ import {
   Bot,
   MessageSquare,
   ShieldCheck,
-  ArrowUpRight
+  ArrowUpRight,
+  TrendingDown
 } from 'lucide-react';
 import { AppView, UBCLevel, User } from '../types';
 
@@ -27,135 +28,152 @@ interface DashboardProps {
   currentUser: User | null;
 }
 
-const stats_data = [
-  { label: 'คอนเนคใจทีม', value: '18', icon: Heart, color: 'text-rose-500', bg: 'bg-rose-50' },
-  { label: 'เคสลงพื้นที่', value: '12', icon: MapPin, color: 'text-blue-500', bg: 'bg-blue-50' },
-  { label: 'นำคนเข้าฟังชั่น', value: '5', icon: CalendarCheck, color: 'text-amber-500', bg: 'bg-amber-50' },
-  { label: 'ระดับการสอน', value: 'Expert', icon: Trophy, color: 'text-purple-500', bg: 'bg-purple-50' },
-];
-
-const mastery_data = [
-  { label: 'UBC 1: Digital Foundation', val: 95, color: 'bg-amber-500' },
-  { label: 'UBC 2: Video Marketing', val: 82, color: 'bg-blue-500' },
-  { label: 'UBC 3: Content Funnel', val: 45, color: 'bg-emerald-500' },
-  { label: 'UBC 4: Leadership System', val: 30, color: 'bg-rose-500' },
-];
-
-const level_data = {
-  [UBCLevel.UBC1_FOUNDATION]: {
-    title: 'UBC 1 - Foundation',
-    subtitle: 'รากฐานที่ปรึกษาและวินัยดิจิทัล',
-    color: 'text-amber-500',
-    bg: 'bg-amber-500/10',
-    icon: Star,
-    missions: [
-      { t: 'ตั้งค่า Digital Name Card', c: 'bg-amber-500/20 text-amber-300', icon: Layout },
-      { t: 'ซ้อมพูดแผน 4 รู้ กับ AI Coach', c: 'bg-blue-500/20 text-blue-300', icon: Bot },
-      { t: 'บันทึกการใช้สินค้า 100%', c: 'bg-emerald-500/20 text-emerald-300', icon: Activity }
-    ]
-  },
-  [UBCLevel.UBC2_SPECIALIST]: {
-    title: 'UBC 2 - Specialist',
-    subtitle: 'ผู้เชี่ยวชาญการตลาดดิจิทัล',
-    color: 'text-indigo-500',
-    bg: 'bg-indigo-500/10',
-    icon: Zap,
-    missions: [
-      { t: 'สร้างคลิป TikTok พร้อม One Link', c: 'bg-indigo-500/20 text-indigo-300', icon: Rocket },
-      { t: 'ฝึกแก้ข้อโต้แย้ง (Storytelling)', c: 'bg-purple-500/20 text-purple-300', icon: MessageSquare },
-      { t: 'สร้าง Super Star ใหม่ในทีม', c: 'bg-amber-500/20 text-amber-300', icon: Trophy }
-    ]
-  },
-  [UBCLevel.UBC3_STRATEGIC]: {
-    title: 'UBC 3 - Strategic',
-    subtitle: 'นักกลยุทธ์หัวใจที่ปรึกษา',
-    color: 'text-emerald-500',
-    bg: 'bg-emerald-500/10',
-    icon: Target,
-    missions: [
-      { t: 'วิเคราะห์ Wealth DNA ของทีม', c: 'bg-emerald-500/20 text-emerald-300', icon: Activity },
-      { t: 'วางแผน Content Funnel 30 วัน', c: 'bg-blue-500/20 text-blue-300', icon: TrendingUp },
-      { t: 'บริหารฟังก์ชันอบรมรายสัปดาห์', c: 'bg-purple-500/20 text-purple-300', icon: CalendarCheck }
-    ]
-  },
-  [UBCLevel.UBC4_MASTER]: {
-    title: 'UBC 4 - Master',
-    subtitle: 'ปรมาจารย์สร้างผู้นำอัจฉริยะ',
-    color: 'text-rose-500',
-    bg: 'bg-rose-500/10',
-    icon: Award,
-    missions: [
-      { t: 'Mentoring ผู้นำระดับ Exclusive', c: 'bg-rose-500/20 text-rose-300', icon: Users },
-      { t: 'สร้างระบบ Training อัตโนมัติ', c: 'bg-amber-500/20 text-amber-300', icon: Zap },
-      { t: 'ขยายธุรกิจสู่ตลาดสากล', c: 'bg-indigo-500/20 text-indigo-300', icon: ShieldCheck }
-    ]
-  }
-};
-
-const GrowthLineChart: React.FC = () => (
-  <svg viewBox="0 0 400 150" className="w-full h-full drop-shadow-lg overflow-visible">
-    <defs>
-      <linearGradient id="growthGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.4" />
-        <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.01" />
-      </linearGradient>
-      <filter id="lineGlow">
-        <feGaussianBlur stdDeviation="3" result="glow" />
-        <feComposite in="SourceGraphic" in2="glow" operator="over" />
-      </filter>
-    </defs>
-    {/* Grid Lines */}
-    <line x1="0" y1="120" x2="400" y2="120" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="4,4" />
-    <line x1="0" y1="80" x2="400" y2="80" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="4,4" />
-    <line x1="0" y1="40" x2="400" y2="40" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="4,4" />
-
-    {/* Area */}
-    <path
-      d="M 0,130 L 50,110 L 100,125 L 150,80 L 200,60 L 250,45 L 300,55 L 350,20 L 400,10 L 400,150 L 0,150 Z"
-      fill="url(#growthGrad)"
-    />
-
-    {/* Main Line */}
-    <path
-      d="M 0,130 L 50,110 L 100,125 L 150,80 L 200,60 L 250,45 L 300,55 L 350,20 L 400,10"
-      fill="none"
-      stroke="#f59e0b"
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      filter="url(#lineGlow)"
-      className="animate-draw"
-    />
-
-    {/* Data Points */}
-    {[
-      { x: 50, y: 110 }, { x: 150, y: 80 }, { x: 250, y: 45 }, { x: 400, y: 10 }
-    ].map((p, i) => (
-      <circle
-        key={i}
-        cx={p.x} cy={p.y} r="5"
-        fill="#f59e0b"
-        stroke="white"
-        strokeWidth="2"
-        className="animate-pulse"
-      />
-    ))}
-  </svg>
-);
-
 const Dashboard: React.FC<DashboardProps> = ({ onNavigate, currentUser }) => {
-  const [activeLevel, setActiveLevel] = React.useState<UBCLevel>(currentUser?.ubcLevel || UBCLevel.UBC1_FOUNDATION);
+  const [activeLevel, setActiveLevel] = React.useState<UBCLevel>((currentUser?.ubcLevel as UBCLevel) || UBCLevel.UBC1_FOUNDATION);
 
   // Sync context level when currentUser changes
   React.useEffect(() => {
     if (currentUser?.ubcLevel) {
-      setActiveLevel(currentUser.ubcLevel);
+      setActiveLevel(currentUser.ubcLevel as UBCLevel);
     }
   }, [currentUser?.ubcLevel]);
+
+  const stats_data = [
+    {
+      label: 'PV ส่วนตัว',
+      value: currentUser?.personalPv?.toLocaleString() || '0',
+      icon: TrendingUp,
+      color: 'text-amber-500',
+      bg: 'bg-amber-50'
+    },
+    {
+      label: 'PV ทีม (ซ้าย)',
+      value: currentUser?.teamPvLeft?.toLocaleString() || '0',
+      icon: Users,
+      color: 'text-blue-500',
+      bg: 'bg-blue-50'
+    },
+    {
+      label: 'PV ทีม (ขวา)',
+      value: currentUser?.teamPvRight?.toLocaleString() || '0',
+      icon: Users,
+      color: 'text-emerald-500',
+      bg: 'bg-emerald-50'
+    },
+    {
+      label: 'ระดับ UBC',
+      value: currentUser?.ubcLevel ? `UBC ${currentUser.ubcLevel}` : 'UBC 1',
+      icon: Trophy,
+      color: 'text-purple-500',
+      bg: 'bg-purple-50'
+    },
+  ];
+
+  const mastery_data = [
+    { label: 'UBC 1: Digital Foundation', val: 95, color: 'bg-amber-500' },
+    { label: 'UBC 2: Video Marketing', val: 82, color: 'bg-blue-500' },
+    { label: 'UBC 3: Content Funnel', val: 45, color: 'bg-emerald-500' },
+    { label: 'UBC 4: Leadership System', val: 30, color: 'bg-rose-500' },
+  ];
+
+  const level_data = {
+    [UBCLevel.UBC1_FOUNDATION]: {
+      title: 'UBC 1 - Foundation',
+      subtitle: 'รากฐานที่ปรึกษาและวินัยดิจิทัล',
+      color: 'text-amber-500',
+      bg: 'bg-amber-500/10',
+      icon: Star,
+      missions: [
+        { t: 'ตั้งค่า Digital Name Card', c: 'bg-amber-500/20 text-amber-300', icon: Layout },
+        { t: 'ซ้อมพูดแผน 4 รู้ กับ AI Coach', c: 'bg-blue-500/20 text-blue-300', icon: Bot },
+        { t: 'บันทึกการใช้สินค้า 100%', c: 'bg-emerald-500/20 text-emerald-300', icon: Activity }
+      ]
+    },
+    [UBCLevel.UBC2_SPECIALIST]: {
+      title: 'UBC 2 - Specialist',
+      subtitle: 'ผู้เชี่ยวชาญการตลาดดิจิทัล',
+      color: 'text-indigo-500',
+      bg: 'bg-indigo-500/10',
+      icon: Zap,
+      missions: [
+        { t: 'สร้างคลิป TikTok พร้อม One Link', c: 'bg-indigo-500/20 text-indigo-300', icon: Rocket },
+        { t: 'ฝึกแก้ข้อโต้แย้ง (Storytelling)', c: 'bg-purple-500/20 text-purple-300', icon: MessageSquare },
+        { t: 'สร้าง Super Star ใหม่ในทีม', c: 'bg-amber-500/20 text-amber-300', icon: Trophy }
+      ]
+    },
+    [UBCLevel.UBC3_STRATEGIC]: {
+      title: 'UBC 3 - Strategic',
+      subtitle: 'นักกลยุทธ์หัวใจที่ปรึกษา',
+      color: 'text-emerald-500',
+      bg: 'bg-emerald-500/10',
+      icon: Target,
+      missions: [
+        { t: 'วิเคราะห์ Wealth DNA ของทีม', c: 'bg-emerald-500/20 text-emerald-300', icon: Activity },
+        { t: 'วางแผน Content Funnel 30 วัน', c: 'bg-blue-500/20 text-blue-300', icon: TrendingUp },
+        { t: 'บริหารฟังก์ชันอบรมรายสัปดาห์', c: 'bg-purple-500/20 text-purple-300', icon: CalendarCheck }
+      ]
+    },
+    [UBCLevel.UBC4_MASTER]: {
+      title: 'UBC 4 - Master',
+      subtitle: 'ปรมาจารย์สร้างผู้นำอัจฉริยะ',
+      color: 'text-rose-500',
+      bg: 'bg-rose-500/10',
+      icon: Award,
+      missions: [
+        { t: 'Mentoring ผู้นำระดับ Exclusive', c: 'bg-rose-500/20 text-rose-300', icon: Users },
+        { t: 'สร้างระบบ Training อัตโนมัติ', c: 'bg-amber-500/20 text-amber-300', icon: Zap },
+        { t: 'ขยายธุรกิจสู่ตลาดสากล', c: 'bg-indigo-500/20 text-indigo-300', icon: ShieldCheck }
+      ]
+    }
+  };
 
   const currentLevelInfo = level_data[activeLevel] || level_data[UBCLevel.UBC1_FOUNDATION];
   const ubcLabel = `UBC ${currentUser?.ubcLevel || 1} Professional`;
   const partnerId = currentUser?.id ? `U-Partner ID: ${currentUser.id.slice(0, 8).toUpperCase()}` : 'U-Partner ID: GUEST';
+
+  const GrowthLineChart: React.FC = () => (
+    <svg viewBox="0 0 400 150" className="w-full h-full drop-shadow-lg overflow-visible">
+      <defs>
+        <linearGradient id="growthGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.01" />
+        </linearGradient>
+        <filter id="lineGlow">
+          <feGaussianBlur stdDeviation="3" result="glow" />
+          <feComposite in="SourceGraphic" in2="glow" operator="over" />
+        </filter>
+      </defs>
+      <line x1="0" y1="120" x2="400" y2="120" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="4,4" />
+      <line x1="0" y1="80" x2="400" y2="80" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="4,4" />
+      <line x1="0" y1="40" x2="400" y2="40" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="4,4" />
+      <path
+        d="M 0,130 L 50,110 L 100,125 L 150,80 L 200,60 L 250,45 L 300,55 L 350,20 L 400,10 L 400,150 L 0,150 Z"
+        fill="url(#growthGrad)"
+      />
+      <path
+        d="M 0,130 L 50,110 L 100,125 L 150,80 L 200,60 L 250,45 L 300,55 L 350,20 L 400,10"
+        fill="none"
+        stroke="#f59e0b"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        filter="url(#lineGlow)"
+        className="animate-draw"
+      />
+      {[
+        { x: 50, y: 110 }, { x: 150, y: 80 }, { x: 250, y: 45 }, { x: 400, y: 10 }
+      ].map((p, i) => (
+        <circle
+          key={i}
+          cx={p.x} cy={p.y} r="5"
+          fill="#f59e0b"
+          stroke="white"
+          strokeWidth="2"
+          className="animate-pulse"
+        />
+      ))}
+    </svg>
+  );
 
   return (
     <div className="space-y-8 animate-fade-in pb-10 px-2 lg:px-0">
@@ -231,7 +249,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, currentUser }) => {
 
       {/* Main Path & Performance Section */}
       <div className="grid lg:grid-cols-12 gap-6 lg:gap-8">
-        {/* Banner Section 改良 */}
         <section className="lg:col-span-8 bg-white/40 backdrop-blur-md rounded-[3rem] p-8 md:p-12 relative overflow-hidden border border-white shadow-2xl group transition-all duration-500 hover:border-amber-500/10 flex flex-col justify-between min-h-[400px]">
           <div className="relative z-10">
             <div className="flex items-center gap-5 mb-10">
@@ -239,7 +256,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, currentUser }) => {
                 {[1, 2, 3, 4].map((lvl) => (
                   <button
                     key={lvl}
-                    onClick={() => setActiveLevel(lvl)}
+                    onClick={() => setActiveLevel(lvl as UBCLevel)}
                     className={`
                       w-10 h-10 md:w-14 md:h-14 rounded-[1.2rem] flex items-center justify-center transition-all duration-500 relative
                       ${activeLevel === lvl
@@ -297,13 +314,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, currentUser }) => {
             </div>
           </div>
 
-          {/* Decorative dynamic icon based on level */}
           <div className="absolute top-1/2 right-0 w-1/2 h-1/2 opacity-[0.05] pointer-events-none flex items-center justify-center transition-all duration-700">
             <currentLevelInfo.icon size={400} className="translate-x-1/4 -translate-y-1/4" />
           </div>
         </section>
 
-        {/* Missions Section 改良 */}
         <div className="lg:col-span-4 bg-slate-950 rounded-[3rem] p-8 text-white flex flex-col justify-between hover-shine shadow-2xl relative overflow-hidden group border border-white/5">
           <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-500/20 transition-all duration-700" />
           <div className="relative z-10">
@@ -329,7 +344,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, currentUser }) => {
               {currentLevelInfo.missions.map((job, idx) => (
                 <button
                   key={idx}
-                  aria-label={`ภารกิจ: ${job.t}`}
                   className="w-full text-left flex items-center gap-4 p-5 rounded-[2rem] bg-white/5 border border-white/5 group/task cursor-pointer hover:bg-white/10 transition-all duration-300 hover:translate-x-1 active:scale-95 shadow-lg"
                 >
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover/task:rotate-12 ${job.c} shadow-xl`}>
@@ -360,7 +374,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, currentUser }) => {
       </div>
 
       {/* Mastery Radar Section */}
-      <section className="glass-card p-8 md:p-12 rounded-[3.5rem] flex flex-col md:flex-row items-center gap-12 group hover:shadow-2xl transition-all duration-700 border border-white shadow-xl relative overflow-hidden">
+      <section className="bg-white/40 backdrop-blur-xl p-8 md:p-12 rounded-[3.5rem] flex flex-col md:flex-row items-center gap-12 group hover:shadow-2xl transition-all duration-700 border border-white shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
 
         <div className="flex-1 text-center md:text-left w-full relative z-10">
@@ -395,11 +409,9 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, currentUser }) => {
         </div>
 
         <div className="relative w-72 h-72 md:w-[450px] md:h-[450px] flex items-center justify-center p-8 group-hover:scale-105 transition-transform duration-1000 relative z-10">
-          {/* Background Rings */}
           <div className="absolute inset-0 border-2 border-slate-100 rounded-full animate-spin-slow opacity-50" />
           <div className="absolute inset-10 border border-slate-100 rounded-full animate-reverse-spin opacity-30" />
 
-          {/* Enhanced Radar SVG */}
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl">
             <defs>
               <radialGradient id="radarGrad" cx="50%" cy="50%" r="50%">
@@ -415,18 +427,14 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, currentUser }) => {
                 </feMerge>
               </filter>
             </defs>
-            {/* Web Lines */}
             {[10, 20, 30, 40, 50].map((r) => (
               <circle key={r} cx="50" cy="50" r={r * 0.9} fill="none" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="2,2" />
             ))}
-
-            {/* 5 Axis */}
             {[0, 72, 144, 216, 288].map((angle) => {
               const x = 50 + 45 * Math.cos((angle - 90) * (Math.PI / 180));
               const y = 50 + 45 * Math.sin((angle - 90) * (Math.PI / 180));
               return <line key={angle} x1="50" y1="50" x2={x} y2={y} stroke="#e2e8f0" strokeWidth="1" />;
             })}
-
             <polygon
               points="50,15 88,42 75,85 25,80 15,35"
               fill="url(#radarGrad)"
@@ -436,8 +444,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, currentUser }) => {
               className="animate-float"
               style={{ strokeLinejoin: 'round' }}
             />
-
-            {/* Point Markers */}
             {[
               { x: 50, y: 15 }, { x: 88, y: 42 }, { x: 75, y: 85 }, { x: 25, y: 80 }, { x: 15, y: 35 }
             ].map((p, i) => (
@@ -461,8 +467,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, currentUser }) => {
         {stats_data.map((stat, idx) => (
           <button
             key={stat.label}
-            aria-label={`สถิติ ${stat.label}: ${stat.value}`}
-            className="glass-card p-6 md:p-10 rounded-[2.5rem] border border-white shadow-xl hover:shadow-2xl transition-all group hover:-translate-y-2 duration-700 cursor-pointer text-left w-full overflow-hidden relative"
+            className="bg-white/40 backdrop-blur-xl p-6 md:p-10 rounded-[2.5rem] border border-white shadow-xl hover:shadow-2xl transition-all group hover:-translate-y-2 duration-700 cursor-pointer text-left w-full overflow-hidden relative"
           >
             <div className="absolute top-0 right-0 w-24 h-24 bg-slate-900/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-500/10 transition-colors" />
             <div className={`${stat.bg} w-16 h-16 rounded-[2rem] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-700 shadow-lg relative z-10`}>
@@ -471,9 +476,9 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, currentUser }) => {
             <p className="text-slate-400 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mb-2 relative z-10">{stat.label}</p>
             <div className="flex items-end gap-2 relative z-10">
               <p className="text-3xl md:text-5xl font-black text-slate-900 group-hover:text-amber-600 transition-colors tracking-tighter">
-                {idx === 0 ? (currentUser?.pvPersonal || 0).toLocaleString() : stat.value}
+                {stat.value}
               </p>
-              {idx === 0 && <span className="text-xs font-black text-slate-400 mb-2">PV</span>}
+              {idx < 3 && <span className="text-xs font-black text-slate-400 mb-2">PV</span>}
             </div>
           </button>
         ))}

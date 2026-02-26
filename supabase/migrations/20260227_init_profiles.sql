@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     pv_personal INTEGER DEFAULT 0,
     pv_team INTEGER DEFAULT 0,
     is_admin BOOLEAN DEFAULT FALSE,
+    referred_by TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );

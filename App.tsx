@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
@@ -30,6 +29,7 @@ import WealthDNA from './pages/WealthDNA.tsx';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import { supabase } from './lib/supabase';
 
 const navigation = [
   { name: 'แดชบอร์ด', icon: LayoutDashboard, view: AppView.DASHBOARD },
@@ -63,18 +63,59 @@ const App: React.FC = () => {
       if (storedRef) setReferralId(storedRef);
     }
 
-    // 2. Check for existing session
-    const storedUser = localStorage.getItem('unicorn_current_user');
-    if (storedUser) {
-      try {
-        const user = JSON.parse(storedUser) as User;
-        setCurrentUser(user);
+    // 2. Initial Session Check
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        await fetchAndSetUser(session.user);
         setCurrentView(AppView.DASHBOARD);
-      } catch {
+      }
+    };
+
+    checkSession();
+
+    // 3. Listen for Auth Changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        await fetchAndSetUser(session.user);
+        setCurrentView(AppView.DASHBOARD);
+      } else if (event === 'SIGNED_OUT') {
+        setCurrentUser(null);
+        setCurrentView(AppView.LANDING);
         localStorage.removeItem('unicorn_current_user');
       }
-    }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
+
+  const fetchAndSetUser = async (user: any) => {
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    const userData: User = {
+      id: user.id,
+      fullName: profileData?.full_name || user.user_metadata?.full_name || 'User',
+      username: profileData?.username || user.user_metadata?.username || user.email?.split('@')[0],
+      email: user.email!,
+      avatarUrl: profileData?.avatar_url,
+      createdAt: user.created_at,
+      ubcLevel: profileData?.ubc_level || 1,
+      pvPersonal: profileData?.pv_personal || 0,
+      pvTeam: profileData?.pv_team || 0,
+      isAdmin: profileData?.is_admin || false,
+      wealthElement: profileData?.wealth_element,
+      referredBy: profileData?.referred_by
+    };
+
+    setCurrentUser(userData);
+    localStorage.setItem('unicorn_current_user', JSON.stringify(userData));
+  };
 
   const handleLogin = (user: User) => {
     setCurrentUser(user);
@@ -86,11 +127,31 @@ const App: React.FC = () => {
     setCurrentView(AppView.DASHBOARD);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('unicorn_current_user');
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     setCurrentUser(null);
     setCurrentView(AppView.LANDING);
     setSidebarOpen(false);
+    localStorage.removeItem('unicorn_current_user');
+  };
+
+  const updateUser = async (updatedUser: User) => {
+    setCurrentUser(updatedUser);
+    localStorage.setItem('unicorn_current_user', JSON.stringify(updatedUser));
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        full_name: updatedUser.fullName,
+        avatar_url: updatedUser.avatarUrl,
+        wealth_element: updatedUser.wealthElement,
+        ubc_level: updatedUser.ubcLevel,
+        pv_personal: updatedUser.pvPersonal,
+        pv_team: updatedUser.pvTeam
+      })
+      .eq('id', updatedUser.id);
+
+    if (error) console.error('Error updating profile:', error);
   };
 
   // ===== AUTH PAGES (not logged in) =====
@@ -242,10 +303,10 @@ const App: React.FC = () => {
             {currentView === AppView.FUNCTIONS && <Functions onNavigate={setCurrentView} currentUser={currentUser} />}
             {currentView === AppView.AI_COACH && <AICoach onNavigate={setCurrentView} />}
             {currentView === AppView.LIBRARY && <Library onNavigate={setCurrentView} />}
-            {currentView === AppView.PROFILE && <Profile currentUser={currentUser} onUpdateUser={setCurrentUser} onNavigate={setCurrentView} />}
+            {currentView === AppView.PROFILE && <Profile currentUser={currentUser} onUpdateUser={updateUser} onNavigate={setCurrentView} />}
             {currentView === AppView.UBC_PROGRAM && <UBCProgram onNavigate={setCurrentView} />}
             {currentView === AppView.PRODUCT_CATALOG && <ProductCatalog onNavigate={setCurrentView} />}
-            {currentView === AppView.WEALTH_DNA && <WealthDNA onNavigate={setCurrentView} onUpdateUser={setCurrentUser} />}
+            {currentView === AppView.WEALTH_DNA && <WealthDNA onNavigate={setCurrentView} onUpdateUser={updateUser} currentUser={currentUser} />}
           </div>
         </div>
       </main>

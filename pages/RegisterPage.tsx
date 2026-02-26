@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
     Mail,
@@ -16,6 +15,7 @@ import {
     RefreshCw
 } from 'lucide-react';
 import { AppView, User } from '../types';
+import { supabase } from '../lib/supabase';
 
 interface RegisterPageProps {
     onNavigate: (view: AppView) => void;
@@ -76,15 +76,71 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
         setIsLoading(true);
 
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            // In a real app, this would trigger an email send
-            setStep('otp');
-            setTimer(60);
-        } catch {
-            setError('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+            // 1. Sign up user via Supabase Auth
+            const { data, error: signUpError } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {
+                        full_name: fullName,
+                        username: username.toLowerCase().replace(/\s+/g, ''),
+                    }
+                }
+            });
+
+            if (signUpError) throw signUpError;
+
+            // In a real app with email verification enabled, it sends an email.
+            // If verification is disabled, it returns a session.
+            if (data.session) {
+                // If auto-logged in, create profile and finish
+                await createProfile(data.user!);
+            } else {
+                // If email verification is needed, show OTP step
+                setStep('otp');
+                setTimer(60);
+            }
+        } catch (err: any) {
+            setError(err.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const createProfile = async (user: any) => {
+        const { error: profileError } = await supabase
+            .from('profiles')
+            .upsert({
+                id: user.id,
+                full_name: fullName,
+                username: username.toLowerCase().replace(/\s+/g, ''),
+                email,
+                phone: phone || null,
+                referred_by: referralId || null,
+                ubc_level: 1,
+                pv_personal: 0,
+                pv_team: 0,
+                is_admin: false
+            });
+
+        if (profileError) throw profileError;
+
+        const userData: User = {
+            id: user.id,
+            fullName,
+            username: username.toLowerCase().replace(/\s+/g, ''),
+            email,
+            phone: phone || undefined,
+            createdAt: user.created_at,
+            referredBy: referralId || undefined,
+            ubcLevel: 1,
+            pvPersonal: 0,
+            pvTeam: 0,
+            isAdmin: false
+        };
+
+        localStorage.setItem('unicorn_current_user', JSON.stringify(userData));
+        onRegister(userData);
     };
 
     const handleVerifyOtp = async (e: React.FormEvent) => {
@@ -100,47 +156,19 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
         setIsLoading(true);
 
         try {
-            await new Promise(resolve => setTimeout(resolve, 1200));
-
-            const storedUsers = JSON.parse(localStorage.getItem('unicorn_users') || '[]');
-
-            if (storedUsers.some((u: any) => u.email === email)) {
-                setError('อีเมลนี้ถูกใช้แล้ว กรุณาใช้อีเมลอื่น');
-                setStep('details');
-                setIsLoading(false);
-                return;
-            }
-
-            if (storedUsers.some((u: any) => u.username === username)) {
-                setError('Username นี้ถูกใช้แล้ว กรุณาใช้ชื่ออื่น');
-                setStep('details');
-                setIsLoading(false);
-                return;
-            }
-
-            const newUser: User & { password: string; referredBy?: string } = {
-                id: `user_${Date.now()}`,
-                fullName,
-                username: username.toLowerCase().replace(/\s+/g, ''),
+            const { data, error: verifyError } = await supabase.auth.verifyOtp({
                 email,
-                phone: phone || undefined,
-                password,
-                createdAt: new Date().toISOString(),
-                referredBy: referralId || undefined,
-                ubcLevel: 1, // Start at Level 1 Foundation
-                pvPersonal: 0,
-                pvTeam: 0,
-                isAdmin: false // Default to false, can be updated manually in DB
-            };
+                token: otpCode,
+                type: 'signup'
+            });
 
-            storedUsers.push(newUser);
-            localStorage.setItem('unicorn_users', JSON.stringify(storedUsers));
+            if (verifyError) throw verifyError;
 
-            const { password: _, ...userWithoutPassword } = newUser;
-            localStorage.setItem('unicorn_current_user', JSON.stringify(userWithoutPassword));
-            onRegister(userWithoutPassword);
-        } catch {
-            setError('รหัสยืนยันไม่ถูกต้อง หรือหมดอายุ');
+            if (data.user) {
+                await createProfile(data.user);
+            }
+        } catch (err: any) {
+            setError(err.message || 'รหัสยืนยันไม่ถูกต้อง หรือหมดอายุ');
         } finally {
             setIsLoading(false);
         }

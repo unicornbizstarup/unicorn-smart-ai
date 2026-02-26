@@ -27,6 +27,9 @@ export interface User {
   ubcLevel?: UBCLevel;
   pvPersonal?: number;
   pvTeam?: number;
+  personalPv?: number;
+  teamPvLeft?: number;
+  teamPvRight?: number;
   isAdmin?: boolean;
   referredBy?: string;
 }
@@ -46,43 +49,4 @@ export interface TopicMastery {
   quizScore: number;
   aiScore: number;
   fieldWorkCount: number;
-}
-
-export interface ChatMessage {
-  id?: string;
-  role: 'user' | 'model' | 'assistant';
-  text: string;
-  timestamp?: Date;
-}
-
-export interface FunctionEvent {
-  period: 'DAY' | 'WEEK' | 'MONTH' | 'QUARTER';
-  items: string[];
-}
-
-export interface LibraryItem {
-  id: string;
-  title: string;
-  description: string;
-  category: 'TEACHING' | 'DOCUMENTS' | 'MARKETING' | 'CLIPS' | 'GUIDELINES';
-  type: 'PDF' | 'VIDEO' | 'IMAGE' | 'LINK';
-  thumbnail?: string;
-}
-
-export interface UserProgress {
-  userId: string;
-  level: UBCLevel;
-  points: number;
-  completedMissions: string[];
-  lastActive: Date;
-  dnaScore: number; // Decoding Your Wealth DNA score
-}
-
-export interface Mission {
-  id: string;
-  level: UBCLevel;
-  title: string;
-  description: string;
-  category: 'MINDSET' | 'SKILLSET' | 'TOOLSET';
-  rewardPoints: number;
 }

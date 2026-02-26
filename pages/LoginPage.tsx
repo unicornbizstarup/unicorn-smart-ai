@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
     Mail,
@@ -10,6 +9,7 @@ import {
     Sparkles
 } from 'lucide-react';
 import { AppView, User } from '../types';
+import { supabase } from '../lib/supabase';
 
 interface LoginPageProps {
     onNavigate: (view: AppView) => void;
@@ -34,24 +34,49 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLogin }) => {
 
         setIsLoading(true);
 
-        // Phase 1: localStorage auth
         try {
-            await new Promise(resolve => setTimeout(resolve, 800));
+            // 1. Sign in via Supabase Auth
+            const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
 
-            const storedUsers = JSON.parse(localStorage.getItem('unicorn_users') || '[]');
-            const foundUser = storedUsers.find(
-                (u: User & { password: string }) => u.email === email && u.password === password
-            );
+            if (authError) throw authError;
 
-            if (foundUser) {
-                const { password: _, ...userWithoutPassword } = foundUser;
-                localStorage.setItem('unicorn_current_user', JSON.stringify(userWithoutPassword));
-                onLogin(userWithoutPassword);
-            } else {
-                setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+            if (authData.user) {
+                // 2. Fetch profile data from public.profiles
+                const { data: profileData, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', authData.user.id)
+                    .single();
+
+                if (profileError) {
+                    console.error('Error fetching profile:', profileError);
+                    // If profile doesn't exist yet but user is in auth (shouldn't happen with our sign up),
+                    // we might need to handle it or fallback.
+                }
+
+                const userData: User = {
+                    id: authData.user.id,
+                    fullName: profileData?.full_name || authData.user.user_metadata?.full_name || 'User',
+                    username: profileData?.username || authData.user.user_metadata?.username || email.split('@')[0],
+                    email: authData.user.email!,
+                    avatarUrl: profileData?.avatar_url,
+                    createdAt: authData.user.created_at,
+                    ubcLevel: profileData?.ubc_level || 1,
+                    pvPersonal: profileData?.pv_personal || 0,
+                    pvTeam: profileData?.pv_team || 0,
+                    isAdmin: profileData?.is_admin || false,
+                    wealthElement: profileData?.wealth_element,
+                    referredBy: profileData?.referred_by
+                };
+
+                localStorage.setItem('unicorn_current_user', JSON.stringify(userData));
+                onLogin(userData);
             }
-        } catch {
-            setError('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+        } catch (err: any) {
+            setError(err.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
         } finally {
             setIsLoading(false);
         }

@@ -1,18 +1,6 @@
-// Supabase is temporarily disabled. Membership system will be integrated in the next phase.
-// lib/supabase.ts - Stub placeholder
+import { createClient } from '@supabase/supabase-js';
 
-export const supabase = {
-    auth: {
-        getUser: async () => ({ data: { user: null }, error: null }),
-        signInWithPassword: async () => ({ data: null, error: { message: 'Auth not available' } }),
-        signOut: async () => ({ error: null }),
-    },
-    from: (_table: string) => ({
-        select: (_cols?: string) => ({
-            eq: (_col: string, _val: unknown) => ({
-                single: async () => ({ data: null, error: null }),
-            }),
-        }),
-        upsert: async (_data: unknown) => ({ error: null }),
-    }),
-};
+const supabaseUrl = 'https://joryufdkqxlnaseocolf.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impvcnl1ZmRrcXhsbmFzZW9jb2xmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzE3MTEsImV4cCI6MjA4NzcwNzcxMX0.QFg75UYcnm_aRiApY6d2zeXYdDF3YE41i28i0KHzG7M';
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);

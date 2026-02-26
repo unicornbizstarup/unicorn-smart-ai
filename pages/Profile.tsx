@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-    User,
+    User as UserIcon,
     Mail,
     Link as LinkIcon,
     BookOpen,
@@ -28,10 +28,12 @@ import {
     ChevronRight,
     Trophy,
     Lightbulb,
-    Bot
+    Bot,
+    Loader2
 } from 'lucide-react';
 import { WEALTH_ELEMENTS } from '../data/wealthDnaData';
 import { User as UserType, AppView } from '../types';
+import { supabase } from '../lib/supabase';
 
 interface ProfileProps {
     currentUser: UserType | null;
@@ -44,31 +46,89 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
     const [isSaving, setIsSaving] = useState(false);
     const [showCopiedToast, setShowCopiedToast] = useState(false);
     const [profile, setProfile] = useState({
-        full_name: 'Kru Den Master Fa',
-        email: 'kru.den@unicorn.com',
-        bio: 'ผู้เชี่ยวชาญการสร้างระบบ Business Startup และการสอนด้วย AI เพื่อเปลี่ยนนักขายให้เป็นที่ปรึกษามืออาชีพ',
-        specialization: 'AI Marketing & Leadership',
-        contact_link: 'https://line.me/ti/p/@unicorn', // Main CTA link
-        quote: 'เป้าหมายที่ชัดเจน คือจุดเริ่มต้นของความสำเร็จระดับยูนิคอร์น 🦄',
-        video_url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Example embedded video URL
+        full_name: currentUser?.fullName || '',
+        email: currentUser?.email || '',
+        bio: '',
+        specialization: '',
+        contact_link: '',
+        quote: '',
+        video_url: '',
         social_links: {
-            facebook: 'https://facebook.com/kru.den',
-            instagram: 'https://instagram.com/kru.den.unicorn',
-            tiktok: 'https://tiktok.com/@kru.den.ai',
-            youtube: 'https://youtube.com/@kruden',
-            website: 'https://kruden.unicorn.com',
+            facebook: '',
+            instagram: '',
+            tiktok: '',
+            youtube: '',
+            website: '',
         },
-        ubc_level: 4,
-        points: 45280,
+        ubc_level: currentUser?.ubcLevel || 1,
+        points: (currentUser?.pvPersonal || 0) + (currentUser?.pvTeam || 0),
         wealthElement: currentUser?.wealthElement || null
     });
 
+    // Fetch full profile details from Supabase on mount
+    useEffect(() => {
+        const fetchProfileDetails = async () => {
+            if (!currentUser?.id) return;
+
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', currentUser.id)
+                .single();
+
+            if (data && !error) {
+                // Assuming we'll add these columns to the DB or store in a JSON field
+                // For now, let's map what we have and use defaults for the rest
+                setProfile(prev => ({
+                    ...prev,
+                    full_name: data.full_name,
+                    email: data.email,
+                    wealthElement: data.wealth_element,
+                    ubc_level: data.ubc_level || 1,
+                    // If we add columns for bio, video_url etc later:
+                    bio: data.bio || prev.bio,
+                    quote: data.quote || prev.quote,
+                    video_url: data.video_url || prev.video_url,
+                    contact_link: data.contact_link || prev.contact_link,
+                    social_links: data.social_links || prev.social_links
+                }));
+            }
+        };
+
+        fetchProfileDetails();
+    }, [currentUser?.id]);
+
     const handleSave = async () => {
+        if (!currentUser?.id) return;
         setIsSaving(true);
-        // Simulated save - Supabase will be connected in next phase
-        await new Promise(resolve => setTimeout(resolve, 800));
-        setIsSaving(false);
-        setIsEditing(false);
+
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({
+                    full_name: profile.full_name,
+                    wealth_element: profile.wealthElement,
+                    // Store extra fields in a JSON column or separate columns
+                    // For now, let's assume we might have these columns or use a fallback
+                })
+                .eq('id', currentUser.id);
+
+            if (error) throw error;
+
+            // Update local user state in App.tsx
+            onUpdateUser({
+                ...currentUser,
+                fullName: profile.full_name,
+                wealthElement: profile.wealthElement as any
+            });
+
+            setIsEditing(false);
+        } catch (err) {
+            console.error('Save error:', err);
+            alert('ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง');
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const handleCopyLink = () => {
@@ -268,7 +328,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                         <div className="flex justify-between items-center mb-8 border-b border-slate-100 pb-4">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white shadow-md">
-                                    <User size={20} />
+                                    <UserIcon size={20} />
                                 </div>
                                 <h3 className="text-lg md:text-xl font-black text-slate-900">ตั้งค่าโปรไฟล์และข้อมูลติดต่อ</h3>
                             </div>
