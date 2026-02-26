@@ -1,5 +1,8 @@
 
 export enum AppView {
+  LANDING = 'LANDING',
+  LOGIN = 'LOGIN',
+  REGISTER = 'REGISTER',
   DASHBOARD = 'DASHBOARD',
   SYSTEM_456 = 'SYSTEM_456',
   START_UP = 'START_UP',
@@ -7,6 +10,14 @@ export enum AppView {
   AI_COACH = 'AI_COACH',
   LIBRARY = 'LIBRARY',
   PROFILE = 'PROFILE'
+}
+
+export interface User {
+  id: string;
+  fullName: string;
+  email: string;
+  phone?: string;
+  createdAt: string;
 }
 
 export enum UBCLevel {

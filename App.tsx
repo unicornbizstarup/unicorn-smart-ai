@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
   Layers,
@@ -12,9 +12,10 @@ import {
   BookOpen,
   Trophy,
   CheckCircle2,
-  FolderOpen
+  FolderOpen,
+  LogOut
 } from 'lucide-react';
-import { AppView } from './types';
+import { AppView, User } from './types';
 import Dashboard from './pages/Dashboard';
 import System456 from './pages/System456';
 import StartUp from './pages/StartUp';
@@ -22,6 +23,9 @@ import Functions from './pages/Functions';
 import AICoach from './pages/AICoach';
 import Library from './pages/Library';
 import Profile from './pages/Profile';
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 const navigation = [
   { name: 'แดชบอร์ด', icon: LayoutDashboard, view: AppView.DASHBOARD },
@@ -33,9 +37,53 @@ const navigation = [
 ];
 
 const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<AppView>(AppView.DASHBOARD);
+  const [currentView, setCurrentView] = useState<AppView>(AppView.LANDING);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
+  // Check for existing session on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem('unicorn_current_user');
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser) as User;
+        setCurrentUser(user);
+        setCurrentView(AppView.DASHBOARD);
+      } catch {
+        localStorage.removeItem('unicorn_current_user');
+      }
+    }
+  }, []);
+
+  const handleLogin = (user: User) => {
+    setCurrentUser(user);
+    setCurrentView(AppView.DASHBOARD);
+  };
+
+  const handleRegister = (user: User) => {
+    setCurrentUser(user);
+    setCurrentView(AppView.DASHBOARD);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('unicorn_current_user');
+    setCurrentUser(null);
+    setCurrentView(AppView.LANDING);
+    setSidebarOpen(false);
+  };
+
+  // ===== AUTH PAGES (not logged in) =====
+  if (!currentUser) {
+    if (currentView === AppView.LOGIN) {
+      return <LoginPage onNavigate={setCurrentView} onLogin={handleLogin} />;
+    }
+    if (currentView === AppView.REGISTER) {
+      return <RegisterPage onNavigate={setCurrentView} onRegister={handleRegister} />;
+    }
+    return <LandingPage onNavigate={setCurrentView} />;
+  }
+
+  // ===== MAIN APP (logged in) =====
   return (
     <div className="min-h-screen bg-slate-50 flex">
       {/* Sidebar for Desktop */}
@@ -45,8 +93,8 @@ const App: React.FC = () => {
         lg:relative lg:translate-x-0 border-r border-white/5 shadow-2xl
       `}>
         <div className="p-6 lg:p-8 h-full flex flex-col">
-          <button 
-            className="flex items-center gap-4 mb-12 group cursor-pointer text-left focus:outline-none" 
+          <button
+            className="flex items-center gap-4 mb-12 group cursor-pointer text-left focus:outline-none"
             onClick={() => setCurrentView(AppView.DASHBOARD)}
             aria-label="ไปที่หน้าแดชบอร์ดหลัก"
           >
@@ -80,8 +128,8 @@ const App: React.FC = () => {
             ))}
           </nav>
 
-          <div className="mt-auto pt-8">
-            <button 
+          <div className="mt-auto pt-8 space-y-3">
+            <button
               onClick={() => {
                 setCurrentView(AppView.PROFILE);
                 setSidebarOpen(false);
@@ -96,13 +144,23 @@ const App: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-400 via-amber-500 to-amber-600 shadow-lg group-hover:scale-110 transition-transform duration-500" />
                 <div>
-                  <p className="text-sm font-bold tracking-tight text-white">Kru Den Master Fa</p>
+                  <p className="text-sm font-bold tracking-tight text-white">{currentUser.fullName}</p>
                   <div className="flex items-center gap-1">
                     <Trophy size={10} className="text-amber-500" />
                     <p className="text-xs-plus text-slate-400 font-bold uppercase">Super Star</p>
                   </div>
                 </div>
               </div>
+            </button>
+
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              aria-label="ออกจากระบบ"
+              className="w-full flex items-center gap-3 px-5 py-3 text-slate-500 hover:text-red-400 hover:bg-red-500/5 rounded-2xl transition-all group"
+            >
+              <LogOut size={18} className="group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-bold">ออกจากระบบ</span>
             </button>
           </div>
         </div>
