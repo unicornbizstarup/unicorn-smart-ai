@@ -58,7 +58,7 @@ const Profile: React.FC = () => {
                     </div>
                     <div className="flex-1 text-white pb-2">
                         <div className="flex items-center gap-2 mb-2">
-                            <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg">UBC Level {profile.ubc_level} - Master</span>
+                            <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg">UBC {profile.ubc_level} - Master</span>
                         </div>
                         <h1 className="text-3xl md:text-4xl font-black tracking-tight">{profile.full_name}</h1>
                         <p className="text-white/60 font-bold text-sm tracking-wide mt-1 uppercase tracking-[0.2em]">{profile.specialization}</p>

@@ -166,7 +166,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <span className="bg-amber-500/10 text-amber-600 border border-amber-500/20 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-sm">Diamond Executive</span>
+              <span className="bg-amber-500/10 text-amber-600 border border-amber-500/20 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-sm">DIAMOND ZONE</span>
               <span className="text-slate-400 text-[10px] font-bold">U-Partner ID: 9988-AIC</span>
             </div>
             <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight mb-1">Kru Den Master Fa</h2>
@@ -177,7 +177,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               </div>
               <div className="flex items-center gap-1.5 transition-transform hover:scale-105">
                 <Star size={16} className="text-amber-500 fill-amber-500" />
-                <span className="text-xs font-black text-slate-900 tracking-tight">Level {userLevel} Professional</span>
+                <span className="text-xs font-black text-slate-900 tracking-tight">UBC {userLevel} Professional</span>
               </div>
             </div>
           </div>
