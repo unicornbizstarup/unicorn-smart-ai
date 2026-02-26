@@ -1,5 +1,5 @@
 import express from 'express';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 // Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
 // Chat Proxy Endpoint
 app.post('/api/chat', async (req, res) => {
@@ -27,7 +27,7 @@ app.post('/api/chat', async (req, res) => {
     }
 
     // Initialize Gemini inside the handler to ensure fresh environment variables
-    const genAI = new GoogleGenerativeAI(apiKey);
+    const ai = new GoogleGenAI({ apiKey });
 
     // Hardcoded system instruction with updated persona and product data
     const systemInstruction = `คุณคือ 'Uni Smart AI' (ชื่อเล่น: น้องยูนิ) โค้ชพี่เลี้ยง (Mentor Coach) ที่อบอุ่นและที่ปรึกษาการตลาดยูนิคอร์นมืออาชีพ! 🦄✨
@@ -65,11 +65,6 @@ app.post('/api/chat', async (req, res) => {
           
           ภารกิจ: เป็นทั้งลมใต้ปีกและคลังสมองให้คุณพี่ เพื่อให้ "ทำการตลาดและปิดการขายได้อย่างมืออาชีพและถูกต้องที่สุด" 🚀💎`;
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-      systemInstruction: systemInstruction
-    });
-
     // 1. Transform messages to Gemini history format (excluding the last message)
     // CRITICAL: Gemini requires the history to START with a 'user' message.
     let history = messages.slice(0, -1).map(msg => ({
@@ -87,13 +82,21 @@ app.post('/api/chat', async (req, res) => {
 
     const lastMessage = messages[messages.length - 1].text;
 
-    const chat = model.startChat({
-      history: history
+    // Build contents array: system instruction + history + last message
+    const contents = [
+      ...history,
+      { role: 'user', parts: [{ text: lastMessage }] }
+    ];
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: contents,
+      config: {
+        systemInstruction: systemInstruction
+      }
     });
 
-    const result = await chat.sendMessage(lastMessage);
-    const response = await result.response;
-    const text = response.text();
+    const text = response.text;
 
     res.json({ text });
   } catch (error) {

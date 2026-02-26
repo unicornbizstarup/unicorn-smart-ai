@@ -10,6 +10,7 @@
     "upweb": "npm run build && git add . && git commit -m \"update: automated web update 🦄✨\" && git push origin main"
   },
   "dependencies": {
+    "@google/genai": "^1.43.0",
     "@google/generative-ai": "^0.21.0",
     "@supabase/supabase-js": "^2.97.0",
     "cors": "^2.8.5",
