@@ -25,6 +25,7 @@ import AICoach from './pages/AICoach';
 import Library from './pages/Library';
 import Profile from './pages/Profile';
 import UBCProgram from './pages/UBCProgram';
+import ProductCatalog from './pages/ProductCatalog';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -37,6 +38,7 @@ const navigation = [
   { name: 'ฟังก์ชั่นการเรียนรู้', icon: CalendarDays, view: AppView.FUNCTIONS },
   { name: 'โค้ชอัจฉริยะ AI', icon: Bot, view: AppView.AI_COACH },
   { name: 'โปรแกรม UBC', icon: GraduationCap, view: AppView.UBC_PROGRAM },
+  { name: 'ข้อมูลสินค้า', icon: BookOpen, view: AppView.PRODUCT_CATALOG },
 ];
 
 const App: React.FC = () => {
@@ -215,13 +217,14 @@ const App: React.FC = () => {
         <div className={`flex-1 overflow-y-auto ${currentView === AppView.AI_COACH ? 'p-0' : 'p-2 lg:p-4'} h-full bg-slate-50`}>
           <div className="w-full h-full">
             {currentView === AppView.DASHBOARD && <Dashboard onNavigate={setCurrentView} />}
-            {currentView === AppView.SYSTEM_456 && <System456 />}
+            {currentView === AppView.SYSTEM_456 && <System456 onNavigate={setCurrentView} />}
             {currentView === AppView.START_UP && <StartUp />}
             {currentView === AppView.FUNCTIONS && <Functions />}
             {currentView === AppView.AI_COACH && <AICoach />}
             {currentView === AppView.LIBRARY && <Library />}
             {currentView === AppView.PROFILE && <Profile />}
             {currentView === AppView.UBC_PROGRAM && <UBCProgram />}
+            {currentView === AppView.PRODUCT_CATALOG && <ProductCatalog onNavigate={setCurrentView} />}
           </div>
         </div>
       </main>

@@ -25,8 +25,11 @@ import {
    Briefcase,
    Search,
    MessageCircle,
-   Zap
+   Zap,
+   CheckCircle2,
+   BookOpen
 } from 'lucide-react';
+import { AppView } from '../types';
 
 const iconMap: Record<string, any> = {
    User, Star, Shield, Gem, Award, Crown
@@ -41,7 +44,7 @@ const masterySteps = [
 
 const tabs_options = ['4-KNOW', '5-DO', '6-BE'] as const;
 
-const System456: React.FC = () => {
+const System456: React.FC<{ onNavigate?: (view: AppView) => void }> = ({ onNavigate }) => {
    const [activeTab, setActiveTab] = useState<'4-KNOW' | '5-DO' | '6-BE'>('4-KNOW');
    const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
 
