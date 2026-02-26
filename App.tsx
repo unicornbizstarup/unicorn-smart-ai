@@ -13,7 +13,8 @@ import {
   Trophy,
   CheckCircle2,
   FolderOpen,
-  LogOut
+  LogOut,
+  GraduationCap
 } from 'lucide-react';
 import { AppView, User } from './types';
 import Dashboard from './pages/Dashboard';
@@ -23,6 +24,7 @@ import Functions from './pages/Functions';
 import AICoach from './pages/AICoach';
 import Library from './pages/Library';
 import Profile from './pages/Profile';
+import UBCProgram from './pages/UBCProgram';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -34,6 +36,7 @@ const navigation = [
   { name: 'คลังสื่อ/เอกสาร', icon: FolderOpen, view: AppView.LIBRARY },
   { name: 'ฟังก์ชั่นการเรียนรู้', icon: CalendarDays, view: AppView.FUNCTIONS },
   { name: 'โค้ชอัจฉริยะ AI', icon: Bot, view: AppView.AI_COACH },
+  { name: 'โปรแกรม UBC', icon: GraduationCap, view: AppView.UBC_PROGRAM },
 ];
 
 const App: React.FC = () => {
@@ -218,6 +221,7 @@ const App: React.FC = () => {
             {currentView === AppView.AI_COACH && <AICoach />}
             {currentView === AppView.LIBRARY && <Library />}
             {currentView === AppView.PROFILE && <Profile />}
+            {currentView === AppView.UBC_PROGRAM && <UBCProgram />}
           </div>
         </div>
       </main>

@@ -9,7 +9,8 @@ export enum AppView {
   FUNCTIONS = 'FUNCTIONS',
   AI_COACH = 'AI_COACH',
   LIBRARY = 'LIBRARY',
-  PROFILE = 'PROFILE'
+  PROFILE = 'PROFILE',
+  UBC_PROGRAM = 'UBC_PROGRAM'
 }
 
 export interface User {
