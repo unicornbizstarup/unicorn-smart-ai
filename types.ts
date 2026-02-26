@@ -11,7 +11,8 @@ export enum AppView {
   LIBRARY = 'LIBRARY',
   PROFILE = 'PROFILE',
   UBC_PROGRAM = 'UBC_PROGRAM',
-  PRODUCT_CATALOG = 'PRODUCT_CATALOG'
+  PRODUCT_CATALOG = 'PRODUCT_CATALOG',
+  WEALTH_DNA = 'WEALTH_DNA'
 }
 
 export interface User {
@@ -20,6 +21,8 @@ export interface User {
   email: string;
   phone?: string;
   createdAt: string;
+  birthDate?: string;
+  wealthElement?: 'FIRE' | 'WATER' | 'EARTH' | 'AIR';
 }
 
 export enum UBCLevel {

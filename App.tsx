@@ -26,6 +26,7 @@ import Library from './pages/Library';
 import Profile from './pages/Profile';
 import UBCProgram from './pages/UBCProgram';
 import ProductCatalog from './pages/ProductCatalog';
+import WealthDNA from './pages/WealthDNA';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -39,6 +40,7 @@ const navigation = [
   { name: 'โค้ชอัจฉริยะ AI', icon: Bot, view: AppView.AI_COACH },
   { name: 'โปรแกรม UBC', icon: GraduationCap, view: AppView.UBC_PROGRAM },
   { name: 'ข้อมูลสินค้า', icon: BookOpen, view: AppView.PRODUCT_CATALOG },
+  { name: 'วิเคราะห์ Wealth DNA', icon: Trophy, view: AppView.WEALTH_DNA },
 ];
 
 const App: React.FC = () => {
@@ -222,9 +224,10 @@ const App: React.FC = () => {
             {currentView === AppView.FUNCTIONS && <Functions />}
             {currentView === AppView.AI_COACH && <AICoach />}
             {currentView === AppView.LIBRARY && <Library />}
-            {currentView === AppView.PROFILE && <Profile />}
+            {currentView === AppView.PROFILE && <Profile currentUser={currentUser} onUpdateUser={setCurrentUser} />}
             {currentView === AppView.UBC_PROGRAM && <UBCProgram />}
             {currentView === AppView.PRODUCT_CATALOG && <ProductCatalog onNavigate={setCurrentView} />}
+            {currentView === AppView.WEALTH_DNA && <WealthDNA onNavigate={setCurrentView} onUpdateUser={setCurrentUser} />}
           </div>
         </div>
       </main>

@@ -19,10 +19,26 @@ import {
     Globe,
     Share2,
     CheckCircle2,
-    Copy
+    Copy,
+    Zap,
+    Waves,
+    Shield,
+    Airplay,
+    Sparkles,
+    ChevronRight,
+    Trophy,
+    Lightbulb,
+    Bot
 } from 'lucide-react';
+import { WEALTH_ELEMENTS } from '../data/wealthDnaData';
+import { User as UserType } from '../types';
 
-const Profile: React.FC = () => {
+interface ProfileProps {
+    currentUser: UserType | null;
+    onUpdateUser: (user: UserType) => void;
+}
+
+const Profile: React.FC<ProfileProps> = ({ currentUser }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [showCopiedToast, setShowCopiedToast] = useState(false);
@@ -42,7 +58,8 @@ const Profile: React.FC = () => {
             website: 'https://kruden.unicorn.com',
         },
         ubc_level: 4,
-        points: 45280
+        points: 45280,
+        wealthElement: currentUser?.wealthElement || null
     });
 
     const handleSave = async () => {
@@ -145,6 +162,67 @@ const Profile: React.FC = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Wealth DNA Section */}
+            <div className="glass-card p-6 md:p-8 rounded-[2.5rem] border border-white/60 shadow-xl overflow-hidden relative group">
+                {profile.wealthElement ? (
+                    <div className="flex flex-col md:flex-row items-center gap-8 animate-in fade-in slide-in-from-right-8 duration-500">
+                        <div className={`w-32 h-32 rounded-3xl bg-gradient-to-br flex items-center justify-center text-white shadow-lg ${WEALTH_ELEMENTS[profile.wealthElement].color}`}>
+                            {profile.wealthElement === 'FIRE' && <Zap size={48} />}
+                            {profile.wealthElement === 'WATER' && <Waves size={48} />}
+                            {profile.wealthElement === 'EARTH' && <Shield size={48} />}
+                            {profile.wealthElement === 'AIR' && <Airplay size={48} />}
+                        </div>
+                        <div className="flex-1 text-center md:text-left space-y-2">
+                            <div className="flex items-center gap-2 justify-center md:justify-start">
+                                <Trophy size={16} className="text-amber-500" />
+                                <span className="text-xs font-black text-slate-400 uppercase tracking-widest">รหัสความมั่งคั่งประเจำตัว</span>
+                            </div>
+                            <h2 className="text-3xl font-black text-slate-900 tracking-tight">
+                                {WEALTH_ELEMENTS[profile.wealthElement].name}
+                            </h2>
+                            <p className="text-slate-500 font-bold italic">"{WEALTH_ELEMENTS[profile.wealthElement].concept}"</p>
+                            <div className="flex flex-wrap gap-2 pt-2 justify-center md:justify-start">
+                                {WEALTH_ELEMENTS[profile.wealthElement].strengths.slice(0, 3).map((s, i) => (
+                                    <span key={i} className="px-3 py-1 bg-slate-100 rounded-lg text-[10px] font-black text-slate-600 uppercase tracking-tight">
+                                        {s}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="bg-indigo-50 p-6 rounded-2xl border border-indigo-100 max-w-sm">
+                            <h4 className="text-xs font-black text-indigo-600 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                <Lightbulb size={14} /> กลยุทธ์การตลาดแนะนำ
+                            </h4>
+                            <p className="text-sm font-bold text-slate-700 leading-relaxed italic">
+                                {WEALTH_ELEMENTS[profile.wealthElement].business_strategy}
+                            </p>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-6 py-4">
+                        <div className="flex items-center gap-6">
+                            <div className="w-20 h-20 bg-slate-100 rounded-3xl flex items-center justify-center text-slate-400">
+                                <Sparkles size={32} />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-black text-slate-900">ยังไม่ได้รับการวิเคราะห์ Wealth DNA</h3>
+                                <p className="text-slate-500 font-bold">ค้นหารหัสลับความมั่งคั่งของคุณเพื่อรับแผนธุรกิจที่ถูกโฉลกกับธาตุ</p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => window.location.hash = '#wealth-dna'} // Note: Simplified navigation trigger
+                            className="px-8 py-4 bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 font-black rounded-2xl shadow-lg hover:scale-105 transition-all flex items-center gap-2"
+                        >
+                            <Sparkles size={20} /> วิเคราะห์ DNA ตอนนี้
+                        </button>
+                    </div>
+                )}
+                {/* Background Sparkle Decoration */}
+                <div className="absolute -top-4 -right-4 text-slate-100/50 group-hover:text-amber-500/10 transition-colors">
+                    <Sparkles size={120} />
+                </div>
+            </div>
 
             <div className="grid lg:grid-cols-12 gap-8 items-start">
 
