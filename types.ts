@@ -23,8 +23,12 @@ export interface User {
   phone?: string;
   avatarUrl?: string; // Profile Image
   createdAt: string;
-  birthDate?: string;
-  wealthElement?: 'FIRE' | 'WATER' | 'EARTH' | 'AIR';
+  wealthElement?: string;
+  ubcLevel?: UBCLevel;
+  pvPersonal?: number;
+  pvTeam?: number;
+  isAdmin?: boolean;
+  referredBy?: string;
 }
 
 export enum UBCLevel {

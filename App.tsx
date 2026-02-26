@@ -25,8 +25,8 @@ import AICoach from './pages/AICoach';
 import Library from './pages/Library';
 import Profile from './pages/Profile';
 import UBCProgram from './pages/UBCProgram';
-import ProductCatalog from './pages/ProductCatalog';
-import WealthDNA from './pages/WealthDNA';
+import ProductCatalog from './pages/ProductCatalog.tsx';
+import WealthDNA from './pages/WealthDNA.tsx';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -47,9 +47,23 @@ const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>(AppView.LANDING);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [referralId, setReferralId] = useState<string | null>(null);
 
-  // Check for existing session on mount
+  // Check for existing session and referral parameters on mount
   useEffect(() => {
+    // 1. Check for referral code in URL
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref) {
+      localStorage.setItem('unicorn_referral_id', ref);
+      setReferralId(ref);
+      console.log('Referral tracked:', ref);
+    } else {
+      const storedRef = localStorage.getItem('unicorn_referral_id');
+      if (storedRef) setReferralId(storedRef);
+    }
+
+    // 2. Check for existing session
     const storedUser = localStorage.getItem('unicorn_current_user');
     if (storedUser) {
       try {
@@ -85,7 +99,7 @@ const App: React.FC = () => {
       return <LoginPage onNavigate={setCurrentView} onLogin={handleLogin} />;
     }
     if (currentView === AppView.REGISTER) {
-      return <RegisterPage onNavigate={setCurrentView} onRegister={handleRegister} />;
+      return <RegisterPage onNavigate={setCurrentView} onRegister={handleRegister} referralId={referralId} />;
     }
     return <LandingPage onNavigate={setCurrentView} />;
   }
@@ -112,7 +126,7 @@ const App: React.FC = () => {
             </div>
           </button>
 
-          <nav className="space-y-2 flex-1">
+          <nav className="space-y-2 flex-1 overflow-y-auto scrollbar-hide pr-2">
             {navigation.map((item) => (
               <button
                 key={item.name}
@@ -205,11 +219,15 @@ const App: React.FC = () => {
               onClick={() => setCurrentView(AppView.PROFILE)}
             >
               <div className="text-right">
-                <p className="text-xs font-black text-slate-900 leading-none group-hover:text-amber-600 transition-colors">Business Partner</p>
-                <p className="text-xs-plus text-amber-500 font-bold uppercase tracking-tighter">Diamond Executive</p>
+                <p className="text-xs font-black text-slate-900 leading-none group-hover:text-amber-600 transition-colors">
+                  {currentUser?.fullName || 'Guest User'}
+                </p>
+                <p className="text-[10px] text-amber-500 font-bold uppercase tracking-tighter whitespace-nowrap">
+                  {currentUser?.isAdmin ? 'ADMIN' : (currentUser?.ubcLevel ? `UBC ${currentUser.ubcLevel}` : 'Partner')}
+                </p>
               </div>
               <div className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200 overflow-hidden group-hover:ring-2 group-hover:ring-amber-500/50 transition-all">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=UnicornPartner" alt="Avatar" className="w-full h-full object-cover" />
+                <img src={currentUser?.avatarUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=UnicornPartner"} alt="Avatar" className="w-full h-full object-cover" />
               </div>
             </div>
           </div>
@@ -218,14 +236,14 @@ const App: React.FC = () => {
         {/* Content Area */}
         <div className={`flex-1 overflow-y-auto ${currentView === AppView.AI_COACH ? 'p-0' : 'p-2 lg:p-4'} h-full bg-slate-50`}>
           <div className="w-full h-full">
-            {currentView === AppView.DASHBOARD && <Dashboard onNavigate={setCurrentView} />}
+            {currentView === AppView.DASHBOARD && <Dashboard onNavigate={setCurrentView} currentUser={currentUser} />}
             {currentView === AppView.SYSTEM_456 && <System456 onNavigate={setCurrentView} />}
-            {currentView === AppView.START_UP && <StartUp />}
-            {currentView === AppView.FUNCTIONS && <Functions />}
-            {currentView === AppView.AI_COACH && <AICoach />}
-            {currentView === AppView.LIBRARY && <Library />}
+            {currentView === AppView.START_UP && <StartUp onNavigate={setCurrentView} />}
+            {currentView === AppView.FUNCTIONS && <Functions onNavigate={setCurrentView} currentUser={currentUser} />}
+            {currentView === AppView.AI_COACH && <AICoach onNavigate={setCurrentView} />}
+            {currentView === AppView.LIBRARY && <Library onNavigate={setCurrentView} />}
             {currentView === AppView.PROFILE && <Profile currentUser={currentUser} onUpdateUser={setCurrentUser} onNavigate={setCurrentView} />}
-            {currentView === AppView.UBC_PROGRAM && <UBCProgram />}
+            {currentView === AppView.UBC_PROGRAM && <UBCProgram onNavigate={setCurrentView} />}
             {currentView === AppView.PRODUCT_CATALOG && <ProductCatalog onNavigate={setCurrentView} />}
             {currentView === AppView.WEALTH_DNA && <WealthDNA onNavigate={setCurrentView} onUpdateUser={setCurrentUser} />}
           </div>

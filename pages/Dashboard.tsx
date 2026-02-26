@@ -20,10 +20,11 @@ import {
   ShieldCheck,
   ArrowUpRight
 } from 'lucide-react';
-import { AppView, UBCLevel } from '../types';
+import { AppView, UBCLevel, User } from '../types';
 
 interface DashboardProps {
   onNavigate: (view: AppView) => void;
+  currentUser: User | null;
 }
 
 const stats_data = [
@@ -142,9 +143,19 @@ const GrowthLineChart: React.FC = () => (
   </svg>
 );
 
-const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
-  const [userLevel, setUserLevel] = React.useState<UBCLevel>(UBCLevel.UBC4_MASTER);
-  const currentLevelInfo = level_data[userLevel] || level_data[UBCLevel.UBC1_FOUNDATION];
+const Dashboard: React.FC<DashboardProps> = ({ onNavigate, currentUser }) => {
+  const [activeLevel, setActiveLevel] = React.useState<UBCLevel>(currentUser?.ubcLevel || UBCLevel.UBC1_FOUNDATION);
+
+  // Sync context level when currentUser changes
+  React.useEffect(() => {
+    if (currentUser?.ubcLevel) {
+      setActiveLevel(currentUser.ubcLevel);
+    }
+  }, [currentUser?.ubcLevel]);
+
+  const currentLevelInfo = level_data[activeLevel] || level_data[UBCLevel.UBC1_FOUNDATION];
+  const ubcLabel = `UBC ${currentUser?.ubcLevel || 1} Professional`;
+  const partnerId = currentUser?.id ? `U-Partner ID: ${currentUser.id.slice(0, 8).toUpperCase()}` : 'U-Partner ID: GUEST';
 
   return (
     <div className="space-y-8 animate-fade-in pb-10 px-2 lg:px-0">
@@ -155,7 +166,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           <div className="relative">
             <div className="w-20 h-20 md:w-28 md:h-28 bg-dark-gradient rounded-[2rem] p-1 shadow-2xl overflow-hidden group-hover:rotate-3 transition-transform duration-500">
               <img
-                src="https://api.dicebear.com/7.x/avataaars/svg?seed=UnicornPartner"
+                src={currentUser?.avatarUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=UnicornPartner"}
                 alt="Partner Avatar"
                 className="w-full h-full object-cover rounded-[1.8rem]"
               />
@@ -166,10 +177,14 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <span className="bg-amber-500/10 text-amber-600 border border-amber-500/20 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-sm">DIAMOND ZONE</span>
-              <span className="text-slate-400 text-[10px] font-bold">U-Partner ID: 9988-AIC</span>
+              <span className="bg-amber-500/10 text-amber-600 border border-amber-500/20 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-sm">
+                {currentUser?.isAdmin ? 'ADMIN ZONE' : 'PARTNER ZONE'}
+              </span>
+              <span className="text-slate-400 text-[10px] font-bold">{partnerId}</span>
             </div>
-            <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight mb-1">Kru Den Master Fa</h2>
+            <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight mb-1">
+              {currentUser?.fullName || 'Guest User'}
+            </h2>
             <div className="flex items-center gap-4 mt-3">
               <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 rounded-full border border-emerald-100">
                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
@@ -177,7 +192,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               </div>
               <div className="flex items-center gap-1.5 transition-transform hover:scale-105">
                 <Star size={16} className="text-amber-500 fill-amber-500" />
-                <span className="text-xs font-black text-slate-900 tracking-tight">UBC {userLevel} Professional</span>
+                <span className="text-xs font-black text-slate-900 tracking-tight">{ubcLabel}</span>
               </div>
             </div>
           </div>
@@ -188,10 +203,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           <div className="relative z-10">
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2">My Business Valuation</p>
             <div className="flex items-end gap-3 mb-4">
-              <p className="text-4xl font-black text-white tracking-tighter">45,280</p>
+              <p className="text-4xl font-black text-white tracking-tighter">
+                {(currentUser?.pvTeam || 0).toLocaleString()}
+              </p>
               <div className="flex items-center gap-1 bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-lg text-xs font-black border border-emerald-500/20 mb-1.5">
                 <ArrowUpRight size={12} />
-                12%
+                {(currentUser?.pvPersonal || 0) > 0 ? '+5%' : '0%'}
               </div>
             </div>
             <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
@@ -222,10 +239,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 {[1, 2, 3, 4].map((lvl) => (
                   <button
                     key={lvl}
-                    onClick={() => setUserLevel(lvl)}
+                    onClick={() => setActiveLevel(lvl)}
                     className={`
                       w-10 h-10 md:w-14 md:h-14 rounded-[1.2rem] flex items-center justify-center transition-all duration-500 relative
-                      ${userLevel === lvl
+                      ${activeLevel === lvl
                         ? 'bg-slate-950 text-amber-500 shadow-2xl scale-110 z-10'
                         : 'text-slate-400 hover:bg-white hover:text-slate-600'}
                     `}
@@ -293,7 +310,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-2">
                 <div className={`px-4 py-1.5 rounded-full ${currentLevelInfo.bg} ${currentLevelInfo.color} text-[10px] font-black uppercase tracking-[0.2em] border border-white/10`}>
-                  Level {userLevel} Path
+                  Level {activeLevel} Path
                 </div>
                 <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-amber-500 shadow-xl border border-white/10">
                   <currentLevelInfo.icon size={16} />
@@ -441,7 +458,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
       {/* Stats Table Section */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats_data.map((stat) => (
+        {stats_data.map((stat, idx) => (
           <button
             key={stat.label}
             aria-label={`สถิติ ${stat.label}: ${stat.value}`}
@@ -453,8 +470,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             </div>
             <p className="text-slate-400 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mb-2 relative z-10">{stat.label}</p>
             <div className="flex items-end gap-2 relative z-10">
-              <p className="text-3xl md:text-5xl font-black text-slate-900 group-hover:text-amber-600 transition-colors tracking-tighter">{stat.value}</p>
-              <div className="text-[10px] font-black bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded-md mb-2 shadow-sm">+2</div>
+              <p className="text-3xl md:text-5xl font-black text-slate-900 group-hover:text-amber-600 transition-colors tracking-tighter">
+                {idx === 0 ? (currentUser?.pvPersonal || 0).toLocaleString() : stat.value}
+              </p>
+              {idx === 0 && <span className="text-xs font-black text-slate-400 mb-2">PV</span>}
             </div>
           </button>
         ))}

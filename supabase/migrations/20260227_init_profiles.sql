@@ -6,14 +6,64 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     email TEXT UNIQUE NOT NULL,
     phone TEXT,
     avatar_url TEXT,
-    birth_date DATE,
-    wealth_element TEXT CHECK (
-        wealth_element IN ('FIRE', 'WATER', 'EARTH', 'AIR')
-    ),
+    wealth_element TEXT,
     ubc_level INTEGER DEFAULT 1,
-    points INTEGER DEFAULT 0,
+    pv_personal INTEGER DEFAULT 0,
+    pv_team INTEGER DEFAULT 0,
+    is_admin BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+-- 📅 Create Activities Table
+CREATE TABLE IF NOT EXISTS public.activities (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title TEXT NOT NULL,
+    type TEXT NOT NULL CHECK (
+        type IN (
+            'DAILY',
+            'WEEKLY',
+            'MONTHLY',
+            'QUARTERLY',
+            'SPECIAL'
+        )
+    ),
+    location TEXT,
+    attendees TEXT,
+    link TEXT,
+    date TIMESTAMPTZ,
+    author_id UUID REFERENCES auth.users(id),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+-- Enable RLS for activities
+ALTER TABLE public.activities ENABLE ROW LEVEL SECURITY;
+-- Activities Policies
+CREATE POLICY "Activities are viewable by everyone" ON public.activities FOR
+SELECT USING (true);
+CREATE POLICY "Only admins can insert activities" ON public.activities FOR
+INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1
+            FROM public.profiles
+            WHERE id = auth.uid()
+                AND is_admin = true
+        )
+    );
+CREATE POLICY "Only admins can update activities" ON public.activities FOR
+UPDATE USING (
+        EXISTS (
+            SELECT 1
+            FROM public.profiles
+            WHERE id = auth.uid()
+                AND is_admin = true
+        )
+    );
+CREATE POLICY "Only admins can delete activities" ON public.activities FOR DELETE USING (
+    EXISTS (
+        SELECT 1
+        FROM public.profiles
+        WHERE id = auth.uid()
+            AND is_admin = true
+    )
 );
 -- Enable RLS
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;

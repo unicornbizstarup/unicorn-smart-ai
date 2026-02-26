@@ -569,9 +569,9 @@ const Style = () => (
     `}} />
 );
 
-export default () => (
+export default (props: ProfileProps) => (
     <>
         <Style />
-        <Profile />
+        <Profile {...props} />
     </>
 );

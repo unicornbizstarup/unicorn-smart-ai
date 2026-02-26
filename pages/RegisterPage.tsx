@@ -20,9 +20,10 @@ import { AppView, User } from '../types';
 interface RegisterPageProps {
     onNavigate: (view: AppView) => void;
     onRegister: (user: User) => void;
+    referralId?: string | null;
 }
 
-const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister }) => {
+const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, referralId }) => {
     const [step, setStep] = useState<'details' | 'otp'>('details');
     const [fullName, setFullName] = useState('');
     const [username, setUsername] = useState('');
@@ -36,13 +37,12 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister }) =
     const [isLoading, setIsLoading] = useState(false);
     const [timer, setTimer] = useState(60);
 
+    // If there's a referral, maybe show a welcome message or pre-fill recruiter
     useEffect(() => {
-        let interval: NodeJS.Timeout;
-        if (step === 'otp' && timer > 0) {
-            interval = setInterval(() => setTimer(prev => prev - 1), 1000);
+        if (referralId) {
+            console.log('Registering with recruiter:', referralId);
         }
-        return () => clearInterval(interval);
-    }, [step, timer]);
+    }, [referralId]);
 
     const passwordChecks = [
         { label: 'อย่างน้อย 6 ตัวอักษร', valid: password.length >= 6 },
@@ -104,14 +104,21 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister }) =
 
             const storedUsers = JSON.parse(localStorage.getItem('unicorn_users') || '[]');
 
-            if (storedUsers.some((u: User) => u.email === email)) {
+            if (storedUsers.some((u: any) => u.email === email)) {
                 setError('อีเมลนี้ถูกใช้แล้ว กรุณาใช้อีเมลอื่น');
                 setStep('details');
                 setIsLoading(false);
                 return;
             }
 
-            const newUser: User & { password: string } = {
+            if (storedUsers.some((u: any) => u.username === username)) {
+                setError('Username นี้ถูกใช้แล้ว กรุณาใช้ชื่ออื่น');
+                setStep('details');
+                setIsLoading(false);
+                return;
+            }
+
+            const newUser: User & { password: string; referredBy?: string } = {
                 id: `user_${Date.now()}`,
                 fullName,
                 username: username.toLowerCase().replace(/\s+/g, ''),
@@ -119,6 +126,11 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister }) =
                 phone: phone || undefined,
                 password,
                 createdAt: new Date().toISOString(),
+                referredBy: referralId || undefined,
+                ubcLevel: 1, // Start at Level 1 Foundation
+                pvPersonal: 0,
+                pvTeam: 0,
+                isAdmin: false // Default to false, can be updated manually in DB
             };
 
             storedUsers.push(newUser);
