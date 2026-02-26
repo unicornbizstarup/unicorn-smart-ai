@@ -171,6 +171,23 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLogin }) => {
                             </button>
                         </p>
                     </div>
+
+                    <div className="flex items-center gap-3 my-6">
+                        <div className="flex-1 h-px bg-white/10" />
+                        <span className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">หรือเข้าสู่ระบบด้วย</span>
+                        <div className="flex-1 h-px bg-white/10" />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        <button className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm hover:bg-white/10 transition-all group">
+                            <img src="https://www.google.com/favicon.ico" className="w-4 h-4 grayscale group-hover:grayscale-0 transition-all" alt="Google" />
+                            Google
+                        </button>
+                        <button className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm hover:bg-white/10 transition-all group">
+                            <div className="w-4 h-4 bg-emerald-500 rounded-sm flex items-center justify-center text-[10px] font-black text-white">L</div>
+                            LINE
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -178,3 +195,4 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLogin }) => {
 };
 
 export default LoginPage;
+

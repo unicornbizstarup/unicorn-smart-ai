@@ -224,7 +224,7 @@ const App: React.FC = () => {
             {currentView === AppView.FUNCTIONS && <Functions />}
             {currentView === AppView.AI_COACH && <AICoach />}
             {currentView === AppView.LIBRARY && <Library />}
-            {currentView === AppView.PROFILE && <Profile currentUser={currentUser} onUpdateUser={setCurrentUser} />}
+            {currentView === AppView.PROFILE && <Profile currentUser={currentUser} onUpdateUser={setCurrentUser} onNavigate={setCurrentView} />}
             {currentView === AppView.UBC_PROGRAM && <UBCProgram />}
             {currentView === AppView.PRODUCT_CATALOG && <ProductCatalog onNavigate={setCurrentView} />}
             {currentView === AppView.WEALTH_DNA && <WealthDNA onNavigate={setCurrentView} onUpdateUser={setCurrentUser} />}

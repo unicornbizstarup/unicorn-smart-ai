@@ -211,7 +211,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser }) => {
                             </div>
                         </div>
                         <button
-                            onClick={() => window.location.hash = '#wealth-dna'} // Note: Simplified navigation trigger
+                            onClick={() => onNavigate(AppView.WEALTH_DNA)}
                             className="px-8 py-4 bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 font-black rounded-2xl shadow-lg hover:scale-105 transition-all flex items-center gap-2"
                         >
                             <Sparkles size={20} /> วิเคราะห์ DNA ตอนนี้
