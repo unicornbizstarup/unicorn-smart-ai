@@ -152,9 +152,10 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
 
             setIsEditing(false);
             alert('บันทึกข้อมูลสำเร็จแล้ว!');
-        } catch (err) {
+        } catch (err: any) {
             console.error('Save error:', err);
-            alert('ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง');
+            const errorMsg = err.message || (err.error?.message) || 'กรุณาลองใหม่อีกครั้ง';
+            alert(`ไม่สามารถบันทึกข้อมูลได้: ${errorMsg}`);
         } finally {
             setIsSaving(false);
         }

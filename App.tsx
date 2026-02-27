@@ -233,6 +233,13 @@ const AppContent: React.FC = () => {
 
     if (error) {
       console.error('Error syncing profile to Supabase:', error);
+      // Log more details for debugging
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint
+      });
       throw error;
     }
     return { success: true };

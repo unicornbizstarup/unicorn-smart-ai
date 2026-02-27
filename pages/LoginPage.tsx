@@ -80,21 +80,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLogin }) => {
         }
     };
 
-    const handleSocialLogin = async (provider: 'google' | 'facebook') => {
-        try {
-            setIsLoading(true);
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: provider as any,
-                options: {
-                    redirectTo: window.location.origin
-                }
-            });
-            if (error) throw error;
-        } catch (err: any) {
-            setError(`ไม่สามารถเข้าสู่ระบบด้วย ${provider} ได้: ${err.message}`);
-            setIsLoading(false);
-        }
-    };
+
 
     return (
         <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
@@ -211,31 +197,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLogin }) => {
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3 my-6">
-                        <div className="flex-1 h-px bg-white/10" />
-                        <span className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">หรือเข้าสู่ระบบด้วย</span>
-                        <div className="flex-1 h-px bg-white/10" />
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                        <button
-                            onClick={() => handleSocialLogin('google')}
-                            disabled={isLoading}
-                            className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm hover:bg-white/10 transition-all group disabled:opacity-50"
-                        >
-                            <img src="https://www.google.com/favicon.ico" className="w-4 h-4 grayscale group-hover:grayscale-0 transition-all" alt="Google" />
-                            Google
-                        </button>
-                        <button
-                            onClick={() => handleSocialLogin('facebook')}
-                            disabled={isLoading}
-                            className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm hover:bg-white/10 transition-all group disabled:opacity-50"
-                        >
-                            <div className="w-4 h-4 bg-blue-600 rounded-sm flex items-center justify-center text-[10px] font-black text-white">f</div>
-                            Facebook
-                        </button>
-
-                    </div>
                 </div>
             </div>
         </div>

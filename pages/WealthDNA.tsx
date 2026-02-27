@@ -62,9 +62,10 @@ const WealthDNA: React.FC<{
                 wealthElement: analyzedElement
             });
             onNavigate(AppView.PROFILE);
-        } catch (err) {
+        } catch (err: any) {
             console.error('Save result error:', err);
-            alert('ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง');
+            const errorMsg = err.message || (err.error?.message) || 'กรุณาลองใหม่อีกครั้ง';
+            alert(`ไม่สามารถบันทึกข้อมูลได้: ${errorMsg}`);
         } finally {
             setIsSaving(false);
         }
