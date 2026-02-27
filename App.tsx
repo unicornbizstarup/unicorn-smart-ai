@@ -227,9 +227,15 @@ const AppContent: React.FC = () => {
         specialization: updatedUser.specialization,
         social_links: updatedUser.socialLinks,
         updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'id'
       });
 
-    if (error) console.error('Error syncing profile to Supabase:', error);
+    if (error) {
+      console.error('Error syncing profile to Supabase:', error);
+      throw error;
+    }
+    return { success: true };
   };
 
   // ===== AUTH PAGES (not logged in) =====

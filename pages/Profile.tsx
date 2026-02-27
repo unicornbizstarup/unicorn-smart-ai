@@ -87,9 +87,9 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                 // For now, let's map what we have and use defaults for the rest
                 setProfile(prev => ({
                     ...prev,
-                    full_name: data.full_name,
-                    email: data.email,
-                    wealthElement: data.wealth_element,
+                    full_name: data.full_name || prev.full_name,
+                    email: data.email || prev.email,
+                    wealthElement: data.wealth_element || currentUser?.wealthElement || prev.wealthElement,
                     ubc_level: data.ubc_level || 1,
                     bio: data.bio || prev.bio,
                     quote: data.quote || prev.quote,

@@ -28,6 +28,7 @@ const WealthDNA: React.FC<{
     const [birthDate, setBirthDate] = useState('');
     const [birthTime, setBirthTime] = useState('');
     const [analyzedElement, setAnalyzedElement] = useState<keyof typeof WEALTH_ELEMENTS | null>(null);
+    const [isSaving, setIsSaving] = useState(false);
 
     const handleStart = () => setStep('form');
 
@@ -46,19 +47,28 @@ const WealthDNA: React.FC<{
 
             setAnalyzedElement(element);
             setStep('result');
-
-            // Save result to user session & sync to DB via App.tsx
-            if (currentUser?.id) {
-                const updatedUser: User = {
-                    ...currentUser,
-                    wealthElement: element
-                };
-                onUpdateUser(updatedUser);
-            }
+            // We'll save explicitly when they click "Save result to profile"
         }, 2500);
     };
 
     const elementData = analyzedElement ? WEALTH_ELEMENTS[analyzedElement] : null;
+
+    const handleSaveToProfile = async () => {
+        if (!currentUser?.id || !analyzedElement) return;
+        setIsSaving(true);
+        try {
+            await onUpdateUser({
+                ...currentUser,
+                wealthElement: analyzedElement
+            });
+            onNavigate(AppView.PROFILE);
+        } catch (err) {
+            console.error('Save result error:', err);
+            alert('ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง');
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     return (
         <div className="min-h-[80vh] flex flex-col items-center justify-center p-4">
@@ -259,10 +269,11 @@ const WealthDNA: React.FC<{
 
                     <div className="flex flex-col md:flex-row gap-4">
                         <button
-                            onClick={() => onNavigate(AppView.PROFILE)}
-                            className="flex-1 bg-slate-900 text-white py-6 rounded-[2rem] font-black text-xl shadow-xl hover:bg-slate-800 transition-all flex items-center justify-center gap-2 group"
+                            onClick={handleSaveToProfile}
+                            disabled={isSaving}
+                            className="flex-1 bg-slate-900 text-white py-6 rounded-[2rem] font-black text-xl shadow-xl hover:bg-slate-800 transition-all flex items-center justify-center gap-2 group disabled:opacity-70"
                         >
-                            <CheckCircle2 size={24} /> บันทึกผลไปที่โปรไฟล์ <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
+                            <CheckCircle2 size={24} /> {isSaving ? 'กำลังบันทึก...' : 'บันทึกผลไปที่โปรไฟล์'} <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
                         </button>
                         <button
                             className="px-10 py-6 bg-white text-slate-900 border border-slate-200 rounded-[2rem] font-black text-xl hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
