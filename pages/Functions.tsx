@@ -27,7 +27,7 @@ interface FunctionsProps {
   currentUser: User | null;
 }
 
-const Functions: React.FC<FunctionsProps> = ({ currentUser }) => {
+const Functions: React.FC<FunctionsProps> = ({ onNavigate, currentUser }) => {
   const [activities, setActivities] = React.useState<Activity[]>([]);
   const [showAddModal, setShowAddModal] = React.useState(false);
   const [newActivity, setNewActivity] = React.useState<Partial<Activity>>({
@@ -124,6 +124,7 @@ const Functions: React.FC<FunctionsProps> = ({ currentUser }) => {
 
             <div className="p-5 md:p-6 border-t border-slate-50">
               <button
+                onClick={() => onNavigate(AppView.START_UP)}
                 aria-label={`ดูปฏิทินงานสำหรับกิจกรรม ${group.label}`}
                 className="w-full py-3 md:py-4 bg-slate-50 hover:bg-slate-900 hover:text-white rounded-xl md:rounded-2xl text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-slate-600 flex items-center justify-center gap-2 md:gap-3 transition-all active:scale-95"
               >

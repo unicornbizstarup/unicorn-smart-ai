@@ -13,7 +13,11 @@ import {
   CheckCircle2,
   FolderOpen,
   LogOut,
-  GraduationCap
+  GraduationCap,
+  Dna,
+  Info,
+  PhoneCall,
+  HelpCircle
 } from 'lucide-react';
 import { AppView, User } from './types';
 import Dashboard from './pages/Dashboard';
@@ -52,12 +56,14 @@ const AppContent: React.FC = () => {
     { name: 'nav.home', icon: LayoutDashboard, view: AppView.DASHBOARD },
     { name: 'nav.ubc_program', icon: Trophy, view: AppView.UBC_PROGRAM },
     { name: 'nav.system456', icon: Layers, view: AppView.SYSTEM_456 },
-    { name: 'nav.functions', icon: FolderOpen, view: AppView.FUNCTIONS },
-    { name: 'nav.calendar', icon: CalendarDays, view: AppView.START_UP },
+    { name: 'nav.functions', icon: GraduationCap, view: AppView.FUNCTIONS },
+    { name: 'nav.calendar', icon: Rocket, view: AppView.START_UP },
     { name: 'nav.ai_coach', icon: Bot, view: AppView.AI_COACH },
-    { name: 'nav.about', icon: LayoutDashboard, view: AppView.ABOUT },
+    { name: 'nav.library', icon: FolderOpen, view: AppView.LIBRARY },
+    { name: 'nav.wealth_dna', icon: Dna, view: AppView.WEALTH_DNA },
     { name: 'nav.products', icon: BookOpen, view: AppView.PRODUCT_CATALOG },
-    { name: 'nav.contact', icon: CalendarDays, view: AppView.CONTACT },
+    { name: 'nav.about', icon: Info, view: AppView.ABOUT },
+    { name: 'nav.contact', icon: PhoneCall, view: AppView.CONTACT },
   ];
 
   const [currentView, setCurrentView] = useState<AppView>(AppView.LANDING);

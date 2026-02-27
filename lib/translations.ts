@@ -1,7 +1,7 @@
 
 export type TranslationKey =
     | 'nav.home' | 'nav.about' | 'nav.products' | 'nav.contact' | 'nav.privacy'
-    | 'nav.system456' | 'nav.functions' | 'nav.calendar' | 'nav.ai_coach' | 'nav.ubc_program'
+    | 'nav.system456' | 'nav.functions' | 'nav.calendar' | 'nav.ai_coach' | 'nav.ubc_program' | 'nav.library' | 'nav.wealth_dna' | 'nav.ai_coach_nong_uni'
     | 'hero.title' | 'hero.subtitle' | 'hero.cta' | 'hero.login'
     | 'sections.strategy' | 'sections.products' | 'sections.contact'
     | 'strategy.eco.title' | 'strategy.eco.desc'
@@ -37,9 +37,12 @@ export const translations = {
         'hero.title': 'Unicorn',
         'nav.system456': 'ระบบ 456',
         'nav.functions': 'ฟังก์ชั่น',
-        'nav.calendar': 'ปฏิทิน',
+        'nav.calendar': '5 START-UP',
         'nav.ai_coach': 'โค้ชอัจฉริยะ AI',
         'nav.ubc_program': 'โปรแกรม UBC',
+        'nav.library': 'คลังความรู้',
+        'nav.wealth_dna': 'Wealth DNA',
+        'nav.ai_coach_nong_uni': 'โค้ชเอไอ (น้องยูนิ)',
         'hero.subtitle': 'Biz Start Up Platform เพื่อนักธุรกิจยุคใหม่',
         'hero.cta': 'เริ่มต้นธุรกิจของคุณวันนี้',
         'hero.login': 'เข้าสู่ระบบ',
@@ -126,9 +129,12 @@ export const translations = {
         'hero.title': 'Unicorn',
         'nav.system456': 'System 456',
         'nav.functions': 'Functions',
-        'nav.calendar': 'Calendar',
+        'nav.calendar': '5 START-UP',
         'nav.ai_coach': 'AI Coach',
         'nav.ubc_program': 'UBC Program',
+        'nav.library': 'Knowledge Base',
+        'nav.wealth_dna': 'Wealth DNA',
+        'nav.ai_coach_nong_uni': 'AI Coach (Nong Uni)',
         'hero.subtitle': 'Biz Start Up Platform for Next-Gen Entrepreneurs',
         'hero.cta': 'Start Your Business Today',
         'hero.login': 'Sign In',
@@ -215,9 +221,12 @@ export const translations = {
         'hero.title': 'Unicorn',
         'nav.system456': 'စနစ် ၄၅၆',
         'nav.functions': 'လုပ်ဆောင်ချက်များ',
-        'nav.calendar': 'ပြက္ခဒိန်',
+        'nav.calendar': '5 START-UP',
         'nav.ai_coach': 'AI နည်းပြ',
         'nav.ubc_program': 'UBC အစီအစဉ်',
+        'nav.library': 'ပညာဘဏ်တိုက်',
+        'nav.wealth_dna': 'Wealth DNA',
+        'nav.ai_coach_nong_uni': 'AI နည်းပြ (Nong Uni)',
         'hero.subtitle': 'မျိုးဆက်သစ်စီးပွားရေးလုပ်ငန်းရှင်များအတွက် Biz Start Up Platform',
         'hero.cta': 'ယနေ့ပင် သင်၏စီးပွားရေးကို สတင်လိုက်ပါ',
         'hero.login': 'အကောင့်ဝင်ရန်',
