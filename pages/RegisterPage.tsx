@@ -81,6 +81,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
                 email,
                 password,
                 options: {
+                    emailRedirectTo: window.location.origin,
                     data: {
                         full_name: fullName,
                         username: username.toLowerCase().replace(/\s+/g, ''),
