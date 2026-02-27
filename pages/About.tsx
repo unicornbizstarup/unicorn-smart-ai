@@ -16,38 +16,41 @@ import {
     Heart
 } from 'lucide-react';
 import { AppView } from '../types';
+import { useLanguage } from '../hooks/useLanguage';
 
 interface AboutProps {
     onNavigate: (view: AppView) => void;
 }
 
 const About: React.FC<AboutProps> = ({ onNavigate }) => {
+    const { t } = useLanguage();
+
     const strategies = [
         {
-            title: 'ECO-SYSTEM',
+            title: t('strategy.eco.title'),
             icon: Zap,
-            desc: 'ระบบการจัดการที่ทันสมัยทั้งออฟไลน์และออนไลน์ เพื่อความคล่องตัวสูงสุด',
+            desc: t('strategy.eco.desc'),
             color: 'text-amber-500',
             bg: 'bg-amber-500/10'
         },
         {
-            title: 'PRODUCT',
+            title: t('strategy.product.title'),
             icon: Award,
-            desc: 'ผลิตภัณฑ์นวัตกรรมที่มีสิทธิบัตร คุณภาพสูง และสนับสนุนการสร้างธุรกิจ',
+            desc: t('strategy.product.desc'),
             color: 'text-blue-500',
             bg: 'bg-blue-500/10'
         },
         {
-            title: 'Ai & TOOLS',
+            title: t('strategy.ai.title'),
             icon: Sparkles,
-            desc: 'Unicorn Smart AI และ Unicorn Academy เสริมแกร่งให้นักธุรกิจยุคใหม่',
+            desc: t('strategy.ai.desc'),
             color: 'text-purple-500',
             bg: 'bg-purple-500/10'
         },
         {
-            title: 'REWARD',
+            title: t('strategy.reward.title'),
             icon: Heart,
-            desc: 'ระบบแผนรายได้ที่ยุติธรรม รางวัลเกียรติยศ และทริปท่องเที่ยวทั่วโลก',
+            desc: t('strategy.reward.desc'),
             color: 'text-pink-500',
             bg: 'bg-pink-500/10'
         }
@@ -56,7 +59,7 @@ const About: React.FC<AboutProps> = ({ onNavigate }) => {
     const certifications = ['GMP', 'HACCP', 'ISO', 'Halal'];
 
     return (
-        <div className="min-h-screen bg-slate-50 animate-fade-in relative overflow-hidden pb-20">
+        <div className="min-h-screen bg-slate-50 animate-fade-in relative overflow-hidden pb-20 font-inter">
             {/* Decorative Background Elements */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
@@ -68,20 +71,20 @@ const About: React.FC<AboutProps> = ({ onNavigate }) => {
                     className="group mb-12 flex items-center gap-2 text-slate-500 hover:text-amber-500 transition-all font-bold text-sm uppercase tracking-widest"
                 >
                     <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                    กลับหน้าหลัก
+                    {t('common.back')}
                 </button>
 
                 {/* Hero Section */}
-                <div className="grid lg:grid-cols-12 gap-12 items-center mb-24">
-                    <div className="lg:col-span-12 text-center lg:text-left">
+                <div className="grid lg:grid-cols-12 gap-12 items-center mb-24 text-center lg:text-left">
+                    <div className="lg:col-span-12">
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/5 border border-slate-900/10 mb-6">
                             <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">ABOUT UNICORN GLOBAL LINK</span>
                         </div>
-                        <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter leading-none mb-8">
-                            ธุรกิจเครือข่ายยุคใหม่ <br />ที่พลิกจาก<span className="text-amber-500">รูปแบบเดิมๆ</span>
+                        <h1 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tighter leading-tight mb-8">
+                            {t('about.hero.title')}
                         </h1>
                         <p className="text-xl md:text-2xl text-slate-500 font-medium max-w-4xl leading-relaxed mx-auto lg:mx-0">
-                            เราคือ <span className="text-slate-900 font-black">"Biz Start Up Platform"</span> เครื่องมือสนับสนุนให้นักธุรกิจและผู้คนทั่วไปสามารถเป็นเจ้าของกิจการและประสบความสำเร็จได้อย่างยั่งยืน
+                            {t('about.hero.subtitle')}
                         </p>
                     </div>
                 </div>
@@ -90,14 +93,13 @@ const About: React.FC<AboutProps> = ({ onNavigate }) => {
                 <section className="grid lg:grid-cols-2 gap-12 items-center mb-32">
                     <div className="relative">
                         <div className="aspect-[4/5] bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl relative group">
-                            {/* Photo placeholder for Dr. Joy */}
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/20 to-transparent z-10" />
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <Users size={120} className="text-slate-800 opacity-20 group-hover:scale-110 transition-transform duration-700" />
                             </div>
                             <div className="absolute bottom-10 left-10 z-20">
-                                <p className="text-amber-500 font-black text-sm uppercase tracking-widest mb-2">President & Founder</p>
-                                <h3 className="text-3xl font-black text-white tracking-tighter">ดร. ภัทร์พิชาภา ธนะลีละผลิน</h3>
+                                <p className="text-amber-500 font-black text-sm uppercase tracking-widest mb-2">{t('about.founder.role')}</p>
+                                <h3 className="text-3xl font-black text-white tracking-tighter">{t('about.founder.name')}</h3>
                                 <p className="text-white/60 font-bold">(Dr. Joy)</p>
                             </div>
                         </div>
@@ -109,23 +111,21 @@ const About: React.FC<AboutProps> = ({ onNavigate }) => {
                         <div>
                             <h2 className="text-4xl font-black text-slate-900 tracking-tighter mb-6 flex items-center gap-4">
                                 <div className="w-2 h-10 bg-amber-500 rounded-full" />
-                                วิสัยทัศน์ที่กว้างไกล
+                                {t('about.vision.title')}
                             </h2>
                             <p className="text-lg text-slate-600 leading-relaxed font-medium">
-                                บริหารโดยผู้ที่มีประสบการณ์ความสำเร็จในธุรกิจเครือข่ายระดับแนวหน้ามากกว่า 20 ปี
-                                มุ่งเน้นการเป็นแพลตฟอร์มที่มีระบบ เครื่องมือที่ทรงพลัง สินค้านวัตกรรม
-                                และองค์ความรู้ เพื่อให้ทุกคนได้เป็นเจ้าของเครือข่ายผู้บริโภคขนาดใหญ่ทั่วโลก
+                                {t('about.vision.desc')}
                             </p>
                         </div>
                         <div className="p-8 bg-amber-500 rounded-[2.5rem] text-slate-950 shadow-2xl transform -rotate-2 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
                             <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-2">Our Slogan</p>
                             <h4 className="text-3xl font-black tracking-tight italic">
-                                "U LINK U SHARE U SUCCESS"
+                                "{t('about.slogan')}"
                             </h4>
                         </div>
                         <p className="text-sm font-bold text-slate-400 italic">
-                            "ความสำเร็จของคุณ คือภารกิจของเรา"
+                            "{t('about.motto')}"
                         </p>
                     </div>
                 </section>
@@ -136,44 +136,34 @@ const About: React.FC<AboutProps> = ({ onNavigate }) => {
                     <div className="relative z-10 grid lg:grid-cols-2 gap-16 items-center">
                         <div>
                             <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-8 leading-tight">
-                                ความมั่นคงและ <br /><span className="text-amber-500">ความถูกต้องที่ชัดเจน</span>
+                                {t('about.legal.title')}
                             </h2>
                             <div className="flex items-center gap-6 mb-10">
                                 <div className="w-16 h-16 rounded-2xl bg-amber-500 flex items-center justify-center text-slate-950 shadow-lg shadow-amber-500/20">
                                     <Scale size={32} />
                                 </div>
                                 <div>
-                                    <p className="text-xs font-black text-white/40 uppercase tracking-[0.2em] mb-1">Registered Capital</p>
-                                    <p className="text-3xl font-black text-white">19,000,000 บาท</p>
-                                    <p className="text-[10px] text-amber-500 font-bold uppercase">(ชำระเต็มจำนวน)</p>
+                                    <p className="text-xs font-black text-white/40 uppercase tracking-[0.2em] mb-1">Unicorn Finance</p>
+                                    <p className="text-3xl font-black text-white">{t('about.legal.capital')}</p>
                                 </div>
                             </div>
                             <p className="text-white/60 font-medium text-lg leading-relaxed">
-                                จดทะเบียนบริษัทถูกต้องตามกฎหมายประเทศไทย และ<strong>ได้รับการรับรองจาก สคบ.</strong>
-                                ให้สามารถดำเนินธุรกิจการตลาดแบบตรง ขายตรง และการขายผ่านระบบอินเทอร์เน็ตได้อย่างถูกต้องทุกประการ
+                                {t('about.legal.desc')}
                             </p>
                         </div>
                         <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-white/5 border border-white/10 p-8 rounded-[2rem] text-center hover:bg-white/10 transition-colors">
-                                <ShieldCheck size={40} className="text-amber-500 mx-auto mb-4" />
-                                <p className="text-sm font-bold opacity-60">ได้รับการรับรอง</p>
-                                <p className="text-2xl font-black text-amber-500">สคบ.</p>
-                            </div>
-                            <div className="bg-white/5 border border-white/10 p-8 rounded-[2rem] text-center hover:bg-white/10 transition-colors">
-                                <Globe size={40} className="text-blue-500 mx-auto mb-4" />
-                                <p className="text-sm font-bold opacity-60">ขยายตลาด</p>
-                                <p className="text-2xl font-black text-blue-500">AEC+</p>
-                            </div>
-                            <div className="bg-white/5 border border-white/10 p-8 rounded-[2rem] text-center hover:bg-white/10 transition-colors">
-                                <Building size={40} className="text-purple-500 mx-auto mb-4" />
-                                <p className="text-sm font-bold opacity-60">สำนักงาน</p>
-                                <p className="text-2xl font-black text-purple-500">20+ Years</p>
-                            </div>
-                            <div className="bg-white/5 border border-white/10 p-8 rounded-[2rem] text-center hover:bg-white/10 transition-colors">
-                                <Award size={40} className="text-pink-500 mx-auto mb-4" />
-                                <p className="text-sm font-bold opacity-60">มาตรฐาน</p>
-                                <p className="text-2xl font-black text-pink-500">Global</p>
-                            </div>
+                            {[
+                                { t: t('about.stats.cert'), s: 'OCPB', i: ShieldCheck, c: 'text-amber-500' },
+                                { t: t('about.stats.growth'), s: 'AEC+', i: Globe, c: 'text-blue-500' },
+                                { t: t('about.stats.office'), s: '20+ Yrs', i: Building, c: 'text-purple-500' },
+                                { t: t('about.stats.standard'), s: 'Global', i: Award, c: 'text-pink-500' },
+                            ].map((stat, idx) => (
+                                <div key={idx} className="bg-white/5 border border-white/10 p-8 rounded-[2rem] text-center hover:bg-white/10 transition-colors">
+                                    <stat.i size={40} className={`${stat.c} mx-auto mb-4`} />
+                                    <p className="text-xs font-bold opacity-60 uppercase tracking-tighter mb-1">{stat.t}</p>
+                                    <p className={`text-xl font-black ${stat.c}`}>{stat.s}</p>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </section>
@@ -182,10 +172,10 @@ const About: React.FC<AboutProps> = ({ onNavigate }) => {
                 <section className="mb-32">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-4">
-                            กลยุทธ์ <span className="text-amber-500">Biz Start Up Platform</span>
+                            {t('sections.strategy')}
                         </h2>
                         <p className="text-slate-500 text-lg font-medium max-w-2xl mx-auto">
-                            เราใช้ 4 เสาหลักในการขับเคลื่อนธุรกิจ เพื่อส่งมอบคุณค่าที่ดีที่สุดให้กับนักธุรกิจทุกคน
+                            Biz Start Up Platform Foundations
                         </p>
                     </div>
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -194,46 +184,16 @@ const About: React.FC<AboutProps> = ({ onNavigate }) => {
                                 <div className={`w-14 h-14 rounded-2xl ${s.bg} flex items-center justify-center ${s.color} mb-6 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-sm`}>
                                     <s.icon size={28} />
                                 </div>
-                                <h3 className="text-xl font-black text-slate-900 mb-2">{s.title}</h3>
+                                <h3 className="text-xl font-black text-slate-900 mb-2 uppercase tracking-tighter">{s.title}</h3>
                                 <p className="text-slate-500 text-sm font-bold leading-relaxed">{s.desc}</p>
                             </div>
                         ))}
                     </div>
                 </section>
 
-                {/* Market Expansion */}
-                <section className="grid lg:grid-cols-2 gap-16 items-center mb-32">
-                    <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 mb-6 font-black text-blue-600 text-[10px] tracking-widest uppercase">
-                            Global Connectivity
-                        </div>
-                        <h2 className="text-4xl font-black text-slate-900 tracking-tighter mb-6 leading-tight">
-                            สำนักงานใหญ่ประเทศไทย <br /><span className="text-blue-600">สู่การเติบโตทั่วโลก</span>
-                        </h2>
-                        <p className="text-lg text-slate-600 leading-relaxed font-medium mb-8">
-                            มียอดขายและฐานลูกค้าที่ขยายตัวอย่างต่อเนื่องในระดับ AEC และปัจจุบันมีสาขาที่เปิดทำการแบบครบวงจรแล้วในประเทศเมียนมา
-                            พร้อมเป้าหมายการขยายตัวสู่ 4+ ประเทศในปีนี้
-                        </p>
-                        <div className="flex gap-4">
-                            <div className="flex items-center gap-3 px-6 py-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                                <Plane className="text-blue-500" size={24} />
-                                <span className="text-sm font-black text-slate-900">Expansion Across AEC</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="bg-slate-200 aspect-video rounded-[3rem] overflow-hidden shadow-2xl relative group border-4 border-white">
-                        {/* World Map Background Placeholder */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-amber-500/20 z-10" />
-                        <div className="absolute inset-0 flex items-center justify-center flex-col gap-4 text-slate-400">
-                            <Globe size={100} className="animate-spin-slow" />
-                            <p className="font-black text-xs uppercase tracking-[0.4em]">International Presence</p>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Product Groups & Standards */}
+                {/* Product Groups */}
                 <section className="bg-white/60 backdrop-blur-md rounded-[3rem] p-10 md:p-16 border border-white shadow-2xl text-center">
-                    <h2 className="text-4xl font-black text-slate-900 tracking-tighter mb-12">กลุ่มผลิตภัณฑ์ที่เน้น<span className="text-emerald-500">นวัตกรรม</span></h2>
+                    <h2 className="text-4xl font-black text-slate-900 tracking-tighter mb-12">{t('sections.products')}</h2>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-16">
                         {[
                             { n: 'Skincare', i: '✨' },
@@ -245,7 +205,7 @@ const About: React.FC<AboutProps> = ({ onNavigate }) => {
                         ].map((p) => (
                             <div key={p.n} className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all">
                                 <div className="text-3xl mb-3">{p.i}</div>
-                                <p className="text-xs font-black text-slate-900 leading-tight">{p.n}</p>
+                                <p className="text-xs font-black text-slate-900 leading-tight uppercase tracking-tighter">{p.n}</p>
                             </div>
                         ))}
                     </div>
@@ -265,12 +225,12 @@ const About: React.FC<AboutProps> = ({ onNavigate }) => {
 
                 {/* Bottom CTA */}
                 <div className="mt-24 text-center">
-                    <p className="text-slate-400 font-bold mb-6 italic">อยากร่วมเป็นส่วนหนึ่งของครอบครัวยูนิคอร์น?</p>
+                    <p className="text-slate-400 font-bold mb-6 italic">{t('about.motto')}</p>
                     <button
                         onClick={() => onNavigate(AppView.CONTACT)}
-                        className="px-12 py-5 bg-slate-950 text-white rounded-2xl font-black text-xl shadow-2xl hover:scale-105 active:scale-95 transition-all"
+                        className="px-12 py-5 bg-blue-600 text-white rounded-2xl font-black text-xl shadow-2xl hover:scale-105 active:scale-95 transition-all uppercase tracking-tighter"
                     >
-                        ติดต่อเราเลยตอนนี้
+                        {t('common.contact_now')}
                     </button>
                 </div>
             </div>

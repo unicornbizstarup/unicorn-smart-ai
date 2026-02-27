@@ -33,20 +33,28 @@ import Contact from './pages/Contact';
 import About from './pages/About';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import { supabase } from './lib/supabase';
-
-const navigation = [
-  { name: 'แดชบอร์ด', icon: LayoutDashboard, view: AppView.DASHBOARD },
-  { name: 'ระบบ 4-5-6', icon: Layers, view: AppView.SYSTEM_456 },
-  { name: '5 Start-Up', icon: Rocket, view: AppView.START_UP },
-  { name: 'คลังสื่อ/เอกสาร', icon: FolderOpen, view: AppView.LIBRARY },
-  { name: 'ฟังก์ชั่นการเรียนรู้', icon: CalendarDays, view: AppView.FUNCTIONS },
-  { name: 'โค้ชอัจฉริยะ AI', icon: Bot, view: AppView.AI_COACH },
-  { name: 'โปรแกรม UBC', icon: GraduationCap, view: AppView.UBC_PROGRAM },
-  { name: 'ข้อมูลสินค้า', icon: BookOpen, view: AppView.PRODUCT_CATALOG },
-  { name: 'วิเคราะห์ Wealth DNA', icon: Trophy, view: AppView.WEALTH_DNA },
-];
+import { LanguageProvider, useLanguage } from './hooks/useLanguage';
+import LanguageSelector from './components/LanguageSelector';
+import { TranslationKey } from './lib/translations';
 
 const App: React.FC = () => {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
+  );
+};
+
+const AppContent: React.FC = () => {
+  const { t } = useLanguage();
+
+  const navigation: { name: TranslationKey; icon: any; view: AppView }[] = [
+    { name: 'nav.home', icon: LayoutDashboard, view: AppView.DASHBOARD },
+    { name: 'nav.about', icon: LayoutDashboard, view: AppView.ABOUT }, // Reusing keys where appropriate
+    { name: 'nav.products', icon: BookOpen, view: AppView.PRODUCT_CATALOG },
+    { name: 'nav.contact', icon: CalendarDays, view: AppView.CONTACT },
+  ];
+
   const [currentView, setCurrentView] = useState<AppView>(AppView.LANDING);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -207,7 +215,7 @@ const App: React.FC = () => {
                 `}
               >
                 <item.icon size={22} className={`transition-transform duration-500 group-hover:scale-110 ${currentView === item.view ? 'text-slate-950' : 'text-slate-500 group-hover:text-amber-400'}`} />
-                <span className="font-semibold tracking-wide">{item.name}</span>
+                <span className="font-semibold tracking-wide">{t(item.name)}</span>
                 {currentView === item.view && <ChevronRight size={18} className="ml-auto opacity-50" />}
               </button>
             ))}
@@ -264,7 +272,7 @@ const App: React.FC = () => {
               <Menu size={24} />
             </button>
             <h2 className="text-lg lg:text-xl font-black text-slate-900 tracking-tight">
-              {currentView === AppView.PROFILE ? 'ข้อมูลส่วนตัว' : navigation.find(n => n.view === currentView)?.name}
+              {currentView === AppView.PROFILE ? 'ข้อมูลส่วนตัว' : (navigation.find(n => n.view === currentView) ? t(navigation.find(n => n.view === currentView)!.name) : '')}
             </h2>
           </div>
 
@@ -277,7 +285,8 @@ const App: React.FC = () => {
               <div className="absolute top-2.5 right-2.5 lg:top-3 lg:right-3 w-2 h-2 lg:w-2.5 lg:h-2.5 bg-amber-500 rounded-full border-2 border-white" />
               <CalendarDays size={20} className="lg:w-[22px] lg:h-[22px] group-hover:rotate-12 transition-transform" />
             </button>
-            <div className="h-8 w-px bg-slate-200 mx-2 hidden sm:block" />
+            <LanguageSelector />
+            <div className="h-8 w-px bg-slate-200 mx-1 hidden sm:block" />
             <div
               className="hidden sm:flex items-center gap-3 pl-2 cursor-pointer group"
               onClick={() => setCurrentView(AppView.PROFILE)}

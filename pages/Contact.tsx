@@ -15,52 +15,55 @@ import {
     Clock
 } from 'lucide-react';
 import { AppView } from '../types';
+import { useLanguage } from '../hooks/useLanguage';
 
 interface ContactProps {
     onNavigate: (view: AppView) => void;
 }
 
 const Contact: React.FC<ContactProps> = ({ onNavigate }) => {
+    const { t } = useLanguage();
+
     const socialLinks = [
         {
-            name: 'Line OA: UNICORN Official',
+            name: t('contact.social.line_off'),
             icon: MessageCircle,
             url: 'https://line.me/R/ti/p/@178gxlfl',
             color: 'bg-emerald-500',
-            description: 'สอบถามข้อมูลทั่วไปและบริการ'
+            description: t('contact.social.desc.line_off')
         },
         {
-            name: 'Line OA: UNICORN CONNECT',
+            name: t('contact.social.line_con'),
             icon: MessageCircle,
             url: 'https://line.me/R/ti/p/@296juuiw',
             color: 'bg-emerald-600',
-            description: 'ระบบสมาชิกและบริการพาร์ทเนอร์'
+            description: t('contact.social.desc.line_con')
         },
         {
-            name: 'Facebook',
+            name: t('contact.social.fb'),
             icon: Facebook,
             url: 'https://www.facebook.com/share/1Gp8uSoTmn',
             color: 'bg-blue-600',
-            description: 'ติดตามข่าวสารและกิจกรรมล่าสุด'
+            description: t('contact.social.desc.fb')
         },
         {
-            name: 'Instagram',
+            name: t('contact.social.ig'),
             icon: Instagram,
             url: 'https://www.instagram.com/unicorn.globallink',
             color: 'bg-pink-600',
-            description: 'ภาพลักษณ์และไลฟ์สไตล์ยูนิคอร์น'
+            description: t('contact.social.desc.ig')
         },
         {
-            name: 'YouTube',
+            name: t('contact.social.yt'),
             icon: Youtube,
             url: 'https://www.youtube.com/@unicorngloballink',
             color: 'bg-red-600',
-            description: 'วิดีโอความรู้และแรงบันดัดใจ'
+            description: t('contact.social.desc.yt')
         }
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 animate-fade-in relative overflow-hidden pb-12">
+        <div className="min-h-screen bg-slate-50 animate-fade-in relative overflow-hidden pb-12 font-inter">
             {/* Decorative Background Elements */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
@@ -72,7 +75,7 @@ const Contact: React.FC<ContactProps> = ({ onNavigate }) => {
                     className="group mb-8 flex items-center gap-2 text-slate-500 hover:text-amber-500 transition-colors font-bold text-sm uppercase tracking-widest"
                 >
                     <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                    กลับหน้าหลัก
+                    {t('common.back')}
                 </button>
 
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
@@ -81,27 +84,19 @@ const Contact: React.FC<ContactProps> = ({ onNavigate }) => {
                             <ShieldCheck size={16} className="text-amber-500" />
                             <span className="text-xs font-black text-amber-600 uppercase tracking-widest">Official Support</span>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter leading-none mb-4">
-                            ติดต่อ<span className="text-amber-500">สอบถาม</span>
+                        <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter leading-none mb-4 uppercase">
+                            {t('contact.title')}
                         </h1>
                         <p className="text-slate-500 text-lg md:text-xl font-medium max-w-2xl leading-relaxed">
-                            เราพร้อมให้คำปรึกษาและสนับสนุนทุกย่างก้าวในเส้นทางธุรกิจของคุณ <br className="hidden md:block" />
-                            กับทีมงานมืออาชีพจาก Unicorn Global Link
+                            {t('contact.subtitle')}
                         </p>
-                    </div>
-                    <div className="hidden lg:block text-right">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">Company Status</p>
-                        <div className="flex items-center gap-2 justify-end">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                            <span className="text-sm font-bold text-emerald-600 uppercase tracking-tight">Active & Ready to help</span>
-                        </div>
                     </div>
                 </div>
 
                 <div className="grid lg:grid-cols-12 gap-8 items-start">
                     {/* Main Info Card */}
                     <div className="lg:col-span-7 space-y-6">
-                        <div className="bg-white/70 backdrop-blur-xl rounded-[2.5rem] p-8 md:p-12 border border-white shadow-2xl relative overflow-hidden group">
+                        <div className="bg-white group backdrop-blur-xl rounded-[2.5rem] p-8 md:p-12 border border-white shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-2xl group-hover:bg-amber-500/10 transition-colors pointer-events-none" />
 
                             <div className="flex items-start gap-6 mb-10">
@@ -109,11 +104,11 @@ const Contact: React.FC<ContactProps> = ({ onNavigate }) => {
                                     <Building2 className="text-amber-500" size={32} />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-tight mb-2">
-                                        บริษัท ยูนิคอร์น โกลบอล ลิ้งค์ จํากัด
+                                    <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-tight mb-2 uppercase">
+                                        {t('contact.company.th')}
                                     </h2>
                                     <p className="text-amber-500 font-bold text-sm tracking-wider uppercase">
-                                        UNICORN GLOBAL LINK COMPANY LIMITED
+                                        {t('contact.company.en')}
                                     </p>
                                 </div>
                             </div>
@@ -125,10 +120,9 @@ const Contact: React.FC<ContactProps> = ({ onNavigate }) => {
                                         <MapPin size={24} />
                                     </div>
                                     <div>
-                                        <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-1">ที่ตั้งสำนักงานเลขา</h3>
+                                        <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-1">{t('contact.address.label')}</h3>
                                         <p className="text-lg font-bold text-slate-700 leading-relaxed md:leading-normal">
-                                            241 ถ.รัชดาภิเษก แขวงรัชดาภิเษก เขตดินแดง, <br className="hidden md:block" />
-                                            Bangkok, Thailand, 10400
+                                            {t('contact.address.value')}
                                         </p>
                                     </div>
                                 </div>
@@ -140,7 +134,7 @@ const Contact: React.FC<ContactProps> = ({ onNavigate }) => {
                                             <Phone size={24} />
                                         </div>
                                         <div>
-                                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Call Center</h3>
+                                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('contact.phone.label')}</h3>
                                             <p className="text-xl font-black text-slate-900 leading-tight">090 970 7755</p>
                                         </div>
                                     </a>
@@ -151,7 +145,7 @@ const Contact: React.FC<ContactProps> = ({ onNavigate }) => {
                                             <Mail size={24} />
                                         </div>
                                         <div className="overflow-hidden">
-                                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Official Email</h3>
+                                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('contact.email.label')}</h3>
                                             <p className="text-sm font-black text-slate-900 leading-tight truncate">b.unicorn.official@gmail.com</p>
                                         </div>
                                     </a>
@@ -164,10 +158,9 @@ const Contact: React.FC<ContactProps> = ({ onNavigate }) => {
                                     <Clock size={28} />
                                 </div>
                                 <div>
-                                    <h4 className="text-lg font-black tracking-tight mb-1">เวลาทำการ (Business Hours)</h4>
-                                    <p className="text-white/60 text-sm font-medium">
-                                        จันทร์ - อาทิตย์ : <span className="text-amber-400 font-bold">10:00 - 20:00 น.</span> <br />
-                                        (ทีมงาน Support ออนไลน์สแตนด์บายตลอด 24 ชม. ผ่านช่องทางโซเชียล)
+                                    <h4 className="text-lg font-black tracking-tight mb-1">{t('contact.hours.title')}</h4>
+                                    <p className="text-white/60 text-sm font-bold uppercase tracking-tighter">
+                                        {t('contact.hours.desc')}
                                     </p>
                                 </div>
                             </div>
@@ -200,23 +193,6 @@ const Contact: React.FC<ContactProps> = ({ onNavigate }) => {
                                     <ExternalLink size={16} className="text-slate-300 group-hover:text-amber-500 group-hover:translate-x-1 transition-all" />
                                 </a>
                             ))}
-                        </div>
-
-                        {/* Special Call to Action */}
-                        <div className="mt-8 bg-gradient-to-br from-amber-400 to-orange-500 p-8 rounded-[2.5rem] text-slate-950 shadow-2xl relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-                            <div className="relative z-10">
-                                <h4 className="text-2xl font-black tracking-tighter mb-2">สอบถามด่วน?</h4>
-                                <p className="text-slate-900/70 text-sm font-bold mb-6 leading-relaxed">
-                                    สแกน Line QR Code <br /> หรือกดปุ่มด้านบนเพื่อคุยกับโค้ช AI และทีมงานได้ทันทีครับ
-                                </p>
-                                <div className="flex items-center gap-2">
-                                    <div className="h-1 flex-1 bg-slate-950/20 rounded-full overflow-hidden">
-                                        <div className="h-full bg-slate-950 w-2/3 rounded-full animate-pulse-slow" />
-                                    </div>
-                                    <span className="text-[10px] font-black uppercase opacity-60">Priority Response</span>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
