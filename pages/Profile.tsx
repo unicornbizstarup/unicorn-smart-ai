@@ -109,36 +109,9 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
         setIsSaving(true);
 
         try {
-            // Check session before saving to avoid OAuth errors
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                alert('เซสชั่นหมดอายุ กรุณาเข้าสู่ระบบใหม่อีกครั้ง');
-                onNavigate(AppView.LOGIN);
-                return;
-            }
-
-            const { error } = await supabase
-                .from('profiles')
-                .upsert({
-                    id: currentUser.id,
-                    full_name: profile.full_name,
-                    username: currentUser.username, // Maintain the existing username
-                    email: currentUser.email,
-                    wealth_element: profile.wealthElement,
-                    bio: profile.bio,
-                    youtube_url: profile.youtubeUrl,
-                    line_oa_url: profile.lineOaUrl,
-                    line_id: profile.lineId,
-                    quote: profile.quote,
-                    specialization: profile.specialization,
-                    social_links: profile.social_links,
-                    updated_at: new Date().toISOString()
-                });
-
-            if (error) throw error;
-
-            // Update local user state in App.tsx
-            onUpdateUser({
+            // Use the centralized updateUser logic from App.tsx
+            // This ensures all fields (including email) are handled correctly
+            await onUpdateUser({
                 ...currentUser,
                 fullName: profile.full_name,
                 wealthElement: profile.wealthElement as any,

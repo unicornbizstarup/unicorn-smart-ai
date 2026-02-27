@@ -17,7 +17,9 @@ import {
   Dna,
   Info,
   PhoneCall,
-  HelpCircle
+  HelpCircle,
+  Loader2,
+  Sparkles
 } from 'lucide-react';
 import { AppView, User } from './types';
 import Dashboard from './pages/Dashboard';
@@ -68,6 +70,7 @@ const AppContent: React.FC = () => {
     { name: 'nav.contact', icon: PhoneCall, view: AppView.CONTACT },
   ];
 
+  const [isInitializing, setIsInitializing] = useState(true);
   const [currentView, setCurrentView] = useState<AppView>(AppView.LANDING);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -113,10 +116,23 @@ const AppContent: React.FC = () => {
 
     // 2. Initial Session Check
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        await fetchAndSetUser(session.user);
-        setCurrentView(AppView.DASHBOARD);
+      try {
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+        if (sessionError) throw sessionError;
+
+        if (session?.user) {
+          await fetchAndSetUser(session.user);
+          setCurrentView(AppView.DASHBOARD);
+        }
+      } catch (err) {
+        console.error('Error during initial session check:', err);
+        // If it's a fatal auth error, clear everything
+        await supabase.auth.signOut();
+        setCurrentUser(null);
+        localStorage.removeItem('unicorn_current_user');
+      } finally {
+        setIsInitializing(false);
       }
     };
 
@@ -138,13 +154,22 @@ const AppContent: React.FC = () => {
 
     // 5. Listen for Auth Changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        await fetchAndSetUser(session.user);
-        setCurrentView(AppView.DASHBOARD);
-      } else if (event === 'SIGNED_OUT') {
+      try {
+        if (event === 'SIGNED_IN' && session?.user) {
+          await fetchAndSetUser(session.user);
+          setCurrentView(AppView.DASHBOARD);
+        } else if (event === 'SIGNED_OUT') {
+          setCurrentUser(null);
+          setCurrentView(AppView.LANDING);
+          localStorage.removeItem('unicorn_current_user');
+        } else if (event === 'TOKEN_REFRESHED') {
+          console.log('Token refreshed successfully');
+        }
+      } catch (err) {
+        console.error('Error handling auth state change:', err);
+        // Critical failure during auth transition - reset to safe state
         setCurrentUser(null);
         setCurrentView(AppView.LANDING);
-        localStorage.removeItem('unicorn_current_user');
       }
     });
 
@@ -154,36 +179,57 @@ const AppContent: React.FC = () => {
   }, []);
 
   const fetchAndSetUser = async (user: any) => {
-    const { data: profileData } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
+    try {
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
 
-    const userData: User = {
-      id: user.id,
-      fullName: profileData?.full_name || user.user_metadata?.full_name || 'User',
-      username: profileData?.username || user.user_metadata?.username || user.email?.split('@')[0],
-      email: user.email!,
-      avatarUrl: profileData?.avatar_url,
-      createdAt: user.created_at,
-      ubcLevel: profileData?.ubc_level || 1,
-      pvPersonal: profileData?.pv_personal || 0,
-      pvTeam: profileData?.pv_team || 0,
-      isAdmin: profileData?.is_admin || false,
-      wealthElement: profileData?.wealth_element,
-      referredBy: profileData?.referred_by,
-      bio: profileData?.bio,
-      youtubeUrl: profileData?.youtube_url,
-      lineId: profileData?.line_id,
-      lineOaUrl: profileData?.line_oa_url,
-      quote: profileData?.quote,
-      specialization: profileData?.specialization,
-      socialLinks: profileData?.social_links
-    };
+      if (profileError && profileError.code !== 'PGRST116') { // PGRST116 is 'not found'
+        console.warn('Error fetching profile:', profileError);
+      }
 
-    setCurrentUser(userData);
-    localStorage.setItem('unicorn_current_user', JSON.stringify(userData));
+      const userData: User = {
+        id: user.id,
+        fullName: profileData?.full_name || user.user_metadata?.full_name || 'User',
+        username: profileData?.username || user.user_metadata?.username || user.email?.split('@')[0],
+        email: user.email!,
+        avatarUrl: profileData?.avatar_url,
+        createdAt: user.created_at,
+        ubcLevel: profileData?.ubc_level || 1,
+        pvPersonal: profileData?.pv_personal || 0,
+        pvTeam: profileData?.pv_team || 0,
+        isAdmin: profileData?.is_admin || false,
+        wealthElement: profileData?.wealth_element,
+        referredBy: profileData?.referred_by,
+        bio: profileData?.bio,
+        youtubeUrl: profileData?.youtube_url,
+        lineId: profileData?.line_id,
+        lineOaUrl: profileData?.line_oa_url,
+        quote: profileData?.quote,
+        specialization: profileData?.specialization,
+        socialLinks: profileData?.social_links
+      };
+
+      setCurrentUser(userData);
+      localStorage.setItem('unicorn_current_user', JSON.stringify(userData));
+    } catch (err) {
+      console.error('Critical error in fetchAndSetUser:', err);
+      // Fallback to basic user info if profile fetch fails completely
+      const fallbackUser: User = {
+        id: user.id,
+        fullName: user.user_metadata?.full_name || 'User',
+        username: user.user_metadata?.username || user.email?.split('@')[0],
+        email: user.email!,
+        ubcLevel: 1,
+        pvPersonal: 0,
+        pvTeam: 0,
+        isAdmin: false,
+        createdAt: user.created_at
+      };
+      setCurrentUser(fallbackUser);
+    }
   };
 
   const handleLogin = (user: User) => {
@@ -245,6 +291,37 @@ const AppContent: React.FC = () => {
     }
     return { success: true };
   };
+
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-4">
+        <div className="max-w-md w-full text-center space-y-8 animate-in fade-in zoom-in duration-500">
+          <div className="relative">
+            <div className="absolute inset-0 bg-amber-500/20 blur-3xl rounded-full animate-pulse"></div>
+            <div className="relative flex justify-center">
+              <div className="p-4 bg-slate-900 ring-1 ring-slate-800 rounded-3xl shadow-2xl">
+                <Sparkles className="w-16 h-16 text-amber-500 animate-bounce" />
+              </div>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <h1 className="text-3xl font-bold text-white tracking-tight">
+              Unicorn <span className="text-amber-500">Academy</span>
+            </h1>
+            <div className="flex flex-col items-center gap-4">
+              <div className="h-1 w-48 bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-full bg-amber-500 animate-loading-bar origin-left"></div>
+              </div>
+              <p className="text-slate-400 text-sm font-medium flex items-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin text-amber-500" />
+                กำลังเตรียมระบบอัจฉริยะสำหรับคุณ...
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // ===== AUTH PAGES (not logged in) =====
   if (!currentUser) {
