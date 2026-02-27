@@ -252,14 +252,14 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                         <div className="flex-1 text-center md:text-left space-y-2">
                             <div className="flex items-center gap-2 justify-center md:justify-start">
                                 <Trophy size={16} className="text-amber-500" />
-                                <span className="text-xs font-black text-slate-400 uppercase tracking-widest">รหัสความมั่งคั่งประเจำตัว</span>
+                                <span className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('nav.wealth_dna')}</span>
                             </div>
                             <h2 className="text-3xl font-black text-slate-900 tracking-tight">
-                                {WEALTH_ELEMENTS[profile.wealthElement].name}
+                                {t(WEALTH_ELEMENTS[profile.wealthElement].name as any)}
                             </h2>
-                            <p className="text-slate-500 font-bold italic">"{WEALTH_ELEMENTS[profile.wealthElement].concept}"</p>
+                            <p className="text-slate-500 font-bold italic">"{t(WEALTH_ELEMENTS[profile.wealthElement].concept as any)}"</p>
                             <div className="flex flex-wrap gap-2 pt-2 justify-center md:justify-start">
-                                {WEALTH_ELEMENTS[profile.wealthElement].strengths.slice(0, 3).map((s, i) => (
+                                {t(WEALTH_ELEMENTS[profile.wealthElement].strengthsKey as any).split(',').slice(0, 3).map((s, i) => (
                                     <span key={i} className="px-3 py-1 bg-slate-100 rounded-lg text-[10px] font-black text-slate-600 uppercase tracking-tight">
                                         {s}
                                     </span>
@@ -268,10 +268,10 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                         </div>
                         <div className="bg-indigo-50 p-6 rounded-2xl border border-indigo-100 max-w-sm">
                             <h4 className="text-xs font-black text-indigo-600 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                <Lightbulb size={14} /> กลยุทธ์การตลาดแนะนำ
+                                <Lightbulb size={14} /> {t('wealth.result.strategy')}
                             </h4>
                             <p className="text-sm font-bold text-slate-700 leading-relaxed italic">
-                                {WEALTH_ELEMENTS[profile.wealthElement].business_strategy}
+                                {t(`wealth.${profile.wealthElement}.strategy` as any)}
                             </p>
                         </div>
                     </div>
@@ -603,7 +603,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                                     )}
 
                                     {/* Video Embed */}
-                                    {profile.video_url && (
+                                    {profile.youtubeUrl && (
                                         <div className="w-full pt-2">
                                             {renderVideoEmbed()}
                                         </div>

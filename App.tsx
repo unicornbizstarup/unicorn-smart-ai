@@ -268,11 +268,19 @@ const AppContent: React.FC = () => {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setCurrentUser(null);
-    setCurrentView(AppView.LANDING);
-    setSidebarOpen(false);
-    localStorage.removeItem('unicorn_current_user');
+    try {
+      // Clear local state first for immediate UI response
+      setCurrentUser(null);
+      setCurrentView(AppView.LANDING);
+      setSidebarOpen(false);
+      localStorage.removeItem('unicorn_current_user');
+
+      // Attempt to sign out from Supabase
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.error('Logout error:', err);
+      // Even if signOut fails, we already cleared local state
+    }
   };
 
   const updateUser = async (updatedUser: User) => {
