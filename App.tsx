@@ -308,7 +308,7 @@ const AppContent: React.FC = () => {
       <aside className={`
         fixed inset-y-0 left-0 z-50 w-72 bg-slate-950 text-white transition-all duration-500 transform 
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
-        lg:relative lg:translate-x-0 border-r border-white/5 shadow-2xl
+        lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 border-r border-white/5 shadow-2xl lg:overflow-y-auto scrollbar-hide
       `}>
         <div className="p-6 lg:p-8 h-full flex flex-col">
           <button
@@ -385,9 +385,9 @@ const AppContent: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden">
+      <main className={`flex-1 flex flex-col ${currentView === AppView.AI_COACH ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
         {/* Header */}
-        <header className="h-16 lg:h-20 bg-white/70 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 lg:px-8 shrink-0 z-30">
+        <header className="h-16 lg:h-20 bg-white/70 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 lg:px-8 shrink-0 sticky top-0 z-30">
           <div className="flex items-center gap-3 lg:gap-4">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -432,7 +432,7 @@ const AppContent: React.FC = () => {
         </header>
 
         {/* Content Area */}
-        <div className={`flex-1 overflow-y-auto ${currentView === AppView.AI_COACH ? 'p-0' : 'p-2 lg:p-4'} h-full bg-slate-50`}>
+        <div className={`flex-1 ${currentView === AppView.AI_COACH ? 'overflow-y-auto h-full' : ''} ${currentView === AppView.AI_COACH ? 'p-0' : 'p-2 lg:p-4'} bg-slate-50`}>
           <div className="w-full h-full">
             {currentView === AppView.DASHBOARD && <Dashboard onNavigate={setCurrentView} currentUser={currentUser} />}
             {currentView === AppView.SYSTEM_456 && <System456 onNavigate={setCurrentView} />}
