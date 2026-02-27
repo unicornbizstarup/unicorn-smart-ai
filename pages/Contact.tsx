@@ -49,7 +49,7 @@ const Contact: React.FC<ContactProps> = ({ onNavigate }) => {
         {
             name: t('contact.social.ig'),
             icon: Instagram,
-            url: 'https://www.instagram.com/unicorn.globallink?fbclid=IwY2xjawQOXKVleHRuA2FlbQIxMABicmlkETFsOFNmYVdTakxFRlBJbE1vc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHjtBg-XEG3CgmWFfDewe3V0qKTy1p3oka9XRWUjon3pZQX2_6zIh91buNqIQ_aem_sRtNr-pAYNA2_jr0UbJY6A',
+            url: 'https://www.instagram.com/unicorn.globallink',
             color: 'bg-pink-600',
             description: t('contact.social.desc.ig')
         },
