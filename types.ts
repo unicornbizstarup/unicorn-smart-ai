@@ -14,7 +14,8 @@ export enum AppView {
   PRODUCT_CATALOG = 'PRODUCT_CATALOG',
   WEALTH_DNA = 'WEALTH_DNA',
   CONTACT = 'CONTACT',
-  ABOUT = 'ABOUT'
+  ABOUT = 'ABOUT',
+  PRIVACY_POLICY = 'PRIVACY_POLICY'
 }
 
 export interface User {
