@@ -1,7 +1,7 @@
 
 export type TranslationKey =
     | 'nav.home' | 'nav.about' | 'nav.products' | 'nav.contact' | 'nav.privacy'
-    | 'nav.system456' | 'nav.functions' | 'nav.calendar' | 'nav.ai_coach'
+    | 'nav.system456' | 'nav.functions' | 'nav.calendar' | 'nav.ai_coach' | 'nav.ubc_program'
     | 'hero.title' | 'hero.subtitle' | 'hero.cta' | 'hero.login'
     | 'sections.strategy' | 'sections.products' | 'sections.contact'
     | 'strategy.eco.title' | 'strategy.eco.desc'
@@ -39,6 +39,7 @@ export const translations = {
         'nav.functions': 'ฟังก์ชั่น',
         'nav.calendar': 'ปฏิทิน',
         'nav.ai_coach': 'โค้ชอัจฉริยะ AI',
+        'nav.ubc_program': 'โปรแกรม UBC',
         'hero.subtitle': 'Biz Start Up Platform เพื่อนักธุรกิจยุคใหม่',
         'hero.cta': 'เริ่มต้นธุรกิจของคุณวันนี้',
         'hero.login': 'เข้าสู่ระบบ',
@@ -127,6 +128,7 @@ export const translations = {
         'nav.functions': 'Functions',
         'nav.calendar': 'Calendar',
         'nav.ai_coach': 'AI Coach',
+        'nav.ubc_program': 'UBC Program',
         'hero.subtitle': 'Biz Start Up Platform for Next-Gen Entrepreneurs',
         'hero.cta': 'Start Your Business Today',
         'hero.login': 'Sign In',
@@ -215,6 +217,7 @@ export const translations = {
         'nav.functions': 'လုပ်ဆောင်ချက်များ',
         'nav.calendar': 'ပြက္ခဒိန်',
         'nav.ai_coach': 'AI နည်းပြ',
+        'nav.ubc_program': 'UBC အစီအစဉ်',
         'hero.subtitle': 'မျိုးဆက်သစ်စီးပွားရေးလုပ်ငန်းရှင်များအတွက် Biz Start Up Platform',
         'hero.cta': 'ယနေ့ပင် သင်၏စီးပွားရေးကို สတင်လိုက်ပါ',
         'hero.login': 'အကောင့်ဝင်ရန်',

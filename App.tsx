@@ -50,6 +50,7 @@ const AppContent: React.FC = () => {
 
   const navigation: { name: TranslationKey; icon: any; view: AppView }[] = [
     { name: 'nav.home', icon: LayoutDashboard, view: AppView.DASHBOARD },
+    { name: 'nav.ubc_program', icon: Trophy, view: AppView.UBC_PROGRAM },
     { name: 'nav.system456', icon: Layers, view: AppView.SYSTEM_456 },
     { name: 'nav.functions', icon: FolderOpen, view: AppView.FUNCTIONS },
     { name: 'nav.calendar', icon: CalendarDays, view: AppView.START_UP },
