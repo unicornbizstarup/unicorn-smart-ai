@@ -51,27 +51,27 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
         full_name: currentUser?.fullName || '',
         email: currentUser?.email || '',
         bio: currentUser?.bio || '',
-        specialization: '',
+        specialization: currentUser?.specialization || '',
         lineOaUrl: currentUser?.lineOaUrl || '',
         lineId: currentUser?.lineId || '',
-        quote: '',
+        quote: currentUser?.quote || '',
         youtubeUrl: currentUser?.youtubeUrl || '',
         social_links: {
-            facebook: '',
-            instagram: '',
-            tiktok: '',
-            youtube: '',
-            twitter: '',
-            linkedin: '',
-            thread: '',
-            website: '',
+            facebook: currentUser?.socialLinks?.facebook || '',
+            instagram: currentUser?.socialLinks?.instagram || '',
+            tiktok: currentUser?.socialLinks?.tiktok || '',
+            youtube: currentUser?.socialLinks?.youtube || '',
+            twitter: currentUser?.socialLinks?.twitter || '',
+            linkedin: currentUser?.socialLinks?.linkedin || '',
+            thread: currentUser?.socialLinks?.thread || '',
+            website: currentUser?.socialLinks?.website || '',
         },
         ubc_level: currentUser?.ubcLevel || 1,
         points: (currentUser?.pvPersonal || 0) + (currentUser?.pvTeam || 0),
         wealthElement: currentUser?.wealthElement || null
     });
 
-    // Fetch full profile details from Supabase on mount
+    // Fetch full profile details from Supabase on mount (Background refresh)
     useEffect(() => {
         const fetchProfileDetails = async () => {
             if (!currentUser?.id) return;
@@ -83,16 +83,15 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                 .single();
 
             if (data && !error) {
-                // Assuming we'll add these columns to the DB or store in a JSON field
-                // For now, let's map what we have and use defaults for the rest
                 setProfile(prev => ({
                     ...prev,
                     full_name: data.full_name || prev.full_name,
                     email: data.email || prev.email,
-                    wealthElement: data.wealth_element || currentUser?.wealthElement || prev.wealthElement,
-                    ubc_level: data.ubc_level || 1,
+                    wealthElement: data.wealth_element || prev.wealthElement,
+                    ubc_level: data.ubc_level || prev.ubc_level,
                     bio: data.bio || prev.bio,
                     quote: data.quote || prev.quote,
+                    specialization: data.specialization || prev.specialization,
                     youtubeUrl: data.youtube_url || prev.youtubeUrl,
                     lineOaUrl: data.line_oa_url || prev.lineOaUrl,
                     lineId: data.line_id || prev.lineId,
