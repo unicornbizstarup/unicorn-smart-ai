@@ -243,7 +243,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                         </div>
                         <div className="flex items-center gap-6">
                             <button className="text-xs text-slate-500 hover:text-amber-500 transition-colors font-medium">เกี่ยวกับเรา</button>
-                            <button className="text-xs text-slate-500 hover:text-amber-500 transition-colors font-medium">ติดต่อ</button>
+                            <button onClick={() => onNavigate(AppView.CONTACT)} className="text-xs text-slate-500 hover:text-amber-500 transition-colors font-medium">ติดต่อ</button>
                             <button className="text-xs text-slate-500 hover:text-amber-500 transition-colors font-medium">นโยบายความเป็นส่วนตัว</button>
                         </div>
                     </div>

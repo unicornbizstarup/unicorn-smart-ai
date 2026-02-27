@@ -29,6 +29,7 @@ import WealthDNA from './pages/WealthDNA.tsx';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import Contact from './pages/Contact';
 import { supabase } from './lib/supabase';
 
 const navigation = [
@@ -307,6 +308,7 @@ const App: React.FC = () => {
             {currentView === AppView.UBC_PROGRAM && <UBCProgram onNavigate={setCurrentView} />}
             {currentView === AppView.PRODUCT_CATALOG && <ProductCatalog onNavigate={setCurrentView} />}
             {currentView === AppView.WEALTH_DNA && <WealthDNA onNavigate={setCurrentView} onUpdateUser={updateUser} currentUser={currentUser} />}
+            {currentView === AppView.CONTACT && <Contact onNavigate={setCurrentView} />}
           </div>
         </div>
       </main>
