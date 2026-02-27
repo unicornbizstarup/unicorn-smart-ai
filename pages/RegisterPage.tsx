@@ -187,6 +187,22 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
         }
     };
 
+    const handleSocialLogin = async (provider: 'google' | 'line') => {
+        try {
+            setIsLoading(true);
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider,
+                options: {
+                    redirectTo: window.location.origin
+                }
+            });
+            if (error) throw error;
+        } catch (err: any) {
+            setError(`ไม่สามารถลงทะเบียนด้วย ${provider} ได้: ${err.message}`);
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
             {/* Background Effects */}
@@ -320,11 +336,19 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
-                                <button className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm hover:bg-white/10 transition-all group">
+                                <button
+                                    onClick={() => handleSocialLogin('google')}
+                                    disabled={isLoading}
+                                    className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm hover:bg-white/10 transition-all group disabled:opacity-50"
+                                >
                                     <img src="https://www.google.com/favicon.ico" className="w-4 h-4 grayscale group-hover:grayscale-0 transition-all" alt="Google" />
                                     Google
                                 </button>
-                                <button className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm hover:bg-white/10 transition-all group">
+                                <button
+                                    onClick={() => handleSocialLogin('line')}
+                                    disabled={isLoading}
+                                    className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm hover:bg-white/10 transition-all group disabled:opacity-50"
+                                >
                                     <MessageSquare size={16} className="text-emerald-500" />
                                     LINE
                                 </button>

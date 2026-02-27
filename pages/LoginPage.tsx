@@ -53,8 +53,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLogin }) => {
 
                 if (profileError) {
                     console.error('Error fetching profile:', profileError);
-                    // If profile doesn't exist yet but user is in auth (shouldn't happen with our sign up),
-                    // we might need to handle it or fallback.
                 }
 
                 const userData: User = {
@@ -78,6 +76,22 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLogin }) => {
         } catch (err: any) {
             setError(err.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
         } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSocialLogin = async (provider: 'google' | 'line') => {
+        try {
+            setIsLoading(true);
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider,
+                options: {
+                    redirectTo: window.location.origin
+                }
+            });
+            if (error) throw error;
+        } catch (err: any) {
+            setError(`ไม่สามารถเข้าสู่ระบบด้วย ${provider} ได้: ${err.message}`);
             setIsLoading(false);
         }
     };
@@ -204,11 +218,19 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLogin }) => {
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
-                        <button className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm hover:bg-white/10 transition-all group">
+                        <button
+                            onClick={() => handleSocialLogin('google')}
+                            disabled={isLoading}
+                            className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm hover:bg-white/10 transition-all group disabled:opacity-50"
+                        >
                             <img src="https://www.google.com/favicon.ico" className="w-4 h-4 grayscale group-hover:grayscale-0 transition-all" alt="Google" />
                             Google
                         </button>
-                        <button className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm hover:bg-white/10 transition-all group">
+                        <button
+                            onClick={() => handleSocialLogin('line')}
+                            disabled={isLoading}
+                            className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm hover:bg-white/10 transition-all group disabled:opacity-50"
+                        >
                             <div className="w-4 h-4 bg-emerald-500 rounded-sm flex items-center justify-center text-[10px] font-black text-white">L</div>
                             LINE
                         </button>
