@@ -103,16 +103,14 @@ const AICoach: React.FC = () => {
         }),
       });
 
-      const contentType = response.headers.get('content-type');
       let data;
+      const responseText = await response.text();
 
-      if (contentType && contentType.includes('application/json')) {
-        data = await response.json();
-      } else {
-        // Backend might have returned an HTML error page (e.g. 404 or Gateway Timeout)
-        const text = await response.text();
-        console.error('Non-JSON response from server:', text.substring(0, 200) + '...');
-        throw new Error(`ระบบหลังบ้านตอบกลับผิดพลาด (${response.status}) โปรดติดต่อแอดมิน`);
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error('Failed to parse AI response:', responseText);
+        throw new Error('ไม่สามารถประมวลผลคำตอบจาก AI ได้ (Invalid JSON). กรุณาติดต่อผู้ดูแลระบบเพื่อตรวจสอบสถานะ Server');
       }
 
       if (!response.ok) {
