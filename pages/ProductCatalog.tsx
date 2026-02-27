@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 import {
     Search,
     Filter,
@@ -30,6 +31,14 @@ interface Product {
     usage_step?: number;
     packaging: string;
     how_to_use: string;
+}
+
+interface Category {
+    id: string;
+    name: string;
+    display_name_th: string;
+    image_url: string;
+    group_number: number | null;
 }
 
 // Data extracted from product_schema.sql
@@ -140,6 +149,28 @@ const ProductCatalog: React.FC<{ onNavigate: (view: AppView) => void }> = ({ onN
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [dbCategories, setDbCategories] = useState<Category[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('product_categories')
+                    .select('*')
+                    .order('group_number', { ascending: true, nullsFirst: false });
+
+                if (error) throw error;
+                if (data) setDbCategories(data);
+            } catch (err) {
+                console.error('Error fetching categories:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCategories();
+    }, []);
 
     const filteredProducts = PRODUCTS.filter(p => {
         const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
@@ -171,6 +202,55 @@ const ProductCatalog: React.FC<{ onNavigate: (view: AppView) => void }> = ({ onN
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
+                </div>
+            </div>
+
+            {/* --- Visual Category Grid --- */}
+            <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">เลือกดูตามกลุ่มสินค้า</h2>
+                    <div className="h-1 flex-1 mx-6 bg-slate-100 rounded-full hidden md:block"></div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    {dbCategories.map((cat) => (
+                        <button
+                            key={cat.id}
+                            onClick={() => setSelectedCategory(cat.name)}
+                            className={`
+                                relative h-48 rounded-[2rem] overflow-hidden group transition-all duration-500 border-2
+                                ${selectedCategory === cat.name
+                                    ? 'border-amber-400 ring-4 ring-amber-400/20 scale-[1.02] shadow-2xl'
+                                    : 'border-white hover:border-amber-400/50 shadow-lg hover:shadow-xl'}
+                            `}
+                        >
+                            {/* Category Image Overlay */}
+                            <div className="absolute inset-0">
+                                <img
+                                    src={cat.image_url}
+                                    alt={cat.display_name_th}
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    onError={(e) => {
+                                        // Fallback if image fails or not yet provided
+                                        (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${cat.name}&background=f1f5f9&color=64748b&bold=true`;
+                                    }}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
+                            </div>
+
+                            {/* Category Content */}
+                            <div className="absolute inset-x-0 bottom-0 p-4 text-left">
+                                {cat.group_number && (
+                                    <span className="bg-amber-400 text-slate-900 text-[10px] font-black px-2 py-0.5 rounded-md mb-2 inline-block">
+                                        GROUP {cat.group_number}
+                                    </span>
+                                )}
+                                <h3 className="text-white font-black text-sm leading-tight line-clamp-2">
+                                    {cat.display_name_th}
+                                </h3>
+                            </div>
+                        </button>
+                    ))}
                 </div>
             </div>
 
