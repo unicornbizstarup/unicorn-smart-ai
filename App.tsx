@@ -71,6 +71,7 @@ const AppContent: React.FC = () => {
   ];
 
   const [isInitializing, setIsInitializing] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(5);
   const [currentView, setCurrentView] = useState<AppView>(AppView.LANDING);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -79,64 +80,59 @@ const AppContent: React.FC = () => {
 
   // Check for existing session and referral parameters on mount
   useEffect(() => {
-    // 1. Check for referral code in URL
-    const checkReferral = async () => {
-      const params = new URLSearchParams(window.location.search);
-      const ref = params.get('ref');
-      const pathRef = window.location.pathname.split('/')[1];
+    const initialize = async () => {
+      // Start both in parallel
+      const referralPromise = (async () => {
+        const params = new URLSearchParams(window.location.search);
+        const ref = params.get('ref');
+        const pathRef = window.location.pathname.split('/')[1];
 
-      if (ref) {
-        localStorage.setItem('unicorn_referral_id', ref);
-        setReferralId(ref);
-        console.log('Referral tracked (param):', ref);
-      } else if (pathRef && pathRef.length > 2 && !['login', 'register', 'privacy', 'about', 'contact', 'dashboard', 'products', 'academy', 'system456', 'functions', 'startup', 'library', 'wealth_dna'].includes(pathRef.toLowerCase())) {
-        // Check if path is a username
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('username', pathRef.toLowerCase())
-          .single();
+        if (ref) {
+          localStorage.setItem('unicorn_referral_id', ref);
+          setReferralId(ref);
+        } else if (pathRef && pathRef.length > 2 && !['login', 'register', 'privacy', 'about', 'contact', 'dashboard', 'products', 'academy', 'system456', 'functions', 'startup', 'library', 'wealth_dna'].includes(pathRef.toLowerCase())) {
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('username', pathRef.toLowerCase())
+            .single();
 
-        if (data && !error) {
-          console.log('Referral tracked (path):', data.username);
-          setReferrer(data);
-          setReferralId(data.username);
-          localStorage.setItem('unicorn_referral_id', data.username);
-          setCurrentView(AppView.REFERRAL_PAGE);
-        } else {
-          const storedRef = localStorage.getItem('unicorn_referral_id');
-          if (storedRef) setReferralId(storedRef);
+          if (data && !error) {
+            setReferrer(data);
+            setReferralId(data.username);
+            localStorage.setItem('unicorn_referral_id', data.username);
+            setCurrentView(AppView.REFERRAL_PAGE);
+          }
         }
-      } else {
-        const storedRef = localStorage.getItem('unicorn_referral_id');
-        if (storedRef) setReferralId(storedRef);
-      }
-    };
-    checkReferral();
+        setLoadingProgress(prev => Math.max(prev, 40));
+      })();
 
-    // 2. Initial Session Check
-    const checkSession = async () => {
-      try {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      const sessionPromise = (async () => {
+        try {
+          const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+          if (sessionError) throw sessionError;
 
-        if (sessionError) throw sessionError;
-
-        if (session?.user) {
-          await fetchAndSetUser(session.user);
-          setCurrentView(AppView.DASHBOARD);
+          if (session?.user) {
+            await fetchAndSetUser(session.user);
+            setCurrentView(AppView.DASHBOARD);
+          }
+        } catch (err) {
+          console.error('Session check error:', err);
+          await supabase.auth.signOut();
+          setCurrentUser(null);
+          localStorage.removeItem('unicorn_current_user');
         }
-      } catch (err) {
-        console.error('Error during initial session check:', err);
-        // If it's a fatal auth error, clear everything
-        await supabase.auth.signOut();
-        setCurrentUser(null);
-        localStorage.removeItem('unicorn_current_user');
-      } finally {
-        setIsInitializing(false);
-      }
+        setLoadingProgress(prev => Math.max(prev, 80));
+      })();
+
+      await Promise.all([referralPromise, sessionPromise]);
+      setLoadingProgress(100);
+
+      // Small delay for smooth transition
+      setTimeout(() => setIsInitializing(false), 300);
     };
 
-    checkSession();
+    initialize();
 
     // 4. Listen for Auth Errors in URL (e.g., bad_oauth_state)
     const urlParams = new URLSearchParams(window.location.search);
@@ -310,7 +306,10 @@ const AppContent: React.FC = () => {
             </h1>
             <div className="flex flex-col items-center gap-4">
               <div className="h-1 w-48 bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-amber-500 animate-loading-bar origin-left"></div>
+                <div
+                  className="h-full bg-amber-500 transition-all duration-500 ease-out origin-left"
+                  style={{ width: `${loadingProgress}%` }}
+                ></div>
               </div>
               <p className="text-slate-400 text-sm font-medium flex items-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin text-amber-500" />
