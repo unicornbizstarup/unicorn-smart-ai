@@ -119,8 +119,10 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
 
             const { error } = await supabase
                 .from('profiles')
-                .update({
+                .upsert({
+                    id: currentUser.id,
                     full_name: profile.full_name,
+                    username: currentUser.username, // Maintain the existing username
                     wealth_element: profile.wealthElement,
                     bio: profile.bio,
                     youtube_url: profile.youtubeUrl,
@@ -128,9 +130,9 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                     line_id: profile.lineId,
                     quote: profile.quote,
                     specialization: profile.specialization,
-                    social_links: profile.social_links
-                })
-                .eq('id', currentUser.id);
+                    social_links: profile.social_links,
+                    updated_at: new Date().toISOString()
+                });
 
             if (error) throw error;
 

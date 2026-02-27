@@ -86,7 +86,7 @@ const AppContent: React.FC = () => {
         localStorage.setItem('unicorn_referral_id', ref);
         setReferralId(ref);
         console.log('Referral tracked (param):', ref);
-      } else if (pathRef && pathRef.length > 2 && !['login', 'register', 'privacy', 'about', 'contact', 'dashboard'].includes(pathRef.toLowerCase())) {
+      } else if (pathRef && pathRef.length > 2 && !['login', 'register', 'privacy', 'about', 'contact', 'dashboard', 'products', 'academy', 'system456', 'functions', 'startup', 'library', 'wealth_dna'].includes(pathRef.toLowerCase())) {
         // Check if path is a username
         const { data, error } = await supabase
           .from('profiles')
@@ -210,8 +210,10 @@ const AppContent: React.FC = () => {
 
     const { error } = await supabase
       .from('profiles')
-      .update({
+      .upsert({
+        id: updatedUser.id,
         full_name: updatedUser.fullName,
+        username: updatedUser.username,
         avatar_url: updatedUser.avatarUrl,
         wealth_element: updatedUser.wealthElement,
         ubc_level: updatedUser.ubcLevel || 1,
@@ -223,11 +225,11 @@ const AppContent: React.FC = () => {
         line_oa_url: updatedUser.lineOaUrl,
         quote: updatedUser.quote,
         specialization: updatedUser.specialization,
-        social_links: updatedUser.socialLinks
-      })
-      .eq('id', updatedUser.id);
+        social_links: updatedUser.socialLinks,
+        updated_at: new Date().toISOString()
+      });
 
-    if (error) console.error('Error updating profile:', error);
+    if (error) console.error('Error syncing profile to Supabase:', error);
   };
 
   // ===== AUTH PAGES (not logged in) =====
