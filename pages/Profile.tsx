@@ -123,6 +123,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                     id: currentUser.id,
                     full_name: profile.full_name,
                     username: currentUser.username, // Maintain the existing username
+                    email: currentUser.email,
                     wealth_element: profile.wealthElement,
                     bio: profile.bio,
                     youtube_url: profile.youtubeUrl,

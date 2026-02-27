@@ -214,6 +214,7 @@ const AppContent: React.FC = () => {
         id: updatedUser.id,
         full_name: updatedUser.fullName,
         username: updatedUser.username,
+        email: updatedUser.email,
         avatar_url: updatedUser.avatarUrl,
         wealth_element: updatedUser.wealthElement,
         ubc_level: updatedUser.ubcLevel || 1,
