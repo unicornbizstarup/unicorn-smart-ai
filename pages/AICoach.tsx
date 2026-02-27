@@ -103,12 +103,21 @@ const AICoach: React.FC = () => {
         }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.details || errorData.error || `Server error: ${response.status}`);
+      const contentType = response.headers.get('content-type');
+      let data;
+
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        // Backend might have returned an HTML error page (e.g. 404 or Gateway Timeout)
+        const text = await response.text();
+        console.error('Non-JSON response from server:', text.substring(0, 200) + '...');
+        throw new Error(`ระบบหลังบ้านตอบกลับผิดพลาด (${response.status}) โปรดติดต่อแอดมิน`);
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.details || data.error || `Server error: ${response.status}`);
+      }
 
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
