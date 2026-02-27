@@ -112,7 +112,7 @@ const AppContent: React.FC = () => {
             .single();
 
           if (data && !error) {
-            setReferrer(data);
+            setReferrer(mapProfileToUser(data));
             setReferralId(data.username);
             localStorage.setItem('unicorn_referral_id', data.username);
             // ONLY if strictly on landing (not logged in)
@@ -199,6 +199,30 @@ const AppContent: React.FC = () => {
     };
   }, []);
 
+  const mapProfileToUser = (profileData: any, authUser?: any): User => {
+    return {
+      id: profileData?.id || authUser?.id,
+      fullName: profileData?.full_name || authUser?.user_metadata?.full_name || 'User',
+      username: profileData?.username || authUser?.user_metadata?.username || authUser?.email?.split('@')[0],
+      email: profileData?.email || authUser?.email || '',
+      avatarUrl: profileData?.avatar_url,
+      createdAt: profileData?.created_at || authUser?.created_at,
+      ubcLevel: profileData?.ubc_level || 1,
+      pvPersonal: profileData?.pv_personal || 0,
+      pvTeam: profileData?.pv_team || 0,
+      isAdmin: profileData?.is_admin || false,
+      wealthElement: profileData?.wealth_element,
+      referredBy: profileData?.referred_by,
+      bio: profileData?.bio,
+      youtubeUrl: profileData?.youtube_url,
+      lineId: profileData?.line_id,
+      lineOaUrl: profileData?.line_oa_url,
+      quote: profileData?.quote,
+      specialization: profileData?.specialization,
+      socialLinks: profileData?.social_links
+    };
+  };
+
   const fetchAndSetUser = async (user: any) => {
     try {
       const { data: profileData, error: profileError } = await supabase
@@ -211,27 +235,7 @@ const AppContent: React.FC = () => {
         console.warn('Error fetching profile:', profileError);
       }
 
-      const userData: User = {
-        id: user.id,
-        fullName: profileData?.full_name || user.user_metadata?.full_name || 'User',
-        username: profileData?.username || user.user_metadata?.username || user.email?.split('@')[0],
-        email: user.email!,
-        avatarUrl: profileData?.avatar_url,
-        createdAt: user.created_at,
-        ubcLevel: profileData?.ubc_level || 1,
-        pvPersonal: profileData?.pv_personal || 0,
-        pvTeam: profileData?.pv_team || 0,
-        isAdmin: profileData?.is_admin || false,
-        wealthElement: profileData?.wealth_element,
-        referredBy: profileData?.referred_by,
-        bio: profileData?.bio,
-        youtubeUrl: profileData?.youtube_url,
-        lineId: profileData?.line_id,
-        lineOaUrl: profileData?.line_oa_url,
-        quote: profileData?.quote,
-        specialization: profileData?.specialization,
-        socialLinks: profileData?.social_links
-      };
+      const userData = mapProfileToUser(profileData, user);
 
       setCurrentUser(userData);
       localStorage.setItem('unicorn_current_user', JSON.stringify(userData));
