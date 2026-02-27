@@ -33,9 +33,11 @@ import WealthDNA from './pages/WealthDNA.tsx';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ReferralPage from './pages/ReferralPage';
 import Contact from './pages/Contact';
 import About from './pages/About';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import GlobalFooter from './components/GlobalFooter';
 import { supabase } from './lib/supabase';
 import { LanguageProvider, useLanguage } from './hooks/useLanguage';
 import LanguageSelector from './components/LanguageSelector';
@@ -70,16 +72,37 @@ const AppContent: React.FC = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [referralId, setReferralId] = useState<string | null>(null);
+  const [referrer, setReferrer] = useState<User | null>(null);
 
   // Check for existing session and referral parameters on mount
   useEffect(() => {
     // 1. Check for referral code in URL
     const params = new URLSearchParams(window.location.search);
     const ref = params.get('ref');
+    const pathRef = window.location.pathname.split('/')[1];
+
     if (ref) {
       localStorage.setItem('unicorn_referral_id', ref);
       setReferralId(ref);
-      console.log('Referral tracked:', ref);
+      console.log('Referral tracked (param):', ref);
+    } else if (pathRef && pathRef.length > 2 && !['login', 'register', 'privacy'].includes(pathRef.toLowerCase())) {
+      // Check if path is a username
+      const checkPathReferrer = async () => {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('username', pathRef.toLowerCase())
+          .single();
+
+        if (data && !error) {
+          console.log('Referral tracked (path):', data.username);
+          setReferrer(data);
+          setReferralId(data.username);
+          localStorage.setItem('unicorn_referral_id', data.username);
+          setCurrentView(AppView.REFERRAL_PAGE);
+        }
+      };
+      checkPathReferrer();
     } else {
       const storedRef = localStorage.getItem('unicorn_referral_id');
       if (storedRef) setReferralId(storedRef);
@@ -184,16 +207,51 @@ const AppContent: React.FC = () => {
     if (currentView === AppView.REGISTER) {
       return <RegisterPage onNavigate={setCurrentView} onRegister={handleRegister} referralId={referralId} />;
     }
-    if (currentView === AppView.ABOUT) {
-      return <About onNavigate={setCurrentView} />;
+    if (currentView === AppView.REFERRAL_PAGE) {
+      return referrer ? (
+        <div className="relative">
+          <ReferralPage
+            referrer={referrer}
+            onNavigate={setCurrentView}
+            onJoinTeam={() => setCurrentView(AppView.REGISTER)}
+          />
+          <div className="fixed bottom-6 right-6 z-50">
+            <LanguageSelector />
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col min-h-screen bg-slate-950">
+          <div className="flex-1">
+            <LandingPage onNavigate={setCurrentView} />
+          </div>
+          <GlobalFooter onNavigate={setCurrentView} />
+          <div className="fixed bottom-6 right-6 z-50">
+            <LanguageSelector />
+          </div>
+        </div>
+      );
     }
-    if (currentView === AppView.CONTACT) {
-      return <Contact onNavigate={setCurrentView} />;
-    }
-    if (currentView === AppView.PRIVACY_POLICY) {
-      return <PrivacyPolicy onNavigate={setCurrentView} />;
-    }
-    return <LandingPage onNavigate={setCurrentView} />;
+
+    const renderPage = () => {
+      switch (currentView) {
+        case AppView.ABOUT: return <About onNavigate={setCurrentView} />;
+        case AppView.CONTACT: return <Contact onNavigate={setCurrentView} />;
+        case AppView.PRIVACY_POLICY: return <PrivacyPolicy onNavigate={setCurrentView} />;
+        default: return <LandingPage onNavigate={setCurrentView} />;
+      }
+    };
+
+    return (
+      <div className="flex flex-col min-h-screen bg-slate-950">
+        <div className="flex-1">
+          {renderPage()}
+        </div>
+        <GlobalFooter onNavigate={setCurrentView} />
+        <div className="fixed bottom-6 right-6 z-50">
+          <LanguageSelector />
+        </div>
+      </div>
+    );
   }
 
   // ===== MAIN APP (logged in) =====

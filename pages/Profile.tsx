@@ -34,6 +34,7 @@ import {
 import { WEALTH_ELEMENTS } from '../data/wealthDnaData';
 import { User as UserType, AppView } from '../types';
 import { supabase } from '../lib/supabase';
+import { useLanguage } from '../hooks/useLanguage';
 
 interface ProfileProps {
     currentUser: UserType | null;
@@ -42,17 +43,19 @@ interface ProfileProps {
 }
 
 const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate }) => {
+    const { t } = useLanguage();
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [showCopiedToast, setShowCopiedToast] = useState(false);
     const [profile, setProfile] = useState({
         full_name: currentUser?.fullName || '',
         email: currentUser?.email || '',
-        bio: '',
+        bio: currentUser?.bio || '',
         specialization: '',
-        contact_link: '',
+        lineOaUrl: currentUser?.lineOaUrl || '',
+        lineId: currentUser?.lineId || '',
         quote: '',
-        video_url: '',
+        youtubeUrl: currentUser?.youtubeUrl || '',
         social_links: {
             facebook: '',
             instagram: '',
@@ -85,11 +88,11 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                     email: data.email,
                     wealthElement: data.wealth_element,
                     ubc_level: data.ubc_level || 1,
-                    // If we add columns for bio, video_url etc later:
                     bio: data.bio || prev.bio,
                     quote: data.quote || prev.quote,
-                    video_url: data.video_url || prev.video_url,
-                    contact_link: data.contact_link || prev.contact_link,
+                    youtubeUrl: data.youtube_url || prev.youtubeUrl,
+                    lineOaUrl: data.line_oa_url || prev.lineOaUrl,
+                    lineId: data.line_id || prev.lineId,
                     social_links: data.social_links || prev.social_links
                 }));
             }
@@ -108,8 +111,13 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                 .update({
                     full_name: profile.full_name,
                     wealth_element: profile.wealthElement,
-                    // Store extra fields in a JSON column or separate columns
-                    // For now, let's assume we might have these columns or use a fallback
+                    bio: profile.bio,
+                    youtube_url: profile.youtubeUrl,
+                    line_oa_url: profile.lineOaUrl,
+                    line_id: profile.lineId,
+                    quote: profile.quote,
+                    specialization: profile.specialization,
+                    social_links: profile.social_links
                 })
                 .eq('id', currentUser.id);
 
@@ -119,7 +127,11 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
             onUpdateUser({
                 ...currentUser,
                 fullName: profile.full_name,
-                wealthElement: profile.wealthElement as any
+                wealthElement: profile.wealthElement as any,
+                bio: profile.bio,
+                youtubeUrl: profile.youtubeUrl,
+                lineOaUrl: profile.lineOaUrl,
+                lineId: profile.lineId
             });
 
             setIsEditing(false);
@@ -150,21 +162,22 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
 
     // Helper to render video embed safely
     const renderVideoEmbed = () => {
-        if (!profile.video_url) return null;
+        if (!profile.youtubeUrl) return null;
 
-        // Basic check for youtube/vimeo structure
-        let embedUrl = profile.video_url;
-        if (embedUrl.includes('youtube.com/watch?v=')) {
-            embedUrl = embedUrl.replace('watch?v=', 'embed/');
-        } else if (embedUrl.includes('youtu.be/')) {
-            embedUrl = embedUrl.replace('youtu.be/', 'youtube.com/embed/');
-        }
+        const getYouTubeId = (url: string) => {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        };
+
+        const videoId = getYouTubeId(profile.youtubeUrl);
+        if (!videoId) return null;
 
         return (
             <div className="relative w-full overflow-hidden rounded-[1.5rem] shadow-lg" style={{ paddingTop: '56.25%' }}>
                 <iframe
                     className="absolute top-0 left-0 w-full h-full border-0"
-                    src={embedUrl}
+                    src={`https://www.youtube.com/embed/${videoId}`}
                     title="Profile Video"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
@@ -398,7 +411,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
 
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex justify-between">
-                                    <span>คำแนะนำตัว (Bio)</span>
+                                    <span>{t('profile.bio')}</span>
                                     <span>แสดงผลหน้า Referral</span>
                                 </label>
                                 <textarea
@@ -413,22 +426,32 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
 
                             {/* --- Links & Social --- */}
                             <div className="space-y-4 pt-4 border-t border-slate-100">
-                                <h4 className="text-sm font-black text-slate-900">ช่องทางการติดต่อและโซเชียลมีเดีย</h4>
+                                <h4 className="text-sm font-black text-slate-900">{t('profile.contact_social')}</h4>
 
                                 <div className="space-y-3">
-                                    {/* Main CTA */}
+                                    {/* Main CTA: LINE OA */}
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 shrink-0 bg-[#06C755]/10 text-[#06C755] rounded-xl flex items-center justify-center">
                                             <LinkIcon size={18} />
                                         </div>
-                                        <input
-                                            type="url"
-                                            disabled={!isEditing}
-                                            placeholder="LINE OA / Main Contact URL"
-                                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition-all disabled:opacity-70 text-sm font-bold text-slate-900"
-                                            value={profile.contact_link}
-                                            onChange={(e) => setProfile({ ...profile, contact_link: e.target.value })}
-                                        />
+                                        <div className="flex-1 space-y-2">
+                                            <input
+                                                type="url"
+                                                disabled={!isEditing}
+                                                placeholder="LINE OA URL (https://line.me/...)"
+                                                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition-all disabled:opacity-70 text-sm font-bold text-slate-900"
+                                                value={profile.lineOaUrl}
+                                                onChange={(e) => setProfile({ ...profile, lineOaUrl: e.target.value })}
+                                            />
+                                            <input
+                                                type="text"
+                                                disabled={!isEditing}
+                                                placeholder={t('referral.line_id')}
+                                                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition-all disabled:opacity-70 text-sm font-semibold text-slate-900"
+                                                value={profile.lineId}
+                                                onChange={(e) => setProfile({ ...profile, lineId: e.target.value })}
+                                            />
+                                        </div>
                                     </div>
                                     {/* Video Embed */}
                                     <div className="flex items-center gap-3">
@@ -438,10 +461,10 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                                         <input
                                             type="url"
                                             disabled={!isEditing}
-                                            placeholder="YouTube/Vimeo Embed Video URL"
+                                            placeholder="YouTube Link (e.g., https://youtu.be/...)"
                                             className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition-all disabled:opacity-70 text-sm font-semibold text-slate-600"
-                                            value={profile.video_url}
-                                            onChange={(e) => setProfile({ ...profile, video_url: e.target.value })}
+                                            value={profile.youtubeUrl}
+                                            onChange={(e) => setProfile({ ...profile, youtubeUrl: e.target.value })}
                                         />
                                     </div>
                                     {/* Facebook */}
@@ -483,7 +506,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                     <div className="sticky top-24">
                         <div className="text-center mb-4">
                             <span className="bg-slate-900 text-white text-[10px] uppercase font-black tracking-[0.2em] px-3 py-1 rounded-full shadow-md inline-flex items-center gap-2">
-                                <MonitorSmartphone size={12} /> หน้าพรีวิวลิงก์แนะนำ (Referral Page)
+                                <MonitorSmartphone size={12} /> {t('profile.preview_title')}
                             </span>
                         </div>
 
@@ -539,15 +562,20 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                                     )}
 
                                     {/* Main Call to Action */}
-                                    <div className="w-full pt-4">
+                                    <div className="w-full pt-4 space-y-3">
                                         <a
-                                            href={profile.contact_link}
+                                            href={profile.lineOaUrl}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="w-full block bg-emerald-500 hover:bg-emerald-600 text-white font-black py-4 rounded-[1.5rem] shadow-lg shadow-emerald-500/20 transition-all hover:-translate-y-1 hover:shadow-xl"
+                                            className="w-full block bg-[#06C755] hover:bg-[#05b34c] text-white font-black py-4 rounded-[1.5rem] shadow-lg shadow-emerald-500/20 transition-all hover:-translate-y-1 hover:shadow-xl"
                                         >
-                                            ติดต่อฉันผ่าน LINE OA
+                                            {t('referral.contact_line')}
                                         </a>
+                                        {profile.lineId && (
+                                            <div className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
+                                                LINE ID: <span className="text-slate-900">{profile.lineId}</span>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Social Links Row */}

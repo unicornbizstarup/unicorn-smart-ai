@@ -15,7 +15,8 @@ export enum AppView {
   WEALTH_DNA = 'WEALTH_DNA',
   CONTACT = 'CONTACT',
   ABOUT = 'ABOUT',
-  PRIVACY_POLICY = 'PRIVACY_POLICY'
+  PRIVACY_POLICY = 'PRIVACY_POLICY',
+  REFERRAL_PAGE = 'REFERRAL_PAGE'
 }
 
 export interface User {
@@ -35,6 +36,10 @@ export interface User {
   teamPvRight?: number;
   isAdmin?: boolean;
   referredBy?: string;
+  bio?: string;
+  youtubeUrl?: string;
+  lineId?: string;
+  lineOaUrl?: string;
 }
 
 export enum UBCLevel {
