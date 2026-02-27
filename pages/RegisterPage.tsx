@@ -187,7 +187,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
         }
     };
 
-    const handleSocialLogin = async (provider: 'google' | 'line' | 'facebook') => {
+    const handleSocialLogin = async (provider: 'google' | 'facebook') => {
         try {
             setIsLoading(true);
             const { error } = await supabase.auth.signInWithOAuth({
@@ -352,14 +352,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
                                     <div className="w-4 h-4 bg-blue-600 rounded-sm flex items-center justify-center text-[10px] font-black text-white">f</div>
                                     Facebook
                                 </button>
-                                <button
-                                    onClick={() => handleSocialLogin('line')}
-                                    disabled={isLoading}
-                                    className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm hover:bg-white/10 transition-all group disabled:opacity-50"
-                                >
-                                    <MessageSquare size={16} className="text-emerald-500" />
-                                    LINE
-                                </button>
+
                             </div>
 
                             <p className="text-center text-sm text-slate-500 mt-8 font-medium">
