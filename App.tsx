@@ -511,7 +511,7 @@ const AppContent: React.FC = () => {
               <div className="absolute top-2.5 right-2.5 lg:top-3 lg:right-3 w-2 h-2 lg:w-2.5 lg:h-2.5 bg-amber-500 rounded-full border-2 border-white" />
               <CalendarDays size={20} className="lg:w-[22px] lg:h-[22px] group-hover:rotate-12 transition-transform" />
             </button>
-            <LanguageSelector />
+            <LanguageSelector direction="down" />
             <div className="h-8 w-px bg-slate-200 mx-1 hidden sm:block" />
             <div
               className="hidden sm:flex items-center gap-3 pl-2 cursor-pointer group"

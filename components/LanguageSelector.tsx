@@ -3,14 +3,18 @@ import React, { useState } from 'react';
 import { Languages, ChevronDown, Check } from 'lucide-react';
 import { useLanguage } from '../hooks/useLanguage';
 
-const LanguageSelector: React.FC = () => {
+interface LanguageSelectorProps {
+    direction?: 'up' | 'down';
+}
+
+const LanguageSelector: React.FC<LanguageSelectorProps> = ({ direction = 'up' }) => {
     const { language, setLanguage, t } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
 
     const languages = [
         { code: 'th', name: 'ไทย', flag: '🇹🇭' },
         { code: 'en', name: 'English', flag: '🇺🇸' },
-        { code: 'mm', name: 'မြန်မာ', flag: '🇲🇲' },
+        { code: 'mm', name: 'မြันမာ', flag: '🇲🇲' },
     ];
 
     const currentLang = languages.find(l => l.code === language);
@@ -34,7 +38,10 @@ const LanguageSelector: React.FC = () => {
                         className="fixed inset-0 z-40"
                         onClick={() => setIsOpen(false)}
                     />
-                    <div className="absolute bottom-full mb-2 right-0 w-48 bg-white/80 backdrop-blur-2xl border border-white/40 rounded-3xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                    <div className={`
+                        absolute right-0 w-48 bg-white/80 backdrop-blur-2xl border border-white/40 rounded-3xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200
+                        ${direction === 'up' ? 'bottom-full mb-2' : 'top-full mt-2'}
+                    `}>
                         <div className="p-2 border-b border-slate-100 bg-slate-50/50">
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 py-1 block">
                                 {t('common.select_lang')}
