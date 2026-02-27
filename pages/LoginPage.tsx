@@ -80,11 +80,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLogin }) => {
         }
     };
 
-    const handleSocialLogin = async (provider: 'google' | 'line') => {
+    const handleSocialLogin = async (provider: 'google' | 'line' | 'facebook') => {
         try {
             setIsLoading(true);
             const { error } = await supabase.auth.signInWithOAuth({
-                provider,
+                provider: provider as any,
                 options: {
                     redirectTo: window.location.origin
                 }
@@ -225,6 +225,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLogin }) => {
                         >
                             <img src="https://www.google.com/favicon.ico" className="w-4 h-4 grayscale group-hover:grayscale-0 transition-all" alt="Google" />
                             Google
+                        </button>
+                        <button
+                            onClick={() => handleSocialLogin('facebook')}
+                            disabled={isLoading}
+                            className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm hover:bg-white/10 transition-all group disabled:opacity-50"
+                        >
+                            <div className="w-4 h-4 bg-blue-600 rounded-sm flex items-center justify-center text-[10px] font-black text-white">f</div>
+                            Facebook
                         </button>
                         <button
                             onClick={() => handleSocialLogin('line')}
