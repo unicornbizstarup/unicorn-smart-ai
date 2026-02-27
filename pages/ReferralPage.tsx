@@ -6,7 +6,13 @@ import {
     ArrowRight,
     ExternalLink,
     ShieldCheck,
-    Star
+    Star,
+    Facebook,
+    Instagram,
+    Twitter,
+    Globe,
+    Share2,
+    Linkedin
 } from 'lucide-react';
 import { User, AppView } from '../types';
 import { useLanguage } from '../hooks/useLanguage';
@@ -132,6 +138,39 @@ const ReferralPage: React.FC<ReferralPageProps> = ({ referrer, onNavigate, onJoi
                             <ExternalLink size={20} className="opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
                         </a>
                     )}
+
+                    <div className="grid grid-cols-5 gap-3">
+                        {referrer.socialLinks?.tiktok && (
+                            <a href={referrer.socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="aspect-square bg-white/[0.03] border border-white/10 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all">
+                                <Share2 size={24} />
+                            </a>
+                        )}
+                        {referrer.socialLinks?.facebook && (
+                            <a href={referrer.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="aspect-square bg-white/[0.03] border border-white/10 rounded-2xl flex items-center justify-center text-slate-400 hover:text-blue-500 hover:bg-white/10 transition-all">
+                                <Facebook size={24} />
+                            </a>
+                        )}
+                        {referrer.socialLinks?.instagram && (
+                            <a href={referrer.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="aspect-square bg-white/[0.03] border border-white/10 rounded-2xl flex items-center justify-center text-slate-400 hover:text-pink-500 hover:bg-white/10 transition-all">
+                                <Instagram size={24} />
+                            </a>
+                        )}
+                        {referrer.socialLinks?.twitter && (
+                            <a href={referrer.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="aspect-square bg-white/[0.03] border border-white/10 rounded-2xl flex items-center justify-center text-slate-400 hover:text-sky-400 hover:bg-white/10 transition-all">
+                                <Twitter size={24} />
+                            </a>
+                        )}
+                        {referrer.socialLinks?.linkedin && (
+                            <a href={referrer.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="aspect-square bg-white/[0.03] border border-white/10 rounded-2xl flex items-center justify-center text-slate-400 hover:text-blue-400 hover:bg-white/10 transition-all">
+                                <Linkedin size={24} />
+                            </a>
+                        )}
+                        {referrer.socialLinks?.website && (
+                            <a href={referrer.socialLinks.website} target="_blank" rel="noopener noreferrer" className="aspect-square bg-white/[0.03] border border-white/10 rounded-2xl flex items-center justify-center text-slate-400 hover:text-amber-500 hover:bg-white/10 transition-all">
+                                <Globe size={24} />
+                            </a>
+                        )}
+                    </div>
 
                     <button
                         onClick={onJoinTeam}

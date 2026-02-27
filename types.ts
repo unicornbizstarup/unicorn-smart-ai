@@ -47,6 +47,9 @@ export interface User {
     instagram?: string;
     tiktok?: string;
     youtube?: string;
+    twitter?: string;
+    linkedin?: string;
+    thread?: string;
     website?: string;
   };
 }

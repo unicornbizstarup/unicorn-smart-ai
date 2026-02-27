@@ -61,6 +61,9 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
             instagram: '',
             tiktok: '',
             youtube: '',
+            twitter: '',
+            linkedin: '',
+            thread: '',
             website: '',
         },
         ubc_level: currentUser?.ubcLevel || 1,
@@ -106,6 +109,14 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
         setIsSaving(true);
 
         try {
+            // Check session before saving to avoid OAuth errors
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                alert('เซสชั่นหมดอายุ กรุณาเข้าสู่ระบบใหม่อีกครั้ง');
+                onNavigate(AppView.LOGIN);
+                return;
+            }
+
             const { error } = await supabase
                 .from('profiles')
                 .update({
@@ -138,6 +149,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
             });
 
             setIsEditing(false);
+            alert('บันทึกข้อมูลสำเร็จแล้ว!');
         } catch (err) {
             console.error('Save error:', err);
             alert('ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง');
@@ -357,6 +369,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                                 </button>
                             ) : (
                                 <button
+                                    type="button"
                                     onClick={handleSave}
                                     disabled={isSaving}
                                     className="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-full text-xs md:text-sm font-black transition-all flex items-center gap-2 shadow-lg shadow-amber-500/20 disabled:opacity-60"
@@ -496,6 +509,62 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                                             className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition-all disabled:opacity-70 text-sm font-semibold text-slate-600"
                                             value={profile.social_links.instagram}
                                             onChange={(e) => handleSocialChange('instagram', e.target.value)}
+                                        />
+                                    </div>
+                                    {/* TikTok */}
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 shrink-0 bg-slate-100 text-slate-900 rounded-xl flex items-center justify-center">
+                                            <Share2 size={18} />
+                                        </div>
+                                        <input
+                                            type="url"
+                                            disabled={!isEditing}
+                                            placeholder="TikTok URL"
+                                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition-all disabled:opacity-70 text-sm font-semibold text-slate-600"
+                                            value={profile.social_links.tiktok}
+                                            onChange={(e) => handleSocialChange('tiktok', e.target.value)}
+                                        />
+                                    </div>
+                                    {/* Twitter / X */}
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 shrink-0 bg-slate-900 text-white rounded-xl flex items-center justify-center">
+                                            <Twitter size={18} />
+                                        </div>
+                                        <input
+                                            type="url"
+                                            disabled={!isEditing}
+                                            placeholder="Twitter / X URL"
+                                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition-all disabled:opacity-70 text-sm font-semibold text-slate-600"
+                                            value={profile.social_links.twitter}
+                                            onChange={(e) => handleSocialChange('twitter', e.target.value)}
+                                        />
+                                    </div>
+                                    {/* LinkedIn */}
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 shrink-0 bg-[#0077b5]/10 text-[#0077b5] rounded-xl flex items-center justify-center">
+                                            <Briefcase size={18} />
+                                        </div>
+                                        <input
+                                            type="url"
+                                            disabled={!isEditing}
+                                            placeholder="LinkedIn URL"
+                                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition-all disabled:opacity-70 text-sm font-semibold text-slate-600"
+                                            value={profile.social_links.linkedin}
+                                            onChange={(e) => handleSocialChange('linkedin', e.target.value)}
+                                        />
+                                    </div>
+                                    {/* Generic Website */}
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 shrink-0 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center">
+                                            <Globe size={18} />
+                                        </div>
+                                        <input
+                                            type="url"
+                                            disabled={!isEditing}
+                                            placeholder="Personal Website URL"
+                                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition-all disabled:opacity-70 text-sm font-semibold text-slate-600"
+                                            value={profile.social_links.website}
+                                            onChange={(e) => handleSocialChange('website', e.target.value)}
                                         />
                                     </div>
                                 </div>
