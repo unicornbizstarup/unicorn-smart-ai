@@ -18,12 +18,15 @@ import {
 } from 'lucide-react';
 import { AppView, User } from '../types';
 import { WEALTH_ELEMENTS } from '../data/wealthDnaData';
+import { useLanguage } from '../hooks/useLanguage';
+import { TranslationKey } from '../lib/translations';
 
 const WealthDNA: React.FC<{
     onNavigate: (view: AppView) => void,
     onUpdateUser: (user: User) => void,
     currentUser: User | null
 }> = ({ onNavigate, onUpdateUser, currentUser }) => {
+    const { t, language } = useLanguage();
     const [step, setStep] = useState<'intro' | 'form' | 'loading' | 'result'>('intro');
     const [birthDate, setBirthDate] = useState('');
     const [birthTime, setBirthTime] = useState('');
@@ -64,8 +67,8 @@ const WealthDNA: React.FC<{
             onNavigate(AppView.PROFILE);
         } catch (err: any) {
             console.error('Save result error:', err);
-            const errorMsg = err.message || (err.error?.message) || 'กรุณาลองใหม่อีกครั้ง';
-            alert(`ไม่สามารถบันทึกข้อมูลได้: ${errorMsg}`);
+            const errorMsg = err.message || (err.error?.message) || t('common.back'); // Fallback to something safe
+            alert(`${t('common.back')}: ${errorMsg}`);
         } finally {
             setIsSaving(false);
         }
@@ -85,13 +88,13 @@ const WealthDNA: React.FC<{
 
                     <div className="space-y-6">
                         <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-500 text-sm font-black tracking-widest uppercase">
-                            ✨ ค้นพบรหัสลับความมั่งคั่งของคุณ
+                            {t('wealth.intro.tag')}
                         </div>
                         <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 leading-tight">
                             Unicorn <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-indigo-500 to-purple-600">Wealth DNA</span>
                         </h1>
                         <p className="text-xl md:text-2xl font-bold text-slate-500 max-w-lg mx-auto leading-relaxed">
-                            ถอดรหัสพื้นดวง เปิดประตูสู่ความมั่งคั่ง วิเคราะห์ธาตุเจ้าเรือนเพื่อค้นพบ "สไตล์การรวย" ที่ใช่คุณ
+                            {t('wealth.intro.desc')}
                         </p>
                     </div>
 
@@ -100,9 +103,9 @@ const WealthDNA: React.FC<{
                             onClick={handleStart}
                             className="w-full md:w-auto px-12 py-6 bg-gradient-to-r from-amber-400 to-amber-600 text-slate-950 font-black text-xl rounded-3xl shadow-2xl shadow-amber-500/30 flex items-center justify-center gap-3 group hover:scale-105 transition-all active:scale-95"
                         >
-                            <Sparkles size={24} /> เริ่มต้นวิเคราะห์ DNA <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+                            <Sparkles size={24} /> {t('wealth.intro.start')} <ArrowRight className="group-hover:translate-x-2 transition-transform" />
                         </button>
-                        <p className="text-sm font-bold text-slate-400">ฟรี! ไม่มีค่าใช้จ่าย • ใช้เวลาไม่ถึง 1 นาที</p>
+                        <p className="text-sm font-bold text-slate-400">{t('wealth.intro.footer')}</p>
                     </div>
                 </div>
             )}
@@ -111,21 +114,21 @@ const WealthDNA: React.FC<{
             {step === 'form' && (
                 <div className="max-w-xl w-full space-y-8 animate-in slide-in-from-bottom-12 duration-500">
                     <button onClick={() => setStep('intro')} className="flex items-center gap-2 text-slate-500 font-bold hover:text-slate-900 transition-colors">
-                        <ChevronLeft size={20} /> ย้อนกลับ
+                        <ChevronLeft size={20} /> {t('common.back')}
                     </button>
 
                     <div className="glass-card rounded-[3rem] p-10 md:p-14 border border-white/60 shadow-3xl bg-white/40 backdrop-blur-xl">
                         <div className="space-y-8">
                             <div className="text-center space-y-2">
-                                <h2 className="text-3xl font-black text-slate-900 tracking-tight">ข้อมูลพื้นดวง</h2>
-                                <p className="text-slate-500 font-bold">กรุณากรอกข้อมูลเพื่อใช้ในการคำนวณธาตุเจ้าเรือน</p>
+                                <h2 className="text-3xl font-black text-slate-900 tracking-tight">{t('wealth.form.title')}</h2>
+                                <p className="text-slate-500 font-bold">{t('wealth.form.subtitle')}</p>
                             </div>
 
                             <div className="space-y-6">
                                 <div className="space-y-2">
                                     <div className="flex justify-between items-end px-1">
-                                        <label className="text-sm font-black text-slate-400 uppercase tracking-widest">วัน/เดือน/ปี เกิด</label>
-                                        {birthDate && (
+                                        <label className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('wealth.form.birth_date')}</label>
+                                        {birthDate && language === 'th' && (
                                             <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-100 animate-in fade-in slide-in-from-right-2">
                                                 พ.ศ. {parseInt(birthDate.split('-')[0]) + 543}
                                             </span>
@@ -143,7 +146,7 @@ const WealthDNA: React.FC<{
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-sm font-black text-slate-400 uppercase tracking-widest px-1">เวลาเกิด (ถ้าทราบ)</label>
+                                    <label className="text-sm font-black text-slate-400 uppercase tracking-widest px-1">{t('wealth.form.birth_time')}</label>
                                     <div className="relative group">
                                         <Clock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={20} />
                                         <input
@@ -164,7 +167,7 @@ const WealthDNA: React.FC<{
                                     ${birthDate ? 'bg-slate-900 text-white hover:bg-slate-800' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}
                                 `}
                             >
-                                วิเคราะห์รหัสความมั่งคั่ง
+                                {t('wealth.form.analyze')}
                             </button>
                         </div>
                     </div>
@@ -179,8 +182,8 @@ const WealthDNA: React.FC<{
                         <Bot className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-900" size={40} />
                     </div>
                     <div className="space-y-2">
-                        <h2 className="text-2xl font-black text-slate-900 animate-pulse">กำลังวิเคราะห์ดวงดาวและความมั่งคั่ง...</h2>
-                        <p className="text-slate-500 font-bold italic">Nong Uni AI Coach is calculating your Wealth DNA</p>
+                        <h2 className="text-2xl font-black text-slate-900 animate-pulse">{t('wealth.loading.title')}</h2>
+                        <p className="text-slate-500 font-bold italic">{t('wealth.loading.subtitle')}</p>
                     </div>
                 </div>
             )}
@@ -200,11 +203,11 @@ const WealthDNA: React.FC<{
 
                             <div className="flex-1 text-center md:text-left space-y-4">
                                 <div className="inline-block px-5 py-2 bg-white/20 border border-white/30 rounded-full font-black text-sm tracking-widest uppercase mb-2">
-                                    Archetype: {elementData.archetype}
+                                    Archetype: {t(elementData.archetype as TranslationKey)}
                                 </div>
-                                <h1 className="text-5xl md:text-7xl font-black tracking-tighter">{elementData.name}</h1>
-                                <p className="text-2xl md:text-3xl font-black text-white/90 italic">"{elementData.concept}"</p>
-                                <p className="text-xl font-bold text-white/80 max-w-2xl leading-relaxed">{elementData.description}</p>
+                                <h1 className="text-5xl md:text-7xl font-black tracking-tighter">{t(elementData.name as TranslationKey)}</h1>
+                                <p className="text-2xl md:text-3xl font-black text-white/90 italic">"{t(elementData.concept as TranslationKey)}"</p>
+                                <p className="text-xl font-bold text-white/80 max-w-2xl leading-relaxed">{t(elementData.description as TranslationKey)}</p>
                             </div>
                         </div>
 
@@ -217,10 +220,10 @@ const WealthDNA: React.FC<{
                         {/* Strengths */}
                         <div className="bg-white rounded-[2.5rem] p-8 border border-slate-200 shadow-xl space-y-6">
                             <div className="flex items-center gap-3 text-emerald-600 font-black tracking-tight uppercase">
-                                <CheckCircle2 size={24} /> จุดแข็งของคุณ
+                                <CheckCircle2 size={24} /> {t('wealth.result.strengths')}
                             </div>
                             <ul className="space-y-3">
-                                {elementData.strengths.map((s, idx) => (
+                                {t((elementData as any).strengthsKey).split(',').map((s: string, idx: number) => (
                                     <li key={idx} className="flex gap-2 font-bold text-slate-700">
                                         <div className="mt-1.5 w-1.5 h-1.5 bg-emerald-500 rounded-full shrink-0" /> {s}
                                     </li>
@@ -231,14 +234,14 @@ const WealthDNA: React.FC<{
                         {/* Strategy */}
                         <div className="bg-white rounded-[2.5rem] p-8 border border-slate-200 shadow-xl space-y-6">
                             <div className="flex items-center gap-3 text-indigo-600 font-black tracking-tight uppercase">
-                                <Lightbulb size={24} /> กลยุทธ์ธุรกิจที่แนะนำ
+                                <Lightbulb size={24} /> {t('wealth.result.strategy')}
                             </div>
                             <p className="text-slate-700 font-bold leading-relaxed bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100 italic">
-                                "{elementData.business_strategy}"
+                                "{t(elementData.name.replace('.name', '.strategy') as TranslationKey) || '...'}"
                             </p>
                             <div className="space-y-3">
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ไอเดียทำคอนเทนต์</p>
-                                {elementData.content_ideas.map((c, idx) => (
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('wealth.result.content_ideas')}</p>
+                                {t((elementData as any).contentIdeasKey).split(',').map((c: string, idx: number) => (
                                     <div key={idx} className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-sm font-bold text-slate-600">
                                         {c}
                                     </div>
@@ -249,7 +252,7 @@ const WealthDNA: React.FC<{
                         {/* Products */}
                         <div className="bg-white rounded-[2.5rem] p-8 border border-slate-200 shadow-xl space-y-6">
                             <div className="flex items-center gap-3 text-amber-600 font-black tracking-tight uppercase">
-                                <ShoppingBag size={24} /> สินค้าแนะนำรวยตามธาตุ
+                                <ShoppingBag size={24} /> {t('wealth.result.products')}
                             </div>
                             <div className="space-y-3">
                                 {elementData.recommended_products.map((p, idx) => (
@@ -263,7 +266,7 @@ const WealthDNA: React.FC<{
                                 onClick={() => onNavigate(AppView.PRODUCT_CATALOG)}
                                 className="w-full py-4 text-amber-600 font-black text-sm uppercase tracking-tighter hover:underline"
                             >
-                                ดูรายละเอียดสินค้าทั้งหมด
+                                {t('wealth.result.all_products')}
                             </button>
                         </div>
                     </div>
@@ -274,12 +277,12 @@ const WealthDNA: React.FC<{
                             disabled={isSaving}
                             className="flex-1 bg-slate-900 text-white py-6 rounded-[2rem] font-black text-xl shadow-xl hover:bg-slate-800 transition-all flex items-center justify-center gap-2 group disabled:opacity-70"
                         >
-                            <CheckCircle2 size={24} /> {isSaving ? 'กำลังบันทึก...' : 'บันทึกผลไปที่โปรไฟล์'} <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
+                            <CheckCircle2 size={24} /> {isSaving ? t('profile.saving') : t('wealth.result.save')} <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
                         </button>
                         <button
                             className="px-10 py-6 bg-white text-slate-900 border border-slate-200 rounded-[2rem] font-black text-xl hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
                         >
-                            <Share2 size={24} /> แชร์ผลลัพธ์
+                            <Share2 size={24} /> {t('wealth.result.share')}
                         </button>
                     </div>
                 </div>
