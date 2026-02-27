@@ -50,7 +50,11 @@ const AppContent: React.FC = () => {
 
   const navigation: { name: TranslationKey; icon: any; view: AppView }[] = [
     { name: 'nav.home', icon: LayoutDashboard, view: AppView.DASHBOARD },
-    { name: 'nav.about', icon: LayoutDashboard, view: AppView.ABOUT }, // Reusing keys where appropriate
+    { name: 'nav.system456', icon: Layers, view: AppView.SYSTEM_456 },
+    { name: 'nav.functions', icon: FolderOpen, view: AppView.FUNCTIONS },
+    { name: 'nav.calendar', icon: CalendarDays, view: AppView.START_UP },
+    { name: 'nav.ai_coach', icon: Bot, view: AppView.AI_COACH },
+    { name: 'nav.about', icon: LayoutDashboard, view: AppView.ABOUT },
     { name: 'nav.products', icon: BookOpen, view: AppView.PRODUCT_CATALOG },
     { name: 'nav.contact', icon: CalendarDays, view: AppView.CONTACT },
   ];
@@ -172,6 +176,15 @@ const AppContent: React.FC = () => {
     }
     if (currentView === AppView.REGISTER) {
       return <RegisterPage onNavigate={setCurrentView} onRegister={handleRegister} referralId={referralId} />;
+    }
+    if (currentView === AppView.ABOUT) {
+      return <About onNavigate={setCurrentView} />;
+    }
+    if (currentView === AppView.CONTACT) {
+      return <Contact onNavigate={setCurrentView} />;
+    }
+    if (currentView === AppView.PRIVACY_POLICY) {
+      return <PrivacyPolicy onNavigate={setCurrentView} />;
     }
     return <LandingPage onNavigate={setCurrentView} />;
   }

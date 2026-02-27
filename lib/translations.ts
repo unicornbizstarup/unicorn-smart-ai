@@ -1,6 +1,7 @@
 
 export type TranslationKey =
     | 'nav.home' | 'nav.about' | 'nav.products' | 'nav.contact' | 'nav.privacy'
+    | 'nav.system456' | 'nav.functions' | 'nav.calendar' | 'nav.ai_coach'
     | 'hero.title' | 'hero.subtitle' | 'hero.cta' | 'hero.login'
     | 'sections.strategy' | 'sections.products' | 'sections.contact'
     | 'strategy.eco.title' | 'strategy.eco.desc'
@@ -33,7 +34,11 @@ export const translations = {
         'nav.products': 'สินค้า',
         'nav.contact': 'ติดต่อเรา',
         'nav.privacy': 'นโยบายความเป็นส่วนตัว',
-        'hero.title': 'Unicorn Academy',
+        'hero.title': 'Unicorn',
+        'nav.system456': 'ระบบ 456',
+        'nav.functions': 'ฟังก์ชั่น',
+        'nav.calendar': 'ปฏิทิน',
+        'nav.ai_coach': 'โค้ชอัจฉริยะ AI',
         'hero.subtitle': 'Biz Start Up Platform เพื่อนักธุรกิจยุคใหม่',
         'hero.cta': 'เริ่มต้นธุรกิจของคุณวันนี้',
         'hero.login': 'เข้าสู่ระบบ',
@@ -117,7 +122,11 @@ export const translations = {
         'nav.products': 'Products',
         'nav.contact': 'Contact',
         'nav.privacy': 'Privacy Policy',
-        'hero.title': 'Unicorn Academy',
+        'hero.title': 'Unicorn',
+        'nav.system456': 'System 456',
+        'nav.functions': 'Functions',
+        'nav.calendar': 'Calendar',
+        'nav.ai_coach': 'AI Coach',
         'hero.subtitle': 'Biz Start Up Platform for Next-Gen Entrepreneurs',
         'hero.cta': 'Start Your Business Today',
         'hero.login': 'Sign In',
@@ -201,7 +210,11 @@ export const translations = {
         'nav.products': 'ထုတ်ကုန်များ',
         'nav.contact': 'ဆက်သွယ်ရန်',
         'nav.privacy': 'ကိုယ်ရေးကိုယ်တာမူဝါဒ',
-        'hero.title': 'Unicorn Academy',
+        'hero.title': 'Unicorn',
+        'nav.system456': 'စနစ် ၄၅၆',
+        'nav.functions': 'လုပ်ဆောင်ချက်များ',
+        'nav.calendar': 'ပြက္ခဒိန်',
+        'nav.ai_coach': 'AI နည်းပြ',
         'hero.subtitle': 'မျိုးဆက်သစ်စီးပွားရေးလုပ်ငန်းရှင်များအတွက် Biz Start Up Platform',
         'hero.cta': 'ယနေ့ပင် သင်၏စီးပွားရေးကို สတင်လိုက်ပါ',
         'hero.login': 'အကောင့်ဝင်ရန်',
