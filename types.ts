@@ -40,6 +40,15 @@ export interface User {
   youtubeUrl?: string;
   lineId?: string;
   lineOaUrl?: string;
+  quote?: string;
+  specialization?: string;
+  socialLinks?: {
+    facebook?: string;
+    instagram?: string;
+    tiktok?: string;
+    youtube?: string;
+    website?: string;
+  };
 }
 
 export enum UBCLevel {

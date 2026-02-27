@@ -77,17 +77,17 @@ const AppContent: React.FC = () => {
   // Check for existing session and referral parameters on mount
   useEffect(() => {
     // 1. Check for referral code in URL
-    const params = new URLSearchParams(window.location.search);
-    const ref = params.get('ref');
-    const pathRef = window.location.pathname.split('/')[1];
+    const checkReferral = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('ref');
+      const pathRef = window.location.pathname.split('/')[1];
 
-    if (ref) {
-      localStorage.setItem('unicorn_referral_id', ref);
-      setReferralId(ref);
-      console.log('Referral tracked (param):', ref);
-    } else if (pathRef && pathRef.length > 2 && !['login', 'register', 'privacy'].includes(pathRef.toLowerCase())) {
-      // Check if path is a username
-      const checkPathReferrer = async () => {
+      if (ref) {
+        localStorage.setItem('unicorn_referral_id', ref);
+        setReferralId(ref);
+        console.log('Referral tracked (param):', ref);
+      } else if (pathRef && pathRef.length > 2 && !['login', 'register', 'privacy', 'about', 'contact', 'dashboard'].includes(pathRef.toLowerCase())) {
+        // Check if path is a username
         const { data, error } = await supabase
           .from('profiles')
           .select('*')
@@ -100,13 +100,16 @@ const AppContent: React.FC = () => {
           setReferralId(data.username);
           localStorage.setItem('unicorn_referral_id', data.username);
           setCurrentView(AppView.REFERRAL_PAGE);
+        } else {
+          const storedRef = localStorage.getItem('unicorn_referral_id');
+          if (storedRef) setReferralId(storedRef);
         }
-      };
-      checkPathReferrer();
-    } else {
-      const storedRef = localStorage.getItem('unicorn_referral_id');
-      if (storedRef) setReferralId(storedRef);
-    }
+      } else {
+        const storedRef = localStorage.getItem('unicorn_referral_id');
+        if (storedRef) setReferralId(storedRef);
+      }
+    };
+    checkReferral();
 
     // 2. Initial Session Check
     const checkSession = async () => {
@@ -155,7 +158,14 @@ const AppContent: React.FC = () => {
       pvTeam: profileData?.pv_team || 0,
       isAdmin: profileData?.is_admin || false,
       wealthElement: profileData?.wealth_element,
-      referredBy: profileData?.referred_by
+      referredBy: profileData?.referred_by,
+      bio: profileData?.bio,
+      youtubeUrl: profileData?.youtube_url,
+      lineId: profileData?.line_id,
+      lineOaUrl: profileData?.line_oa_url,
+      quote: profileData?.quote,
+      specialization: profileData?.specialization,
+      socialLinks: profileData?.social_links
     };
 
     setCurrentUser(userData);
@@ -190,9 +200,16 @@ const AppContent: React.FC = () => {
         full_name: updatedUser.fullName,
         avatar_url: updatedUser.avatarUrl,
         wealth_element: updatedUser.wealthElement,
-        ubc_level: updatedUser.ubcLevel,
-        pv_personal: updatedUser.pvPersonal,
-        pv_team: updatedUser.pvTeam
+        ubc_level: updatedUser.ubcLevel || 1,
+        pv_personal: updatedUser.pvPersonal || 0,
+        pv_team: updatedUser.pvTeam || 0,
+        bio: updatedUser.bio,
+        youtube_url: updatedUser.youtubeUrl,
+        line_id: updatedUser.lineId,
+        line_oa_url: updatedUser.lineOaUrl,
+        quote: updatedUser.quote,
+        specialization: updatedUser.specialization,
+        social_links: updatedUser.socialLinks
       })
       .eq('id', updatedUser.id);
 

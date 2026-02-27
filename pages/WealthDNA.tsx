@@ -112,7 +112,14 @@ const WealthDNA: React.FC<{
 
                             <div className="space-y-6">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-black text-slate-400 uppercase tracking-widest px-1">วัน/เดือน/ปี เกิด</label>
+                                    <div className="flex justify-between items-end px-1">
+                                        <label className="text-sm font-black text-slate-400 uppercase tracking-widest">วัน/เดือน/ปี เกิด</label>
+                                        {birthDate && (
+                                            <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-100 animate-in fade-in slide-in-from-right-2">
+                                                พ.ศ. {parseInt(birthDate.split('-')[0]) + 543}
+                                            </span>
+                                        )}
+                                    </div>
                                     <div className="relative group">
                                         <Calendar className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-amber-500 transition-colors" size={20} />
                                         <input

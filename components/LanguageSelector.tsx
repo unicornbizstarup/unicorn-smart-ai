@@ -34,7 +34,7 @@ const LanguageSelector: React.FC = () => {
                         className="fixed inset-0 z-40"
                         onClick={() => setIsOpen(false)}
                     />
-                    <div className="absolute top-full mt-2 right-0 w-48 bg-white/80 backdrop-blur-2xl border border-white/40 rounded-3xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                    <div className="absolute bottom-full mb-2 right-0 w-48 bg-white/80 backdrop-blur-2xl border border-white/40 rounded-3xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                         <div className="p-2 border-b border-slate-100 bg-slate-50/50">
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 py-1 block">
                                 {t('common.select_lang')}
@@ -49,8 +49,8 @@ const LanguageSelector: React.FC = () => {
                                         setIsOpen(false);
                                     }}
                                     className={`flex items-center justify-between w-full px-4 py-3 rounded-2xl transition-all ${language === lang.code
-                                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
-                                            : 'hover:bg-blue-50 text-slate-700'
+                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
+                                        : 'hover:bg-blue-50 text-slate-700'
                                         }`}
                                 >
                                     <div className="flex items-center gap-3">

@@ -131,7 +131,10 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                 bio: profile.bio,
                 youtubeUrl: profile.youtubeUrl,
                 lineOaUrl: profile.lineOaUrl,
-                lineId: profile.lineId
+                lineId: profile.lineId,
+                quote: profile.quote,
+                specialization: profile.specialization,
+                socialLinks: profile.social_links
             });
 
             setIsEditing(false);
@@ -165,7 +168,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
         if (!profile.youtubeUrl) return null;
 
         const getYouTubeId = (url: string) => {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
             const match = url.match(regExp);
             return (match && match[2].length === 11) ? match[2] : null;
         };

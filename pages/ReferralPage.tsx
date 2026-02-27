@@ -22,7 +22,7 @@ const ReferralPage: React.FC<ReferralPageProps> = ({ referrer, onNavigate, onJoi
 
     // Helper to extract YouTube ID
     const getYouTubeId = (url: string) => {
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
         const match = url.match(regExp);
         return (match && match[2].length === 11) ? match[2] : null;
     };
@@ -61,11 +61,25 @@ const ReferralPage: React.FC<ReferralPageProps> = ({ referrer, onNavigate, onJoi
                     <h1 className="text-3xl lg:text-4xl font-black tracking-tight mb-2">
                         {referrer.fullName}
                     </h1>
+                    {referrer.specialization && (
+                        <p className="text-amber-500 font-bold uppercase tracking-widest text-sm mb-4">
+                            {referrer.specialization}
+                        </p>
+                    )}
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-bold text-slate-400 uppercase tracking-widest">
                         <ShieldCheck size={14} className="text-emerald-500" />
                         {t('referral.verified_partner')}
                     </div>
                 </div>
+
+                {/* Quote Section */}
+                {referrer.quote && (
+                    <div className="text-center mb-12">
+                        <p className="text-xl lg:text-2xl font-black text-slate-300 leading-tight">
+                            "{referrer.quote}"
+                        </p>
+                    </div>
+                )}
 
                 {/* Bio Section */}
                 {referrer.bio && (
