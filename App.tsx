@@ -70,17 +70,31 @@ const AppContent: React.FC = () => {
     { name: 'nav.contact', icon: PhoneCall, view: AppView.CONTACT },
   ];
 
-  const [isInitializing, setIsInitializing] = useState(true);
-  const [loadingProgress, setLoadingProgress] = useState(5);
-  const [currentView, setCurrentView] = useState<AppView>(AppView.LANDING);
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(() => {
+    try {
+      const saved = localStorage.getItem('unicorn_current_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [isInitializing, setIsInitializing] = useState(() => {
+    // Only show loader if no cached user OR if it's the very first visit
+    return !localStorage.getItem('unicorn_current_user');
+  });
   const [referralId, setReferralId] = useState<string | null>(null);
   const [referrer, setReferrer] = useState<User | null>(null);
+  const [loadingProgress, setLoadingProgress] = useState(() => localStorage.getItem('unicorn_current_user') ? 100 : 5);
+  const [currentView, setCurrentView] = useState<AppView>(() => {
+    const savedUser = localStorage.getItem('unicorn_current_user');
+    return savedUser ? AppView.DASHBOARD : AppView.LANDING;
+  });
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   // Check for existing session and referral parameters on mount
   useEffect(() => {
     const initialize = async () => {
+      const hasCachedUser = !!localStorage.getItem('unicorn_current_user');
       // Start both in parallel
       const referralPromise = (async () => {
         const params = new URLSearchParams(window.location.search);
@@ -101,7 +115,8 @@ const AppContent: React.FC = () => {
             setReferrer(data);
             setReferralId(data.username);
             localStorage.setItem('unicorn_referral_id', data.username);
-            setCurrentView(AppView.REFERRAL_PAGE);
+            // ONLY if strictly on landing (not logged in)
+            if (currentView === AppView.LANDING) setCurrentView(AppView.REFERRAL_PAGE);
           }
         }
         setLoadingProgress(prev => Math.max(prev, 40));
@@ -114,13 +129,23 @@ const AppContent: React.FC = () => {
 
           if (session?.user) {
             await fetchAndSetUser(session.user);
-            setCurrentView(AppView.DASHBOARD);
+            // If we are on landing, move to dashboard
+            if (currentView === AppView.LANDING) {
+              setCurrentView(AppView.DASHBOARD);
+            }
+          } else if (hasCachedUser) {
+            // Cache was invalid or expired
+            setCurrentUser(null);
+            setCurrentView(AppView.LANDING);
+            localStorage.removeItem('unicorn_current_user');
           }
         } catch (err) {
           console.error('Session check error:', err);
-          await supabase.auth.signOut();
-          setCurrentUser(null);
-          localStorage.removeItem('unicorn_current_user');
+          if (hasCachedUser) {
+            await supabase.auth.signOut();
+            setCurrentUser(null);
+            localStorage.removeItem('unicorn_current_user');
+          }
         }
         setLoadingProgress(prev => Math.max(prev, 80));
       })();
