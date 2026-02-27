@@ -122,7 +122,21 @@ const AppContent: React.FC = () => {
 
     checkSession();
 
-    // 3. Listen for Auth Changes
+    // 4. Listen for Auth Errors in URL (e.g., bad_oauth_state)
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    if (error) {
+      console.error('Auth Error Detected:', {
+        error,
+        code: urlParams.get('error_code'),
+        description: urlParams.get('error_description')
+      });
+      // Cleanup URL to prevent persistent error message state
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+
+    // 5. Listen for Auth Changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
         await fetchAndSetUser(session.user);
