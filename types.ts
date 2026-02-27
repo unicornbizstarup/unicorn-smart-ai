@@ -13,7 +13,8 @@ export enum AppView {
   UBC_PROGRAM = 'UBC_PROGRAM',
   PRODUCT_CATALOG = 'PRODUCT_CATALOG',
   WEALTH_DNA = 'WEALTH_DNA',
-  CONTACT = 'CONTACT'
+  CONTACT = 'CONTACT',
+  ABOUT = 'ABOUT'
 }
 
 export interface User {

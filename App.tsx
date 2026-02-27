@@ -30,6 +30,7 @@ import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import Contact from './pages/Contact';
+import About from './pages/About';
 import { supabase } from './lib/supabase';
 
 const navigation = [
@@ -309,6 +310,7 @@ const App: React.FC = () => {
             {currentView === AppView.PRODUCT_CATALOG && <ProductCatalog onNavigate={setCurrentView} />}
             {currentView === AppView.WEALTH_DNA && <WealthDNA onNavigate={setCurrentView} onUpdateUser={updateUser} currentUser={currentUser} />}
             {currentView === AppView.CONTACT && <Contact onNavigate={setCurrentView} />}
+            {currentView === AppView.ABOUT && <About onNavigate={setCurrentView} />}
           </div>
         </div>
       </main>

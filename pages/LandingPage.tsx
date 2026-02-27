@@ -13,7 +13,8 @@ import {
     Users,
     TrendingUp,
     Shield,
-    Play
+    Play,
+    Award
 } from 'lucide-react';
 import { AppView } from '../types';
 
@@ -34,7 +35,7 @@ const features = [
         icon: Layers,
         title: 'ระบบ 4-5-6',
         subtitle: 'Blueprint สู่ความสำเร็จ',
-        description: 'ระบบเรียนรู้เฉพาะทางที่ออกแบบมาเพื่อนักธุรกิจ Unicorn โดยเฉพาะ',
+        description: 'ระบบเรียนรู้เฉพาะทางที่ออกแบบมาเพื่อทักธุรกิจ Unicorn โดยเฉพาะ',
         gradient: 'from-amber-500 to-orange-600',
         glow: 'shadow-amber-500/20',
     },
@@ -206,6 +207,29 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                 </div>
             </section>
 
+            {/* ===== STRATEGY HIGHLIGHT (Biz Start Up Platform) ===== */}
+            <section className="relative py-24 bg-slate-900/50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h2 className="text-3xl lg:text-5xl font-black tracking-tighter mb-16">
+                        <span className="text-amber-500">Biz Start Up</span> Platform
+                    </h2>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {[
+                            { t: 'ECO-SYSTEM', d: 'ระบบจัดการออฟไลน์/ออนไลน์', i: Zap, c: 'text-amber-500' },
+                            { t: 'PRODUCT', d: 'นวัตกรรมสิทธิบัตรคุณภาพสูง', i: Award, c: 'text-blue-500' },
+                            { t: 'Ai & TOOLS', d: 'Unicorn Smart AI อัจฉริยะ', i: Bot, c: 'text-purple-500' },
+                            { t: 'REWARD', d: 'แผนรายได้และรางวัลเกียรติยศ', i: Star, c: 'text-pink-500' },
+                        ].map((s, idx) => (
+                            <div key={idx} className="p-8 bg-white/5 border border-white/5 rounded-3xl hover:bg-white/10 transition-all group">
+                                <s.i size={32} className={`${s.c} mb-4 mx-auto group-hover:scale-110 transition-transform`} />
+                                <h4 className="text-lg font-black mb-1">{s.t}</h4>
+                                <p className="text-xs text-slate-500 font-bold">{s.d}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
             {/* ===== CTA SECTION ===== */}
             <section className="relative py-24">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
@@ -242,7 +266,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                             </p>
                         </div>
                         <div className="flex items-center gap-6">
-                            <button className="text-xs text-slate-500 hover:text-amber-500 transition-colors font-medium">เกี่ยวกับเรา</button>
+                            <button onClick={() => onNavigate(AppView.ABOUT)} className="text-xs text-slate-500 hover:text-amber-500 transition-colors font-medium">เกี่ยวกับเรา</button>
                             <button onClick={() => onNavigate(AppView.CONTACT)} className="text-xs text-slate-500 hover:text-amber-500 transition-colors font-medium">ติดต่อ</button>
                             <button className="text-xs text-slate-500 hover:text-amber-500 transition-colors font-medium">นโยบายความเป็นส่วนตัว</button>
                         </div>
