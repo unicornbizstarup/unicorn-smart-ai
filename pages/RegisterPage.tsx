@@ -24,7 +24,6 @@ interface RegisterPageProps {
 }
 
 const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, referralId }) => {
-    const [step, setStep] = useState<'details' | 'otp'>('details');
     const [fullName, setFullName] = useState('');
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -32,10 +31,8 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [timer, setTimer] = useState(60);
 
     // If there's a referral, maybe show a welcome message or pre-fill recruiter
     useEffect(() => {
@@ -91,33 +88,25 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
 
             if (signUpError) throw signUpError;
 
-            // Case 1: Email verification disabled — session returned immediately
+            // Auto-login and create profile immediately
             if (data.session) {
                 await createProfile(data.user!);
                 return;
             }
 
-            // Case 2: User was created but no session (email verification enabled)
             // Try auto-login since the user just registered
             if (data.user && !data.session) {
-                try {
-                    const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
-                        email,
-                        password,
-                    });
+                const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+                    email,
+                    password,
+                });
 
-                    if (!loginError && loginData.session) {
-                        // Auto-login succeeded — create profile and enter
-                        await createProfile(loginData.user!);
-                        return;
-                    }
-                } catch {
-                    // Auto-login failed, fall through to OTP
+                if (!loginError && loginData.session) {
+                    await createProfile(loginData.user!);
+                    return;
+                } else {
+                    setError('สมัครสมาชิกสำเร็จ แต่ระบบระงับการเข้าสู่ระบบอัตโนมัติ กรุณาลองเข้าสู่ระบบอีกครั้ง หรือติดต่อแอดมิน');
                 }
-
-                // Fallback: Show OTP step if auto-login didn't work
-                setStep('otp');
-                setTimer(60);
             }
         } catch (err: any) {
             // Handle "user already registered" gracefully
@@ -167,50 +156,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
         onRegister(userData);
     };
 
-    const handleVerifyOtp = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
-        const otpCode = otp.join('');
-
-        if (otpCode.length < 6) {
-            setError('กรุณากรอกรหัส OTP ให้ครบ 6 หลัก');
-            return;
-        }
-
-        setIsLoading(true);
-
-        try {
-            const { data, error: verifyError } = await supabase.auth.verifyOtp({
-                email,
-                token: otpCode,
-                type: 'signup'
-            });
-
-            if (verifyError) throw verifyError;
-
-            if (data.user) {
-                await createProfile(data.user);
-            }
-        } catch (err: any) {
-            setError(err.message || 'รหัสยืนยันไม่ถูกต้อง หรือหมดอายุ');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleOtpChange = (index: number, value: string) => {
-        if (value.length > 1) return;
-        const newOtp = [...otp];
-        newOtp[index] = value;
-        setOtp(newOtp);
-
-        // Auto focus next input
-        if (value && index < 5) {
-            const nextInput = document.getElementById(`otp-${index + 1}`);
-            nextInput?.focus();
-        }
-    };
-
 
 
     return (
@@ -224,18 +169,16 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
             <div className="relative z-10 w-full max-w-md my-8">
                 {/* Back button */}
                 <button
-                    onClick={() => step === 'otp' ? setStep('details') : onNavigate(AppView.LANDING)}
+                    onClick={() => onNavigate(AppView.LANDING)}
                     className="group flex items-center gap-2 text-sm text-slate-500 hover:text-white mb-8 transition-colors"
                 >
                     <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                    {step === 'otp' ? 'กลับไปแก้ไขข้อมูล' : 'กลับหน้าแรก'}
+                    กลับหน้าแรก
                 </button>
 
                 {/* Register Card */}
                 <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-8 lg:p-10 shadow-2xl backdrop-blur-xl">
-                    {step === 'details' ? (
-                        <>
-                            {/* Header */}
+                    {/* Header */}
                             <div className="text-center mb-8">
                                 <div className="w-14 h-14 bg-gradient-to-br from-amber-400 to-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-amber-500/25">
                                     <Sparkles size={24} className="text-white" />
@@ -345,71 +288,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
                                 เป็นสมาชิกแล้ว?{' '}
                                 <button onClick={() => onNavigate(AppView.LOGIN)} className="text-amber-500 font-bold hover:text-amber-400">เข้าสู่ระบบ</button>
                             </p>
-                        </>
-                    ) : (
-                        <>
-                            {/* OTP Step */}
-                            <div className="text-center mb-10">
-                                <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                                    <ShieldCheck size={32} className="text-emerald-500" />
-                                </div>
-                                <h1 className="text-2xl font-black text-white tracking-tight">ยืนยันอีเมลของคุณ</h1>
-                                <p className="text-sm text-slate-500 mt-2 leading-relaxed px-4">
-                                    เราส่งรหัสผ่าน 6 หลักไปที่ <span className="text-white font-bold">{email}</span><br />
-                                    กรุณากรอกรหัสดังกล่าวเพื่อดำเนินการต่อ
-                                </p>
-                            </div>
-
-                            {error && (
-                                <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 mb-6">
-                                    <p className="text-sm text-red-400 font-medium text-center">{error}</p>
-                                </div>
-                            )}
-
-                            <form onSubmit={handleVerifyOtp} className="space-y-8">
-                                <div className="flex justify-between gap-2">
-                                    {otp.map((digit, i) => (
-                                        <input
-                                            key={i}
-                                            id={`otp-${i}`}
-                                            type="text"
-                                            maxLength={1}
-                                            value={digit}
-                                            onChange={(e) => handleOtpChange(i, e.target.value)}
-                                            className="w-12 h-14 bg-white/5 border border-white/10 rounded-xl text-white text-center text-xl font-black focus:outline-none focus:border-amber-500 transition-all"
-                                        />
-                                    ))}
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    disabled={isLoading}
-                                    className="w-full py-4 bg-emerald-500 text-slate-950 font-black rounded-2xl hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2 text-base"
-                                >
-                                    {isLoading ? <RefreshCw className="animate-spin" size={20} /> : 'ยืนยันและลงทะเบียน'}
-                                </button>
-
-                                <div className="text-center">
-                                    {timer > 0 ? (
-                                        <p className="text-sm text-slate-500 font-bold">
-                                            ไม่ได้รับอีเมล? ส่งใหม่ใน {timer} วินาที
-                                        </p>
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setTimer(60);
-                                                setError('ส่งรหัสใหม่เรียบร้อยแล้ว');
-                                            }}
-                                            className="text-amber-500 text-sm font-black hover:text-amber-400"
-                                        >
-                                            ส่งรหัสยืนยันอีกครั้ง
-                                        </button>
-                                    )}
-                                </div>
-                            </form>
-                        </>
-                    )}
                 </div>
             </div>
         </div>
