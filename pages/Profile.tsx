@@ -110,6 +110,13 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
         setIsUploading(true);
 
         try {
+            // Ensure we have a valid session before uploading
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                alert('กรุณาเข้าสู่ระบบใหม่ก่อนอัพโหลดภาพ');
+                return;
+            }
+
             const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
             const filePath = `${currentUser.id}/avatar.${fileExt}`;
 
@@ -129,6 +136,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
 
             // Update user with new avatar URL
             await onUpdateUser({ ...currentUser, avatarUrl: publicUrl });
+            alert('อัพโหลดภาพสำเร็จ!');
         } catch (err: any) {
             console.error('Upload error:', err);
             alert(`อัพโหลดภาพไม่สำเร็จ: ${err.message || 'กรุณาลองใหม่'}`);
