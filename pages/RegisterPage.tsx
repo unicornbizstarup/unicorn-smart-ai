@@ -91,18 +91,41 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
 
             if (signUpError) throw signUpError;
 
-            // In a real app with email verification enabled, it sends an email.
-            // If verification is disabled, it returns a session.
+            // Case 1: Email verification disabled — session returned immediately
             if (data.session) {
-                // If auto-logged in, create profile and finish
                 await createProfile(data.user!);
-            } else {
-                // If email verification is needed, show OTP step
+                return;
+            }
+
+            // Case 2: User was created but no session (email verification enabled)
+            // Try auto-login since the user just registered
+            if (data.user && !data.session) {
+                try {
+                    const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+                        email,
+                        password,
+                    });
+
+                    if (!loginError && loginData.session) {
+                        // Auto-login succeeded — create profile and enter
+                        await createProfile(loginData.user!);
+                        return;
+                    }
+                } catch {
+                    // Auto-login failed, fall through to OTP
+                }
+
+                // Fallback: Show OTP step if auto-login didn't work
                 setStep('otp');
                 setTimer(60);
             }
         } catch (err: any) {
-            setError(err.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+            // Handle "user already registered" gracefully
+            if (err.message?.includes('already registered') || err.message?.includes('already been registered')) {
+                setError('อีเมลนี้ลงทะเบียนแล้ว กรุณาเข้าสู่ระบบแทน');
+            } else {
+                setError(err.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+            }
         } finally {
             setIsLoading(false);
         }
