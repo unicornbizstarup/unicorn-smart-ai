@@ -94,7 +94,7 @@ app.post('/api/chat', async (req, res) => {
     ];
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-2.0-flash',
       contents: contents,
       config: {
         systemInstruction: systemInstruction
@@ -109,6 +109,14 @@ app.post('/api/chat', async (req, res) => {
     console.error('Time:', new Date().toISOString());
     console.error('Message:', error.message);
     if (error.stack) console.error('Stack:', error.stack);
+
+    // ดัก Error 429 (โควต้าเต็ม / Rate limit)
+    if (error.status === 429 || error.status === 'RESOURCE_EXHAUSTED' || error.message?.includes('429') || error.message?.includes('Quota exceeded')) {
+      return res.status(429).json({
+        error: 'โควต้าการใช้งานผู้ช่วย AI เต็มชั่วคราวค่ะ น้องยูนิต้องขออภัยด้วยนะคะ กรุณาลองใหม่อีกครั้งในภายหลังค่ะ 🥺',
+        details: 'Rate Limit Exceeded or Quota Reached'
+      });
+    }
 
     res.status(500).json({
       error: 'Failed to communicate with AI Coach',

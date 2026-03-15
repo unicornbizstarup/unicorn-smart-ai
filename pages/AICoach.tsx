@@ -114,7 +114,7 @@ const AICoach: React.FC = () => {
       }
 
       if (!response.ok) {
-        throw new Error(data.details || data.error || `Server error: ${response.status}`);
+        throw new Error(data.error || data.details || `Server error: ${response.status}`);
       }
 
       const assistantMessage: ChatMessage = {
