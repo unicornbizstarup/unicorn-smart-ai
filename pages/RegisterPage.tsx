@@ -26,7 +26,6 @@ interface RegisterPageProps {
 const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, referralId }) => {
     const [fullName, setFullName] = useState('');
     const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -50,7 +49,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
         e.preventDefault();
         setError('');
 
-        if (!fullName || !username || !email || !password || !confirmPassword) {
+        if (!fullName || !username || !password || !confirmPassword) {
             setError('กรุณากรอกข้อมูลให้ครบทุกช่อง');
             return;
         }
@@ -74,14 +73,16 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
 
         try {
             // 1. Sign up user via Supabase Auth
+            const fakeEmail = `${username}@unicorn.systems`;
+
             const { data, error: signUpError } = await supabase.auth.signUp({
-                email,
+                email: fakeEmail,
                 password,
                 options: {
-                    emailRedirectTo: window.location.origin,
                     data: {
                         full_name: fullName,
-                        username: username.toLowerCase().replace(/\s+/g, ''),
+                        username: username,
+                        phone: phone,
                     }
                 }
             });
@@ -96,8 +97,9 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
 
             // Try auto-login since the user just registered
             if (data.user && !data.session) {
+                const fakeEmail = `${username}@unicorn.systems`;
                 const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
-                    email,
+                    email: fakeEmail,
                     password,
                 });
 
@@ -127,7 +129,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
                 id: user.id,
                 full_name: fullName,
                 username: username.toLowerCase().replace(/\s+/g, ''),
-                email,
+                email: user.email,
                 phone: phone || null,
                 referred_by: referralId || null,
                 ubc_level: 1,
@@ -142,7 +144,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
             id: user.id,
             fullName,
             username: username.toLowerCase().replace(/\s+/g, ''),
-            email,
+            email: user.email!,
             phone: phone || undefined,
             createdAt: user.created_at,
             referredBy: referralId || undefined,
@@ -223,19 +225,6 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onNavigate, onRegister, ref
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-[10px]">อีเมล</label>
-                                    <div className="relative">
-                                        <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
-                                        <input
-                                            type="email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            placeholder="name@example.com"
-                                            className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 transition-all text-sm font-medium"
-                                        />
-                                    </div>
-                                </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="col-span-2">

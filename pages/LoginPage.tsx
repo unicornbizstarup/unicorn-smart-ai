@@ -17,7 +17,7 @@ interface LoginPageProps {
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLogin }) => {
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
@@ -27,17 +27,21 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLogin }) => {
         e.preventDefault();
         setError('');
 
-        if (!email || !password) {
-            setError('กรุณากรอกอีเมลและรหัสผ่านให้ครบ');
+        if (!username || !password) {
+            setError('กรุณากรอก Username และรหัสผ่านให้ครบ');
             return;
         }
 
         setIsLoading(true);
 
         try {
+            // Transform username to fake email
+            const safeUsername = username.toLowerCase().replace(/\s+/g, '');
+            const fakeEmail = `${safeUsername}@unicorn.systems`;
+
             // 1. Sign in via Supabase Auth
             const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-                email,
+                email: fakeEmail,
                 password
             });
 
@@ -55,10 +59,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLogin }) => {
                     console.error('Error fetching profile:', profileError);
                 }
 
+                const safeUsername = username.toLowerCase().replace(/\s+/g, '');
                 const userData: User = {
                     id: authData.user.id,
                     fullName: profileData?.full_name || authData.user.user_metadata?.full_name || 'User',
-                    username: profileData?.username || authData.user.user_metadata?.username || email.split('@')[0],
+                    username: profileData?.username || authData.user.user_metadata?.username || safeUsername,
                     email: authData.user.email!,
                     avatarUrl: profileData?.avatar_url,
                     createdAt: authData.user.created_at,
@@ -74,7 +79,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLogin }) => {
                 onLogin(userData);
             }
         } catch (err: any) {
-            setError(err.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+            setError(err.message || 'Username หรือรหัสผ่านไม่ถูกต้อง');
         } finally {
             setIsLoading(false);
         }
@@ -118,18 +123,18 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate, onLogin }) => {
 
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="space-y-5">
-                        {/* Email */}
+                        {/* Username */}
                         <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">อีเมล</label>
+                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Username</label>
                             <div className="relative">
-                                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm">@</div>
                                 <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="name@example.com"
+                                    type="text"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    placeholder="yourname"
                                     className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 transition-all text-sm font-medium"
-                                    id="login-email"
+                                    id="login-username"
                                 />
                             </div>
                         </div>
