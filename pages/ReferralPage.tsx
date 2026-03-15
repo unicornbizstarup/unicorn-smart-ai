@@ -123,20 +123,27 @@ const ReferralPage: React.FC<ReferralPageProps> = ({ referrer, onNavigate, onJoi
                 {/* Action Buttons */}
                 <div className="grid gap-4">
                     {referrer.lineOaUrl && (
-                        <a
-                            href={referrer.lineOaUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group flex items-center justify-between p-5 bg-emerald-500 text-slate-950 rounded-2xl font-black text-lg hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20"
-                        >
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                                    <MessageSquare size={20} />
+                        <div>
+                            <a
+                                href={referrer.lineOaUrl.trim()}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group flex items-center justify-between p-5 bg-emerald-500 text-slate-950 rounded-2xl font-black text-lg hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20"
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                                        <MessageSquare size={20} />
+                                    </div>
+                                    <span>{t('referral.contact_line')}</span>
                                 </div>
-                                <span>{t('referral.contact_line')}</span>
-                            </div>
-                            <ExternalLink size={20} className="opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
-                        </a>
+                                <ExternalLink size={20} className="opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
+                            </a>
+                            {referrer.lineId && (
+                                <div className="text-center mt-2 text-xs font-black text-slate-400 uppercase tracking-widest">
+                                    LINE ID: <span className="text-white">{referrer.lineId.trim()}</span>
+                                </div>
+                            )}
+                        </div>
                     )}
 
                     <div className="grid grid-cols-5 gap-3">

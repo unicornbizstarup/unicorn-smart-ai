@@ -46,6 +46,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
     const { t } = useLanguage();
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
     const [showCopiedToast, setShowCopiedToast] = useState(false);
     const [profile, setProfile] = useState({
         full_name: currentUser?.fullName || '',
@@ -103,24 +104,60 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
         fetchProfileDetails();
     }, [currentUser?.id]);
 
+    // Upload avatar to Supabase Storage
+    const handleAvatarUpload = async (file: File) => {
+        if (!currentUser?.id) return;
+        setIsUploading(true);
+
+        try {
+            const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+            const filePath = `${currentUser.id}/avatar.${fileExt}`;
+
+            // Upload to Supabase Storage
+            const { error: uploadError } = await supabase.storage
+                .from('avatars')
+                .upload(filePath, file, { upsert: true });
+
+            if (uploadError) throw uploadError;
+
+            // Get public URL
+            const { data: urlData } = supabase.storage
+                .from('avatars')
+                .getPublicUrl(filePath);
+
+            const publicUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+
+            // Update user with new avatar URL
+            await onUpdateUser({ ...currentUser, avatarUrl: publicUrl });
+        } catch (err: any) {
+            console.error('Upload error:', err);
+            alert(`อัพโหลดภาพไม่สำเร็จ: ${err.message || 'กรุณาลองใหม่'}`);
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
     const handleSave = async () => {
         if (!currentUser?.id) return;
         setIsSaving(true);
 
         try {
-            // Use the centralized updateUser logic from App.tsx
-            // This ensures all fields (including email) are handled correctly
+            // Trim all string values before saving
+            const trimmedSocialLinks = Object.fromEntries(
+                Object.entries(profile.social_links).map(([k, v]) => [k, (v as string)?.trim() || ''])
+            );
+
             await onUpdateUser({
                 ...currentUser,
-                fullName: profile.full_name,
+                fullName: profile.full_name.trim(),
                 wealthElement: profile.wealthElement as any,
-                bio: profile.bio,
-                youtubeUrl: profile.youtubeUrl,
-                lineOaUrl: profile.lineOaUrl,
-                lineId: profile.lineId,
-                quote: profile.quote,
-                specialization: profile.specialization,
-                socialLinks: profile.social_links
+                bio: profile.bio.trim(),
+                youtubeUrl: profile.youtubeUrl.trim(),
+                lineOaUrl: profile.lineOaUrl.trim(),
+                lineId: profile.lineId.trim(),
+                quote: profile.quote.trim(),
+                specialization: profile.specialization.trim(),
+                socialLinks: trimmedSocialLinks
             });
 
             setIsEditing(false);
@@ -201,17 +238,21 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUpdateUser, onNavigate
                                 alt="Profile"
                                 className="w-full h-full object-cover rounded-2xl"
                             />
-                            <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white cursor-pointer">
-                                <Camera size={24} />
+                            <label className={`absolute inset-0 bg-black/40 ${isUploading ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity flex items-center justify-center text-white cursor-pointer`}>
+                                {isUploading ? <Loader2 size={24} className="animate-spin" /> : <Camera size={24} />}
                                 <input
                                     type="file"
-                                    accept="image/*"
+                                    accept="image/jpeg,image/png,image/webp,image/gif"
                                     className="hidden"
+                                    disabled={isUploading}
                                     onChange={(e) => {
                                         const file = e.target.files?.[0];
-                                        if (file && currentUser) {
-                                            const url = URL.createObjectURL(file);
-                                            onUpdateUser({ ...currentUser, avatarUrl: url });
+                                        if (file) {
+                                            if (file.size > 5 * 1024 * 1024) {
+                                                alert('ไฟล์ภาพต้องมีขนาดไม่เกิน 5MB');
+                                                return;
+                                            }
+                                            handleAvatarUpload(file);
                                         }
                                     }}
                                 />
