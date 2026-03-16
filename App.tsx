@@ -43,6 +43,7 @@ import GlobalFooter from './components/GlobalFooter';
 import { supabase } from './lib/supabase';
 import { LanguageProvider, useLanguage } from './hooks/useLanguage';
 import LanguageSelector from './components/LanguageSelector';
+import ReportIssueModal from './components/ReportIssueModal';
 import { TranslationKey } from './lib/translations';
 
 const App: React.FC = () => {
@@ -570,6 +571,11 @@ const AppContent: React.FC = () => {
           className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
+      )}
+
+      {/* Report Issue Modal - Available on all authenticated pages */}
+      {currentUser && currentView !== AppView.LANDING && currentView !== AppView.LOGIN && currentView !== AppView.REGISTER && (
+        <ReportIssueModal />
       )}
     </div>
   );

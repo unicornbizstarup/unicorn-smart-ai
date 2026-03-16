@@ -94,7 +94,7 @@ app.post('/api/chat', async (req, res) => {
     ];
 
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: contents,
       config: {
         systemInstruction: systemInstruction
@@ -122,6 +122,59 @@ app.post('/api/chat', async (req, res) => {
       error: 'Failed to communicate with AI Coach',
       details: error.message
     });
+  }
+});
+
+// LINE Messaging API Endpoint
+app.post('/api/notify', async (req, res) => {
+  try {
+    const { message, type = 'Feedback', userContext } = req.body;
+    const channelAccessToken = process.env.LINE_CHANNEL_ACCESS_TOKEN;
+    const userId = process.env.LINE_USER_ID;
+    
+    if (!channelAccessToken || !userId) {
+      console.warn('LINE Messaging API is not configured (missing token or user ID).');
+      return res.status(200).json({ success: true, message: 'Notification skipped (Unconfigured)' });
+    }
+
+    // Format the message
+    let lineMessage = `🚨 [${type}] แจ้งเตือนจากระบบ\n`;
+    lineMessage += `📝 ข้อความ: ${message}\n`;
+    
+    if (userContext) {
+      lineMessage += `👤 ผู้ใช้: ${userContext.fullName || 'Unknown'} (${userContext.email || 'N/A'})\n`;
+      lineMessage += `⭐️ ระดับ: UBC ${userContext.ubcLevel || 'N/A'}\n`;
+    }
+    
+    lineMessage += `⏰ เวลา: ${new Date().toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' })}`;
+
+    const response = await fetch('https://api.line.me/v2/bot/message/push', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${channelAccessToken}`
+      },
+      body: JSON.stringify({
+        to: userId,
+        messages: [
+          {
+            type: 'text',
+            text: lineMessage
+          }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+        const errorData = await response.text();
+        console.error('LINE Messaging API Error:', errorData);
+      throw new Error(`LINE API responded with status: ${response.status}`);
+    }
+
+    res.json({ success: true, message: 'Notification sent successfully' });
+  } catch (error) {
+    console.error('Failed to send LINE notification:', error);
+    res.status(500).json({ error: 'Failed to send notification' });
   }
 });
 
