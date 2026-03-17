@@ -8,6 +8,7 @@ import {
   Menu,
   X,
   ChevronRight,
+  ChevronDown,
   BookOpen,
   Trophy,
   CheckCircle2,
@@ -57,19 +58,24 @@ const App: React.FC = () => {
 const AppContent: React.FC = () => {
   const { t } = useLanguage();
 
-  const navigation: { name: TranslationKey; icon: any; view: AppView }[] = [
+  const coreNavigation = [
+    { name: 'nav.ai_coach', icon: Bot, view: AppView.AI_COACH, featured: true },
+    { name: 'nav.calendar', icon: Rocket, view: AppView.START_UP },
+    { name: 'nav.wealth_dna', icon: Dna, view: AppView.WEALTH_DNA },
+  ] as const;
+
+  const secondaryNavigation = [
     { name: 'nav.home', icon: LayoutDashboard, view: AppView.DASHBOARD },
     { name: 'nav.ubc_program', icon: Trophy, view: AppView.UBC_PROGRAM },
     { name: 'nav.system456', icon: Layers, view: AppView.SYSTEM_456 },
     { name: 'nav.functions', icon: GraduationCap, view: AppView.FUNCTIONS },
-    { name: 'nav.calendar', icon: Rocket, view: AppView.START_UP },
-    { name: 'nav.ai_coach', icon: Bot, view: AppView.AI_COACH },
     { name: 'nav.library', icon: FolderOpen, view: AppView.LIBRARY },
-    { name: 'nav.wealth_dna', icon: Dna, view: AppView.WEALTH_DNA },
     { name: 'nav.products', icon: BookOpen, view: AppView.PRODUCT_CATALOG },
     { name: 'nav.about', icon: Info, view: AppView.ABOUT },
     { name: 'nav.contact', icon: PhoneCall, view: AppView.CONTACT },
-  ];
+  ] as const;
+
+  const [isMenuExpanded, setIsMenuExpanded] = useState(false);
 
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     try {
@@ -159,6 +165,16 @@ const AppContent: React.FC = () => {
     };
 
     initialize();
+
+    // Auto-expand menu if a secondary item is active
+    const savedUser = localStorage.getItem('unicorn_current_user');
+    if (savedUser) {
+      // Small delay to ensure state is set
+      setTimeout(() => {
+        const path = window.location.pathname;
+        // Or check currentView if it was set from elsewhere
+      }, 0);
+    }
 
     // 4. Listen for Auth Errors in URL (e.g., bad_oauth_state)
     const urlParams = new URLSearchParams(window.location.search);
@@ -437,27 +453,76 @@ const AppContent: React.FC = () => {
             </div>
           </button>
 
-          <nav className="space-y-2 flex-1 overflow-y-auto scrollbar-hide pr-2">
-            {navigation.map((item) => (
+          <nav className="space-y-6 flex-1 overflow-y-auto scrollbar-hide pr-2">
+            {/* Core Features Section */}
+            <div className="space-y-3">
+              <p className="px-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4">Core Intelligence</p>
+              {coreNavigation.map((item) => (
+                <button
+                  key={item.name}
+                  onClick={() => {
+                    setCurrentView(item.view);
+                    setSidebarOpen(false);
+                  }}
+                  aria-label={`ไปที่หน้า ${t(item.name)}`}
+                  className={`
+                    w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-500 group relative overflow-hidden
+                    ${currentView === item.view
+                      ? (item.featured 
+                          ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-2xl shadow-amber-500/40 scale-[1.03] font-black'
+                          : 'bg-amber-500 text-slate-950 shadow-xl shadow-amber-500/20 scale-[1.02] font-black')
+                      : (item.featured
+                          ? 'bg-amber-500/10 border border-amber-500/30 text-amber-500 hover:bg-amber-500/20'
+                          : 'text-slate-400 hover:bg-white/5 hover:text-white')}
+                  `}
+                >
+                  <item.icon size={item.featured ? 24 : 22} className={`transition-all duration-500 group-hover:scale-110 ${currentView === item.view ? 'text-slate-950' : (item.featured ? 'text-amber-500' : 'text-slate-500 group-hover:text-amber-400')}`} />
+                  <span className={`${item.featured ? 'text-lg font-black' : 'font-semibold'} tracking-wide`}>{t(item.name)}</span>
+                  {currentView === item.view && <ChevronRight size={18} className="ml-auto opacity-50" />}
+                  {item.featured && !currentView.includes('ai_coach') && (
+                    <div className="absolute top-0 right-0 p-2">
+                      <Sparkles size={12} className="text-amber-500/50 animate-pulse" />
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Combined Menu Section */}
+            <div className="space-y-2 pt-2">
               <button
-                key={item.name}
-                onClick={() => {
-                  setCurrentView(item.view);
-                  setSidebarOpen(false);
-                }}
-                aria-label={`ไปที่หน้า ${item.name}`}
-                className={`
-                  w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 group
-                  ${currentView === item.view
-                    ? 'bg-amber-500 text-slate-950 shadow-xl shadow-amber-500/20 scale-[1.02] font-black'
-                    : 'text-slate-400 hover:bg-white/5 hover:text-white'}
-                `}
+                onClick={() => setIsMenuExpanded(!isMenuExpanded)}
+                className="w-full flex items-center justify-between px-5 py-3 text-slate-500 hover:text-white transition-colors group"
               >
-                <item.icon size={22} className={`transition-transform duration-500 group-hover:scale-110 ${currentView === item.view ? 'text-slate-950' : 'text-slate-500 group-hover:text-amber-400'}`} />
-                <span className="font-semibold tracking-wide">{t(item.name)}</span>
-                {currentView === item.view && <ChevronRight size={18} className="ml-auto opacity-50" />}
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] group-hover:text-amber-500 transition-colors">Platform Features</p>
+                {isMenuExpanded ? <ChevronDown size={14} className="opacity-50" /> : <ChevronRight size={14} className="opacity-50" />}
               </button>
-            ))}
+              
+              <div className={`space-y-1 transition-all duration-500 overflow-hidden ${isMenuExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                {secondaryNavigation.map((item) => (
+                  <button
+                    key={item.name}
+                    onClick={() => {
+                      setCurrentView(item.view);
+                      setSidebarOpen(false);
+                    }}
+                    aria-label={`ไปที่หน้า ${t(item.name)}`}
+                    className={`
+                      w-full flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 group
+                      ${currentView === item.view
+                        ? 'bg-slate-800 text-amber-400 font-bold'
+                        : 'text-slate-400 hover:bg-white/5 hover:text-white'}
+                    `}
+                  >
+                    <item.icon size={18} className={`transition-transform duration-500 group-hover:scale-110 ${currentView === item.view ? 'text-amber-400' : 'text-slate-600 group-hover:text-amber-500'}`} />
+                    <span className="text-sm tracking-wide">{t(item.name)}</span>
+                  </button>
+                ))}
+              </div>
+              
+              {/* For mobile or when collapsed, if an item in secondary is active, show it as a single row perhaps? 
+                  Better: keep it expanded if an item inside is selected on mount */}
+            </div>
           </nav>
 
           <div className="mt-auto pt-8 space-y-3">
@@ -511,7 +576,11 @@ const AppContent: React.FC = () => {
               <Menu size={24} />
             </button>
             <h2 className="text-lg lg:text-xl font-black text-slate-900 tracking-tight">
-              {currentView === AppView.PROFILE ? 'ข้อมูลส่วนตัว' : (navigation.find(n => n.view === currentView) ? t(navigation.find(n => n.view === currentView)!.name) : '')}
+              {currentView === AppView.PROFILE ? 'ข้อมูลส่วนตัว' : (
+                [...coreNavigation, ...secondaryNavigation].find(n => n.view === currentView) 
+                ? t([...coreNavigation, ...secondaryNavigation].find(n => n.view === currentView)!.name) 
+                : ''
+              )}
             </h2>
           </div>
 
