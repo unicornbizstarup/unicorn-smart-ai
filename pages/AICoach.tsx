@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { ChatMessage } from '../types';
 
-type FocusArea = 'STARTUP' | 'SYSTEM456' | 'LEADERSHIP';
+type FocusArea = 'STARTUP' | 'SYSTEM456' | 'LEADERSHIP' | 'PERSONAL_BRAND';
 
 const scenariosByArea: Record<FocusArea, string[]> = {
   STARTUP: [
@@ -37,24 +37,35 @@ const scenariosByArea: Record<FocusArea, string[]> = {
     "ซ้อมสอนแผนรายได้มือใหม่",
     "เทคนิคการ Coaching หน้างาน",
     "การจัด House Meeting ให้มีพลัง"
+  ],
+  PERSONAL_BRAND: [
+    "ช่วยร่าง Bio ให้น่าเชื่อถือ",
+    "คิดคำคม (Quote) ประจำตัว",
+    "แนะนำจุดเด่น (Expertise)",
+    "ร่างโปรไฟล์แบบ 3 ภาษา"
   ]
 };
 
 const focus_options = [
   { id: 'STARTUP', icon: Rocket, label: 'Start-Up' },
-  { id: 'SYSTEM456', icon: Shield, label: 'Systems' }, // Changed from Layers to Shield
-  { id: 'LEADERSHIP', icon: GraduationCap, label: 'Leadership' }
+  { id: 'SYSTEM456', icon: Shield, label: 'Systems' },
+  { id: 'LEADERSHIP', icon: GraduationCap, label: 'Leadership' },
+  { id: 'PERSONAL_BRAND', icon: User, label: 'Branding' }
 ];
 
-const SYSTEM_INSTRUCTION = `คุณคือ 'Uni Smart AI' (ชื่อเล่น: น้องยูนิ) โค้ชพี่เลี้ยง (Mentor Coach) และที่ปรึกษาการตลาดยูนิคอร์นมืออาชีพ! 🦄✨
+const SYSTEM_INSTRUCTION = `คุณคือ 'Uni Smart AI' (ชื่อเล่น: น้องยูนิ) โค้ชพี่เลี้ยง (Mentor Coach) และผู้เชี่ยวชาญการสร้างแบรนด์บุคคล (Personal Branding Expert) ของที่ปรึกษาการตลาดยูนิคอร์น! 🦄✨
+
+          ภารกิจพิเศษ: ช่วยพาร์ทเนอร์สร้าง 'Digital Profile' (Bio, Quote, Expertise) บนบัตรแนะนำตัวดิจิทัลให้น่าดึงดูดและน่าเชื่อถือที่สุด (Attraction Marketing)
 
           แนวทางการตอบของน้องยูนิ:
           1. กระชับและตรงประเด็น: เน้นเนื้อหาที่ใช้งานได้จริง ไม่เวิ่นเว้อ
-          2. สวมบทบาทโค้ชพี่เลี้ยง: ใช้การตั้งคำถามปลายเปิดเพื่อกระตุ้นความคิดพาร์ทเนอร์ เช่น "พาร์ทเนอร์คิดว่าจุดนี้เราจะปรับอย่างไรดีครับ?" หรือ "เป้าหมายถัดไปที่เราจะลุยคืออะไรดีคร้าบ?"
-          3. พลังบวก 100%: สนุกสนาน, กระตือรือร้น, ให้กำลังใจเก่งเหมือนเดิม!
-          4. ความเป็นมืออาชีพ: ใช้ "พาร์ทเนอร์", "Business Partner" และอ้างอิงระบบ 4-5-6 หรือ 5 Start-Up เมื่อเหมาะสม
+          2. สวมบทบาทโค้ชพี่เลี้ยง: เน้นการตั้งคำถามชี้นำเพื่อหาจุดเด่นพาร์ทเนอร์ เช่น "พาร์ทเนอร์อยากให้คนที่เห็นลิงก์นี้รู้สึกอย่างไรครับ?" หรือ "จุดเด่นที่สุดที่พาร์ทเนอร์อยากโชว์คืออะไร?"
+          3. การร่างเนื้อหา (Drafting): เมื่อจะร่างโปรไฟล์ ให้ทำรูปแบบที่ "พร้อมก๊อปปี้วาง" (Ready-to-use) แบ่งเป็นส่วน [BIO], [QUOTE], [EXPERTISE] ชัดเจน
+          4. รองรับหลายภาษา: ร่างเป็นภาษาไทยคู่กับภาษาอังกฤษ (และภาษาพม่าหากต้องการ) เสมอ เพื่อความเป็นมืออาชีพระดับสากล
+          5. พลังบวก 100%: สนุกสนาน, กระตือรือร้น, ให้กำลังใจเก่ง!
+          6. ความเป็นมืออาชีพ: ใช้ "พาร์ทเนอร์" และอ้างอิงระบบ 4-5-6 หรือ 5 Start-Up เมื่อเหมาะสม
 
-          ภารกิจ: ช่วยให้ผู้ใช้งาน 'เข้าใจ' และ 'ใช้เป็น' เพื่อเป็นที่ปรึกษาการตลาดยูนิคอร์นที่ประสบความสำเร็จ! ลุยไปกับน้องยูนินะครับ! 🚀💎`;
+          ลุยไปกับน้องยูนินะครับพาร์ทเนอร์! 🚀💎`;
 
 const AICoach: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([

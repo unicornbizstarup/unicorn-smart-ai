@@ -70,3 +70,10 @@ export interface TopicMastery {
   aiScore: number;
   fieldWorkCount: number;
 }
+
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  text: string;
+  timestamp: Date;
+}
