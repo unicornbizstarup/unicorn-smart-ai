@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:unicorngloballink.com)",
+      "WebSearch",
+      "WebFetch(domain:www.aajjo.com)",
+      "WebFetch(domain:www.indiamart.com)",
+      "WebFetch(domain:mewjhcheciafyuxkngqn.supabase.co)"
+    ]
+  }
+}

@@ -196,18 +196,19 @@ const About: React.FC<AboutProps> = ({ onNavigate }) => {
                 {/* Product Groups */}
                 <section className="bg-white/60 backdrop-blur-md rounded-[3rem] p-10 md:p-16 border border-white shadow-2xl text-center">
                     <h2 className="text-4xl font-black text-slate-900 tracking-tighter mb-12">{t('sections.products')}</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-16">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-16">
                         {[
-                            { n: 'Skincare', i: '✨' },
-                            { n: 'Personal Care', i: '🧼' },
-                            { n: 'Health & Food', i: '💊' },
-                            { n: 'Agriculture', i: '🌱' },
-                            { n: 'Technology', i: '💻' },
-                            { n: 'Correction Wear', i: '👗' }
+                            { n: 'U-Life Boost', img: 'https://mewjhcheciafyuxkngqn.supabase.co/storage/v1/object/public/Product/1.U-Life%20Boost.png' },
+                            { n: 'U-Skin', img: 'https://mewjhcheciafyuxkngqn.supabase.co/storage/v1/object/public/Product/2.U-Skin.png' },
+                            { n: 'U-Plant', img: 'https://mewjhcheciafyuxkngqn.supabase.co/storage/v1/object/public/Product/3.U-Plant.png' },
+                            { n: 'U-Care', img: 'https://mewjhcheciafyuxkngqn.supabase.co/storage/v1/object/public/Product/4.U-Care.png' },
+                            { n: 'U-Tech', img: 'https://mewjhcheciafyuxkngqn.supabase.co/storage/v1/object/public/Product/5.U-Tech.png' },
                         ].map((p) => (
-                            <div key={p.n} className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all">
-                                <div className="text-3xl mb-3">{p.i}</div>
-                                <p className="text-xs font-black text-slate-900 leading-tight uppercase tracking-tighter">{p.n}</p>
+                            <div key={p.n} className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden group">
+                                <div className="aspect-square overflow-hidden">
+                                    <img src={p.img} alt={p.n} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                </div>
+                                <p className="text-sm font-black text-slate-900 py-3 px-2 uppercase tracking-tighter">{p.n}</p>
                             </div>
                         ))}
                     </div>
