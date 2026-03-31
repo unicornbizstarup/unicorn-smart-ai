@@ -454,195 +454,174 @@ const UBCProgram: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid lg:grid-cols-12 gap-6">
+            <div className="grid lg:grid-cols-2 gap-5">
 
-              {/* ===== LEFT COLUMN: Checklists & KPIs (7 cols) ===== */}
-              <div className="lg:col-span-7 space-y-6">
+              {/* ===== LEFT: เกณฑ์ประเมินและการทำงาน (Checkpoint + Routines รวม) ===== */}
+              <div className="glass-card rounded-[2rem] p-5 md:p-7 shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-br from-amber-100/40 to-transparent rounded-bl-full -z-10 blur-xl" />
 
-                {/* 1. Checkpoint Checklist */}
-                <div className="glass-card rounded-[2rem] md:rounded-[3rem] p-6 md:p-8 shadow-xl relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-100/50 to-transparent rounded-bl-full -z-10 blur-xl"></div>
-
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <Target size={22} className="text-amber-500" />
-                      <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tight">Checkpoint ประเมินผล</h3>
-                    </div>
-                    {progress === 100 && (
-                      <span className="bg-emerald-100 text-emerald-700 font-bold text-xs px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
-                        <CheckCircle2 size={14} /> Completed
-                      </span>
-                    )}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Target size={20} className="text-amber-500" />
+                    <h3 className="text-base font-black text-slate-900 tracking-tight">เกณฑ์ประเมินและการทำงาน</h3>
                   </div>
-
-                  {/* Checklist Items */}
-                  <div className="space-y-2.5">
-                    {level.checkItems.map((item) => (
-                      <button
-                        key={item.id}
-                        onClick={() => toggleCheck(item.id)}
-                        className={`w-full flex items-start gap-4 p-4 rounded-2xl transition-all duration-300 text-left group ${checkedItems[item.id]
-                            ? 'bg-gradient-to-r from-emerald-50 to-white border border-emerald-200 shadow-sm'
-                            : 'bg-white border border-slate-200 hover:border-amber-300 hover:shadow-md hover:bg-amber-50/10 hover:-translate-y-0.5'
-                          }`}
-                      >
-                        <div className={`min-w-[28px] h-7 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 mt-0.5 ${checkedItems[item.id]
-                            ? 'bg-emerald-500 text-white shadow-emerald-500/20 shadow-lg'
-                            : 'bg-slate-100 text-slate-300 group-hover:bg-amber-100 group-hover:text-amber-500'
-                          }`}>
-                          {checkedItems[item.id] ? <CheckCircle2 size={16} /> : <Circle size={16} />}
-                        </div>
-                        <span className={`text-[13px] md:text-sm font-semibold transition-colors mt-0.5 leading-snug ${checkedItems[item.id] ? 'text-emerald-700/80 line-through' : 'text-slate-700 group-hover:text-slate-900'
-                          }`}>
-                          {item.text}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Progress Bottom Bar */}
-                  <div className="mt-8">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ความสำเร็จของระดับนี้</span>
-                      <span className={`text-[10px] font-black ${progress === 100 ? 'text-emerald-500' : level.color}`}>
-                        {level.checkItems.filter(i => checkedItems[i.id]).length} / {level.checkItems.length}
-                      </span>
-                    </div>
-                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden shadow-inner">
-                      <div
-                        className={`h-full rounded-full bg-gradient-to-r ${level.gradient} transition-all duration-1000 relative overflow-hidden`}
-                        style={{ width: `${progress}%` }}
-                      >
-                        <div className="absolute inset-0 bg-white/20 -skew-x-12 translate-x-[-100%] animate-[shimmer_2s_infinite]"></div>
-                      </div>
-                    </div>
-                  </div>
-
                   {progress === 100 && (
-                    <div className="mt-6 bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-200 rounded-2xl p-5 text-center animate-fade-in shadow-lg shadow-emerald-500/10">
-                      <Trophy size={28} className="text-amber-500 mx-auto mb-3" />
-                      <p className="text-base font-black text-emerald-700">
-                        ยินดีด้วย! คุณผ่านคุณสมบัติ UBC {level.level} แล้ว! 🎉
-                      </p>
-                      <p className="text-xs text-emerald-600/70 font-medium mt-1 mb-4">
-                        คุณพร้อมสำหรับก้าวต่อไปสู่การเป็นนักธุรกิจระดับแนวหน้า
-                      </p>
-                      {level.level < 4 && (
-                        <button
-                          onClick={() => setExpandedLevel(level.level + 1)}
-                          className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20 text-xs font-bold px-6 py-2.5 rounded-full inline-flex items-center gap-2 transition-transform hover:scale-105"
-                        >
-                          ไปสู่ UBC {level.level + 1} <ArrowRight size={14} />
-                        </button>
-                      )}
-                    </div>
+                    <span className="bg-emerald-100 text-emerald-700 font-bold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
+                      <CheckCircle2 size={12} /> Done
+                    </span>
                   )}
                 </div>
 
-                {/* 2. KPIs วัดผล */}
-                <div className="glass-card rounded-[2rem] md:rounded-[3rem] p-6 md:p-8 shadow-xl">
-                  <div className="flex items-center gap-3 mb-6">
-                    <BarChart2 size={22} className="text-emerald-500" />
-                    <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tight">การวัดผล และตัวชี้วัด (KPIs)</h3>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {level.kpis.map((kpi, i) => (
-                      <div key={i} className="bg-white/50 border border-slate-100 rounded-2xl p-4 flex flex-col justify-between hover:border-emerald-200 hover:bg-emerald-50/50 transition-colors">
-                        <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">{kpi.metric}</p>
-                        <p className="text-sm font-bold text-slate-800">{kpi.target}</p>
+                {/* Checkpoints — compact */}
+                <div className="space-y-2 mb-4">
+                  {level.checkItems.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => toggleCheck(item.id)}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-left group ${
+                        checkedItems[item.id]
+                          ? 'bg-emerald-50 border border-emerald-200'
+                          : 'bg-white border border-slate-200 hover:border-amber-300 hover:bg-amber-50/20'
+                      }`}
+                    >
+                      <div className={`w-5 h-5 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 ${
+                        checkedItems[item.id]
+                          ? 'bg-emerald-500 text-white'
+                          : 'bg-slate-100 text-slate-300 group-hover:bg-amber-100 group-hover:text-amber-500'
+                      }`}>
+                        {checkedItems[item.id] ? <CheckCircle2 size={12} /> : <Circle size={12} />}
                       </div>
-                    ))}
+                      <span className={`text-xs font-semibold leading-snug ${
+                        checkedItems[item.id] ? 'text-emerald-600/70 line-through' : 'text-slate-700'
+                      }`}>
+                        {item.text}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Progress bar */}
+                <div className="mb-4">
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ความสำเร็จ</span>
+                    <span className={`text-[10px] font-black ${progress === 100 ? 'text-emerald-500' : level.color}`}>
+                      {level.checkItems.filter(i => checkedItems[i.id]).length}/{level.checkItems.length}
+                    </span>
+                  </div>
+                  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div className={`h-full rounded-full bg-gradient-to-r ${level.gradient} transition-all duration-700`} style={{ width: `${progress}%` }} />
                   </div>
                 </div>
 
-                {/* 3. รายได้ตามตำแหน่ง */}
-                <div className="glass-card rounded-[2rem] md:rounded-[3rem] p-6 md:p-8 shadow-xl">
-                  <div className="flex items-center gap-3 mb-6">
-                    <DollarSign size={22} className="text-amber-500" />
-                    <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tight">รายได้ยูนิคอร์นและโบนัสที่ได้รับ</h3>
-                  </div>
-                  <div className="space-y-3">
-                    {level.incomeDetails.map((inc, i) => (
-                      <div key={i} className={`p-4 rounded-2xl border ${inc.highlight ? 'bg-amber-50/50 border-amber-200' : 'bg-slate-50 border-slate-100'}`}>
-                        <p className="text-sm font-black text-slate-900 mb-1">{inc.source}</p>
-                        <p className="text-xs font-medium text-slate-600 leading-relaxed">{inc.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* ===== RIGHT COLUMN: Skills & Routines (5 cols) ===== */}
-              <div className="lg:col-span-5 space-y-6">
-
-                {/* 4. ทักษะที่ควรฝึกฝน */}
-                <div className="glass-card rounded-[2rem] md:rounded-[3rem] p-6 md:p-8 shadow-xl bg-gradient-to-b from-white to-slate-50/50">
-                  <div className="flex items-center gap-3 mb-6">
-                    <BrainCircuit size={22} className="text-blue-500" />
-                    <h3 className="text-lg font-black text-slate-900 tracking-tight">ทักษะที่ควรฝึกฝน</h3>
-                  </div>
-                  <div className="space-y-5">
-                    {level.skillsToLearn.map((cat, i) => (
-                      <div key={i}>
-                        <p className="text-[11px] font-black text-slate-500 tracking-widest uppercase mb-2">
-                          {cat.category}
-                        </p>
-                        <div className="flex flex-wrap gap-1.5">
-                          {cat.skills.map((skill, j) => (
-                            <span key={j} className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-[11px] font-bold text-slate-700 shadow-sm">
-                              {skill}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 5. หมวดเรียนรู้ (Modules) */}
-                <div className="glass-card rounded-[2rem] md:rounded-[3rem] p-6 md:p-8 shadow-xl">
-                  <div className="flex items-center gap-3 mb-6">
-                    <BookOpen size={20} className="text-indigo-500" />
-                    <h3 className="text-lg font-black text-slate-900 tracking-tight">หมวดเรียนรู้ที่เกี่ยวข้อง</h3>
-                  </div>
-                  <div className="space-y-4">
-                    {level.modules.map((mod, i) => (
-                      <div key={i} className="bg-white/50 border border-slate-100 rounded-2xl p-4">
-                        <p className="text-[10px] font-black text-indigo-400 uppercase tracking-wider mb-2">{mod.category}</p>
-                        <div className="flex flex-wrap gap-1.5">
-                          {mod.items.map((item, j) => (
-                            <span key={j} className="px-2.5 py-1 bg-indigo-50 text-[11px] font-bold text-indigo-700 rounded-lg">
-                              {item}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 6. งานประจำวัน (Routines) */}
-                <div className="glass-card rounded-[2rem] md:rounded-[3rem] p-6 md:p-8 shadow-xl">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Zap size={20} className="text-pink-500" />
-                    <h3 className="text-lg font-black text-slate-900 tracking-tight">รูทีนการทำงาน</h3>
+                {/* Routines — compact horizontal pills */}
+                <div className="border-t border-slate-100 pt-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Zap size={14} className="text-pink-400" />
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">รูทีนการทำงาน</p>
                   </div>
                   <div className="space-y-2">
                     {level.routines.map((routine, i) => (
-                      <div key={i} className="flex gap-4 p-3 bg-white/50 border border-slate-100 rounded-xl items-center">
-                        <div className="w-16 shrink-0 text-right">
-                          <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">{routine.freq}</p>
-                        </div>
-                        <div className="w-px h-8 bg-slate-200 shrink-0"></div>
-                        <div className="flex flex-wrap gap-1.5">
+                      <div key={i} className="flex items-start gap-2">
+                        <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 w-14 shrink-0 pt-0.5">{routine.freq}</span>
+                        <div className="flex flex-wrap gap-1">
                           {routine.items.map((item, j) => (
-                            <span key={j} className="text-xs font-semibold text-slate-700 whitespace-nowrap">
-                              {item}{j < routine.items.length - 1 ? ',' : ''}
-                            </span>
+                            <span key={j} className="px-2 py-0.5 bg-pink-50 border border-pink-100 text-[10px] font-bold text-pink-700 rounded-lg whitespace-nowrap">{item}</span>
                           ))}
                         </div>
                       </div>
                     ))}
+                  </div>
+                </div>
+
+                {/* Completion message */}
+                {progress === 100 && (
+                  <div className="mt-4 bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-center animate-fade-in">
+                    <Trophy size={22} className="text-amber-500 mx-auto mb-2" />
+                    <p className="text-sm font-black text-emerald-700">ผ่านคุณสมบัติ UBC {level.level} แล้ว! 🎉</p>
+                    {level.level < 4 && (
+                      <button
+                        onClick={() => setExpandedLevel(level.level + 1)}
+                        className="mt-3 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold px-5 py-2 rounded-full inline-flex items-center gap-1.5 transition-all hover:scale-105"
+                      >
+                        ไปสู่ UBC {level.level + 1} <ArrowRight size={12} />
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* ===== RIGHT: สองการ์ดซ้อน ===== */}
+              <div className="space-y-5">
+
+                {/* ผลลัพธ์และรายได้ (KPIs + Income รวม) */}
+                <div className="glass-card rounded-[2rem] p-5 md:p-7 shadow-xl">
+                  <div className="flex items-center gap-2 mb-4">
+                    <DollarSign size={20} className="text-amber-500" />
+                    <h3 className="text-base font-black text-slate-900 tracking-tight">ผลลัพธ์และรายได้</h3>
+                  </div>
+
+                  {/* Income highlights (starred only) */}
+                  <div className="space-y-2 mb-4">
+                    {level.incomeDetails.filter(inc => inc.highlight).map((inc, i) => (
+                      <div key={i} className="flex items-start gap-2.5 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                        <span className="text-base shrink-0 mt-0.5">{inc.source.split(' ')[0]}</span>
+                        <div>
+                          <p className="text-xs font-black text-slate-900">{inc.source.replace(/^[^ ]+ /, '')}</p>
+                          <p className="text-[10px] text-slate-500 leading-relaxed mt-0.5">{inc.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* KPIs — compact grid (top 4) */}
+                  <div className="border-t border-slate-100 pt-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <BarChart2 size={14} className="text-emerald-500" />
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ตัวชี้วัด (KPIs)</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {level.kpis.slice(0, 4).map((kpi, i) => (
+                        <div key={i} className="bg-slate-50 border border-slate-100 rounded-xl p-2.5">
+                          <p className="text-[9px] font-black uppercase tracking-wider text-slate-400 mb-0.5 leading-tight">{kpi.metric}</p>
+                          <p className="text-[11px] font-bold text-slate-800 leading-snug">{kpi.target}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* ทักษะและหมวดเรียน (Skills + Modules รวม) */}
+                <div className="glass-card rounded-[2rem] p-5 md:p-7 shadow-xl">
+                  <div className="flex items-center gap-2 mb-4">
+                    <BrainCircuit size={20} className="text-blue-500" />
+                    <h3 className="text-base font-black text-slate-900 tracking-tight">ทักษะและหมวดเรียน</h3>
+                  </div>
+
+                  {/* Skills as pills — flat */}
+                  <div className="mb-4">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">ทักษะที่ฝึก</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {level.skillsToLearn.flatMap(cat => cat.skills).map((skill, i) => (
+                        <span key={i} className="px-2.5 py-1 bg-blue-50 border border-blue-100 text-[10px] font-bold text-blue-700 rounded-lg">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Modules as pills — flat */}
+                  <div className="border-t border-slate-100 pt-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <BookOpen size={12} className="text-indigo-400" />
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">หมวดเรียน</p>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {level.modules.flatMap(mod => mod.items).map((item, i) => (
+                        <span key={i} className="px-2.5 py-1 bg-indigo-50 border border-indigo-100 text-[10px] font-bold text-indigo-700 rounded-lg">
+                          {item}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
