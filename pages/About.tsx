@@ -94,9 +94,11 @@ const About: React.FC<AboutProps> = ({ onNavigate }) => {
                     <div className="relative">
                         <div className="aspect-[4/5] bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl relative group">
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/20 to-transparent z-10" />
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <Users size={120} className="text-slate-800 opacity-20 group-hover:scale-110 transition-transform duration-700" />
-                            </div>
+                            <img
+                                src="https://mewjhcheciafyuxkngqn.supabase.co/storage/v1/object/public/media/Dr.Joy%20CEO%20Unicorn%20Global%20link.jpg"
+                                alt="Dr. Joy - CEO Unicorn Global Link"
+                                className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                            />
                             <div className="absolute bottom-10 left-10 z-20">
                                 <p className="text-amber-500 font-black text-sm uppercase tracking-widest mb-2">{t('about.founder.role')}</p>
                                 <h3 className="text-3xl font-black text-white tracking-tighter">{t('about.founder.name')}</h3>
