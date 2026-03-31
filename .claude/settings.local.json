@@ -5,7 +5,9 @@
       "WebSearch",
       "WebFetch(domain:www.aajjo.com)",
       "WebFetch(domain:www.indiamart.com)",
-      "WebFetch(domain:mewjhcheciafyuxkngqn.supabase.co)"
+      "WebFetch(domain:mewjhcheciafyuxkngqn.supabase.co)",
+      "Bash(find '/e/00.0_ห้องพัฒนาเวบและแอพด้วย AI/Unicorn_01\\) Unicorn Smart ai' -type f \\\\\\(-name *.tsx -o -name *.ts -o -name App.tsx -o -name types.ts \\\\\\))",
+      "Bash(find:*)"
     ]
   }
 }

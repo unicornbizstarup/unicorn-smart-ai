@@ -122,8 +122,8 @@ const AppContent: React.FC = () => {
             setReferrer(mapProfileToUser(data));
             setReferralId(data.username);
             localStorage.setItem('unicorn_referral_id', data.username);
-            // ONLY if strictly on landing (not logged in)
-            if (currentView === AppView.LANDING) setCurrentView(AppView.REFERRAL_PAGE);
+            // Always show referral page when accessing via referral URL
+            setCurrentView(AppView.REFERRAL_PAGE);
           }
         }
         setLoadingProgress(prev => Math.max(prev, 40));
@@ -424,6 +424,22 @@ const AppContent: React.FC = () => {
           {renderPage()}
         </div>
         <GlobalFooter onNavigate={setCurrentView} />
+        <div className="fixed bottom-6 right-6 z-50">
+          <LanguageSelector />
+        </div>
+      </div>
+    );
+  }
+
+  // ===== REFERRAL PAGE (logged in - visited via referral URL) =====
+  if (currentView === AppView.REFERRAL_PAGE && referrer) {
+    return (
+      <div className="relative">
+        <ReferralPage
+          referrer={referrer}
+          onNavigate={setCurrentView}
+          onJoinTeam={() => setCurrentView(AppView.DASHBOARD)}
+        />
         <div className="fixed bottom-6 right-6 z-50">
           <LanguageSelector />
         </div>

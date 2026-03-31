@@ -1,21 +1,29 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import {
     User as UserIcon,
     MessageSquare,
-    Play,
     ArrowRight,
     ExternalLink,
-    ShieldCheck,
     Star,
     Facebook,
     Instagram,
     Twitter,
     Globe,
     Share2,
-    Linkedin
+    Linkedin,
+    Copy,
+    Check,
+    Play,
+    TrendingUp,
+    Award,
+    Zap,
+    ChevronRight,
+    Phone,
+    Youtube,
+    LogIn
 } from 'lucide-react';
-import { User, AppView } from '../types';
-import { useLanguage } from '../hooks/useLanguage';
+import { User, AppView, UBCLevel } from '../types';
 
 interface ReferralPageProps {
     referrer: User;
@@ -23,84 +31,230 @@ interface ReferralPageProps {
     onJoinTeam: () => void;
 }
 
-const ReferralPage: React.FC<ReferralPageProps> = ({ referrer, onNavigate, onJoinTeam }) => {
-    const { t } = useLanguage();
+const PRODUCTS = [
+    { name: 'U-Life Boost', img: 'https://mewjhcheciafyuxkngqn.supabase.co/storage/v1/object/public/Product/1.U-Life%20Boost.png', desc: 'สุขภาพ & อาหารเสริม' },
+    { name: 'U-Skin', img: 'https://mewjhcheciafyuxkngqn.supabase.co/storage/v1/object/public/Product/2.U-Skin.png', desc: 'ดูแลผิว & ความงาม' },
+    { name: 'U-Plant', img: 'https://mewjhcheciafyuxkngqn.supabase.co/storage/v1/object/public/Product/3.U-Plant.png', desc: 'เกษตรอินทรีย์' },
+    { name: 'U-Care', img: 'https://mewjhcheciafyuxkngqn.supabase.co/storage/v1/object/public/Product/4.U-Care.png', desc: 'ดูแลส่วนตัว' },
+    { name: 'U-Tech', img: 'https://mewjhcheciafyuxkngqn.supabase.co/storage/v1/object/public/Product/5.U-Tech.png', desc: 'เทคโนโลยี & นวัตกรรม' },
+];
 
-    // Helper to extract YouTube ID
-    const getYouTubeId = (url: string) => {
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
-        const match = url.match(regExp);
-        return (match && match[2].length === 11) ? match[2] : null;
+const UBC_CONFIG: Record<number, { label: string; color: string; bg: string; border: string; glow: string }> = {
+    1: { label: 'UBC 1 · FOUNDATION', color: 'text-blue-400',   bg: 'bg-blue-500/15',   border: 'border-blue-500/40',   glow: 'shadow-blue-500/20' },
+    2: { label: 'UBC 2 · SPECIALIST', color: 'text-purple-400', bg: 'bg-purple-500/15', border: 'border-purple-500/40', glow: 'shadow-purple-500/20' },
+    3: { label: 'UBC 3 · STRATEGIC',  color: 'text-orange-400', bg: 'bg-orange-500/15', border: 'border-orange-500/40', glow: 'shadow-orange-500/20' },
+    4: { label: 'UBC 4 · MASTER',     color: 'text-amber-400',  bg: 'bg-amber-500/15',  border: 'border-amber-500/40',  glow: 'shadow-amber-500/30' },
+};
+
+const getYouTubeId = (url: string) => {
+    const match = url.match(/^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/);
+    return match && match[2].length === 11 ? match[2] : null;
+};
+
+const ReferralPage: React.FC<ReferralPageProps> = ({ referrer, onNavigate, onJoinTeam }) => {
+    const [copied, setCopied] = useState(false);
+    const [lineIdCopied, setLineIdCopied] = useState(false);
+
+    const ubcLevel = referrer.ubcLevel ?? 1;
+    const ubc = UBC_CONFIG[ubcLevel] ?? UBC_CONFIG[1];
+    const videoId = referrer.youtubeUrl ? getYouTubeId(referrer.youtubeUrl) : null;
+    const referralUrl = `${window.location.origin}/${referrer.username}`;
+    const businessPoints = (referrer.pvPersonal ?? 0) + (referrer.pvTeam ?? 0);
+
+    const copyReferralLink = async () => {
+        await navigator.clipboard.writeText(referralUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
     };
 
-    const videoId = referrer.youtubeUrl ? getYouTubeId(referrer.youtubeUrl) : null;
+    const copyLineId = async () => {
+        if (!referrer.lineId) return;
+        await navigator.clipboard.writeText(referrer.lineId);
+        setLineIdCopied(true);
+        setTimeout(() => setLineIdCopied(false), 2000);
+    };
+
+    const handleShare = async () => {
+        if (navigator.share) {
+            await navigator.share({ title: `${referrer.fullName} - Unicorn Global Link`, url: referralUrl });
+        } else {
+            copyReferralLink();
+        }
+    };
 
     return (
-        <div className="min-h-screen bg-slate-950 text-white selection:bg-amber-500/30">
-            {/* Dynamic Background */}
-            <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-amber-500/10 rounded-full blur-[120px] opacity-50" />
-                <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[100px]" />
+        <div className="min-h-screen bg-[#050d1a] text-white font-['Prompt',sans-serif] selection:bg-amber-500/30">
+            {/* Background */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-[-200px] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-blue-600/10 rounded-full blur-[120px]" />
+                <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-[100px]" />
+                <div className="absolute top-1/2 left-0 w-[300px] h-[300px] bg-indigo-600/5 rounded-full blur-[80px]" />
             </div>
 
-            <div className="relative z-10 max-w-2xl mx-auto px-4 py-12 lg:py-20">
-                {/* Header / Brand Section */}
-                <div className="text-center mb-12">
-                    <div className="relative inline-block mb-6">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-amber-400 to-amber-600 rounded-full blur-xl opacity-40 animate-pulse" />
-                        <div className="relative w-32 h-32 rounded-full p-1 bg-gradient-to-tr from-amber-400 via-amber-200 to-amber-600">
-                            <div className="w-full h-full rounded-full overflow-hidden bg-slate-900 border-2 border-slate-900">
-                                {referrer.avatarUrl ? (
-                                    <img src={referrer.avatarUrl} alt={referrer.fullName} className="w-full h-full object-cover" />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-slate-800">
-                                        <UserIcon size={48} className="text-slate-600" />
+            <div className="relative z-10 max-w-md mx-auto px-4 py-8 pb-16">
+
+                {/* Brand Bar */}
+                <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-amber-500 rounded-xl flex items-center justify-center font-black text-slate-950 text-sm shadow-lg shadow-amber-500/30">U</div>
+                        <span className="text-xs font-black tracking-[0.2em] text-slate-400 uppercase">Unicorn Global Link</span>
+                    </div>
+                    <button
+                        onClick={() => onNavigate(AppView.LOGIN)}
+                        className="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-amber-400 transition-colors"
+                    >
+                        <LogIn size={14} />
+                        เข้าสู่ระบบ
+                    </button>
+                </div>
+
+                {/* ===== HERO CARD ===== */}
+                <div className="relative rounded-[2rem] overflow-hidden mb-6 bg-gradient-to-br from-[#0d1f3c] via-[#0f2347] to-[#091830] border border-white/10 shadow-2xl">
+                    {/* Top accent line */}
+                    <div className="h-1 w-full bg-gradient-to-r from-blue-600 via-amber-500 to-blue-600" />
+
+                    <div className="p-6">
+                        {/* Profile Row */}
+                        <div className="flex items-start gap-4 mb-5">
+                            {/* Avatar */}
+                            <div className="relative shrink-0">
+                                <div className="w-20 h-20 rounded-full p-[2px] bg-gradient-to-tr from-amber-400 via-amber-200 to-amber-600 shadow-xl shadow-amber-500/20">
+                                    <div className="w-full h-full rounded-full overflow-hidden bg-slate-900">
+                                        {referrer.avatarUrl ? (
+                                            <img src={referrer.avatarUrl} alt={referrer.fullName} className="w-full h-full object-cover object-top" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center bg-slate-800">
+                                                <UserIcon size={32} className="text-slate-500" />
+                                            </div>
+                                        )}
                                     </div>
+                                </div>
+                                <div className="absolute -bottom-1 -right-1 bg-amber-500 text-slate-950 p-1.5 rounded-lg shadow-lg ring-2 ring-[#0d1f3c]">
+                                    <Star size={12} fill="currentColor" />
+                                </div>
+                            </div>
+
+                            {/* Name & Info */}
+                            <div className="flex-1 min-w-0">
+                                <h1 className="text-xl font-black text-white tracking-tight leading-tight mb-1">
+                                    {referrer.fullName}
+                                </h1>
+                                {referrer.specialization && (
+                                    <p className="text-amber-400 font-bold text-xs uppercase tracking-widest mb-2">
+                                        {referrer.specialization}
+                                    </p>
                                 )}
+                                {/* UBC Badge */}
+                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest border ${ubc.bg} ${ubc.border} ${ubc.color}`}>
+                                    <Award size={11} />
+                                    {ubc.label}
+                                </span>
                             </div>
                         </div>
-                        <div className="absolute -bottom-2 -right-2 bg-amber-500 text-slate-950 p-2 rounded-xl shadow-lg shadow-amber-500/20 ring-4 ring-slate-950">
-                            <Star size={18} fill="currentColor" />
-                        </div>
-                    </div>
 
-                    <h1 className="text-3xl lg:text-4xl font-black tracking-tight mb-2">
-                        {referrer.fullName}
-                    </h1>
-                    {referrer.specialization && (
-                        <p className="text-amber-500 font-bold uppercase tracking-widest text-sm mb-4">
-                            {referrer.specialization}
-                        </p>
-                    )}
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-bold text-slate-400 uppercase tracking-widest">
-                        <ShieldCheck size={14} className="text-emerald-500" />
-                        {t('referral.verified_partner')}
+                        {/* Stats Row */}
+                        <div className="grid grid-cols-2 gap-3 mb-5">
+                            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+                                <div className="flex items-center justify-center gap-1.5 mb-1">
+                                    <TrendingUp size={14} className="text-amber-400" />
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Business Points</span>
+                                </div>
+                                <p className="text-2xl font-black text-amber-400">{businessPoints.toLocaleString()}</p>
+                            </div>
+                            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+                                <div className="flex items-center justify-center gap-1.5 mb-1">
+                                    <Zap size={14} className="text-blue-400" />
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">U-Partner</span>
+                                </div>
+                                <p className={`text-lg font-black ${ubc.color}`}>
+                                    {ubcLevel === 4 ? 'MASTER' : ubcLevel === 3 ? 'STRATEGIC' : ubcLevel === 2 ? 'SPECIALIST' : 'FOUNDATION'}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Quote */}
+                        {referrer.quote && (
+                            <div className="relative bg-blue-950/50 border border-blue-800/30 rounded-xl px-4 py-3 mb-5">
+                                <div className="absolute top-2 left-3 text-blue-400/40 text-2xl font-black leading-none">"</div>
+                                <p className="text-sm text-slate-300 font-medium leading-relaxed pl-3 pr-2">
+                                    {referrer.quote}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Bio */}
+                        {referrer.bio && (
+                            <p className="text-sm text-slate-400 leading-relaxed mb-5 border-l-2 border-amber-500/50 pl-3">
+                                {referrer.bio}
+                            </p>
+                        )}
                     </div>
                 </div>
 
-                {/* Quote Section */}
-                {referrer.quote && (
-                    <div className="text-center mb-12">
-                        <p className="text-xl lg:text-2xl font-black text-slate-300 leading-tight">
-                            "{referrer.quote}"
-                        </p>
-                    </div>
-                )}
+                {/* ===== CONTACT SECTION ===== */}
+                <div className="space-y-3 mb-6">
+                    {referrer.lineOaUrl && (
+                        <a
+                            href={referrer.lineOaUrl.trim()}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group flex items-center justify-between p-4 bg-[#06C755] text-white rounded-2xl font-black text-base hover:bg-[#05b34d] transition-all shadow-xl shadow-[#06C755]/25 active:scale-[0.98]"
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                                    <MessageSquare size={20} />
+                                </div>
+                                <div>
+                                    <p className="font-black">ติดต่อผ่าน LINE OA</p>
+                                    <p className="text-xs text-white/70 font-medium">แชทกับทีม Unicorn</p>
+                                </div>
+                            </div>
+                            <ExternalLink size={18} className="opacity-70 group-hover:opacity-100 transition" />
+                        </a>
+                    )}
 
-                {/* Bio Section */}
-                {referrer.bio && (
-                    <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-6 lg:p-8 mb-8 backdrop-blur-xl relative overflow-hidden group">
-                        <div className="absolute top-0 left-0 w-1 h-full bg-amber-500" />
-                        <p className="text-lg leading-relaxed text-slate-300 font-medium italic">
-                            "{referrer.bio}"
-                        </p>
-                    </div>
-                )}
+                    {referrer.lineId && (
+                        <button
+                            onClick={copyLineId}
+                            className="w-full group flex items-center justify-between p-4 bg-[#0d1f3c] border border-[#06C755]/30 text-white rounded-2xl font-bold text-sm hover:border-[#06C755]/60 transition-all active:scale-[0.98]"
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-[#06C755]/15 rounded-xl flex items-center justify-center">
+                                    <Phone size={18} className="text-[#06C755]" />
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">LINE ID</p>
+                                    <p className="font-black text-white">{referrer.lineId.trim()}</p>
+                                </div>
+                            </div>
+                            {lineIdCopied
+                                ? <Check size={18} className="text-[#06C755]" />
+                                : <Copy size={16} className="text-slate-400 group-hover:text-white transition" />
+                            }
+                        </button>
+                    )}
+                </div>
 
-                {/* Video / Content Section */}
+                {/* ===== PRODUCTS ===== */}
+                <div className="mb-6">
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em] mb-3">กลุ่มผลิตภัณฑ์</p>
+                    <div className="grid grid-cols-5 gap-2">
+                        {PRODUCTS.map((p) => (
+                            <div key={p.name} className="group flex flex-col items-center gap-1.5">
+                                <div className="w-full aspect-square rounded-xl overflow-hidden bg-slate-800 border border-white/10 group-hover:border-amber-500/40 transition-all shadow-md">
+                                    <img src={p.img} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                </div>
+                                <p className="text-[9px] font-black text-slate-400 text-center uppercase tracking-tight leading-tight">{p.name}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* ===== VIDEO ===== */}
                 {videoId ? (
-                    <div className="mb-8 group">
-                        <div className="relative aspect-video rounded-3xl overflow-hidden border border-white/10 bg-slate-900 shadow-2xl">
+                    <div className="mb-6">
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em] mb-3">วิดีโอแนะนำ</p>
+                        <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
                             <iframe
                                 className="w-full h-full"
                                 src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`}
@@ -109,117 +263,112 @@ const ReferralPage: React.FC<ReferralPageProps> = ({ referrer, onNavigate, onJoi
                                 allowFullScreen
                             />
                         </div>
-                        <p className="mt-3 text-center text-xs text-slate-500 font-bold uppercase tracking-wider">
-                            {t('referral.welcome_video')}
-                        </p>
                     </div>
                 ) : (
-                    <div className="aspect-video rounded-3xl border-2 border-dashed border-white/5 flex flex-col items-center justify-center text-slate-600 mb-8 bg-white/[0.01]">
-                        <Play size={40} className="mb-3 opacity-20" />
-                        <span className="text-sm font-bold uppercase tracking-widest opacity-30">{t('referral.welcome')}</span>
+                    <div className="mb-6 aspect-video rounded-2xl border border-dashed border-white/10 flex flex-col items-center justify-center text-slate-700">
+                        <Play size={32} className="mb-2 opacity-30" />
+                        <span className="text-xs font-bold uppercase tracking-widest opacity-30">แนบวิดีโอ YouTube ในโปรไฟล์</span>
                     </div>
                 )}
 
-                {/* Action Buttons */}
-                <div className="grid gap-4">
-                    {referrer.lineOaUrl && (
-                        <div>
-                            <a
-                                href={referrer.lineOaUrl.trim()}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="group flex items-center justify-between p-5 bg-emerald-500 text-slate-950 rounded-2xl font-black text-lg hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20"
-                            >
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                                        <MessageSquare size={20} />
-                                    </div>
-                                    <span>{t('referral.contact_line')}</span>
-                                </div>
-                                <ExternalLink size={20} className="opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
-                            </a>
-                            {referrer.lineId && (
-                                <div className="text-center mt-2 text-xs font-black text-slate-400 uppercase tracking-widest">
-                                    LINE ID: <span className="text-white">{referrer.lineId.trim()}</span>
-                                </div>
+                {/* ===== SOCIAL LINKS ===== */}
+                {referrer.socialLinks && Object.values(referrer.socialLinks).some(Boolean) && (
+                    <div className="mb-6">
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em] mb-3">โซเชียลมีเดีย</p>
+                        <div className="flex gap-2 flex-wrap">
+                            {referrer.socialLinks.tiktok && (
+                                <a href={referrer.socialLinks.tiktok} target="_blank" rel="noopener noreferrer"
+                                    className="flex-1 min-w-[3rem] aspect-square bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all">
+                                    <Share2 size={18} />
+                                </a>
+                            )}
+                            {referrer.socialLinks.facebook && (
+                                <a href={referrer.socialLinks.facebook} target="_blank" rel="noopener noreferrer"
+                                    className="flex-1 min-w-[3rem] aspect-square bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-slate-400 hover:text-[#1877F2] hover:bg-[#1877F2]/10 hover:border-[#1877F2]/30 transition-all">
+                                    <Facebook size={18} />
+                                </a>
+                            )}
+                            {referrer.socialLinks.instagram && (
+                                <a href={referrer.socialLinks.instagram} target="_blank" rel="noopener noreferrer"
+                                    className="flex-1 min-w-[3rem] aspect-square bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-slate-400 hover:text-pink-400 hover:bg-pink-500/10 hover:border-pink-500/30 transition-all">
+                                    <Instagram size={18} />
+                                </a>
+                            )}
+                            {referrer.socialLinks.youtube && (
+                                <a href={referrer.socialLinks.youtube} target="_blank" rel="noopener noreferrer"
+                                    className="flex-1 min-w-[3rem] aspect-square bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-500/10 hover:border-red-500/30 transition-all">
+                                    <Youtube size={18} />
+                                </a>
+                            )}
+                            {referrer.socialLinks.twitter && (
+                                <a href={referrer.socialLinks.twitter} target="_blank" rel="noopener noreferrer"
+                                    className="flex-1 min-w-[3rem] aspect-square bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-slate-400 hover:text-sky-400 hover:bg-sky-500/10 hover:border-sky-500/30 transition-all">
+                                    <Twitter size={18} />
+                                </a>
+                            )}
+                            {referrer.socialLinks.linkedin && (
+                                <a href={referrer.socialLinks.linkedin} target="_blank" rel="noopener noreferrer"
+                                    className="flex-1 min-w-[3rem] aspect-square bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 hover:border-blue-500/30 transition-all">
+                                    <Linkedin size={18} />
+                                </a>
+                            )}
+                            {referrer.socialLinks.website && (
+                                <a href={referrer.socialLinks.website} target="_blank" rel="noopener noreferrer"
+                                    className="flex-1 min-w-[3rem] aspect-square bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-slate-400 hover:text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/30 transition-all">
+                                    <Globe size={18} />
+                                </a>
                             )}
                         </div>
-                    )}
-
-                    <div className="grid grid-cols-5 gap-3">
-                        {referrer.socialLinks?.tiktok && (
-                            <a href={referrer.socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="aspect-square bg-white/[0.03] border border-white/10 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all">
-                                <Share2 size={24} />
-                            </a>
-                        )}
-                        {referrer.socialLinks?.facebook && (
-                            <a href={referrer.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="aspect-square bg-white/[0.03] border border-white/10 rounded-2xl flex items-center justify-center text-slate-400 hover:text-blue-500 hover:bg-white/10 transition-all">
-                                <Facebook size={24} />
-                            </a>
-                        )}
-                        {referrer.socialLinks?.instagram && (
-                            <a href={referrer.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="aspect-square bg-white/[0.03] border border-white/10 rounded-2xl flex items-center justify-center text-slate-400 hover:text-pink-500 hover:bg-white/10 transition-all">
-                                <Instagram size={24} />
-                            </a>
-                        )}
-                        {referrer.socialLinks?.twitter && (
-                            <a href={referrer.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="aspect-square bg-white/[0.03] border border-white/10 rounded-2xl flex items-center justify-center text-slate-400 hover:text-sky-400 hover:bg-white/10 transition-all">
-                                <Twitter size={24} />
-                            </a>
-                        )}
-                        {referrer.socialLinks?.linkedin && (
-                            <a href={referrer.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="aspect-square bg-white/[0.03] border border-white/10 rounded-2xl flex items-center justify-center text-slate-400 hover:text-blue-400 hover:bg-white/10 transition-all">
-                                <Linkedin size={24} />
-                            </a>
-                        )}
-                        {referrer.socialLinks?.website && (
-                            <a href={referrer.socialLinks.website} target="_blank" rel="noopener noreferrer" className="aspect-square bg-white/[0.03] border border-white/10 rounded-2xl flex items-center justify-center text-slate-400 hover:text-amber-500 hover:bg-white/10 transition-all">
-                                <Globe size={24} />
-                            </a>
-                        )}
                     </div>
+                )}
 
-                    <button
-                        onClick={onJoinTeam}
-                        className="group flex items-center justify-between p-5 bg-white text-slate-950 rounded-2xl font-black text-lg hover:bg-slate-100 transition-all shadow-xl shadow-white/5 border border-white/20"
-                    >
-                        <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 bg-slate-950/10 rounded-xl flex items-center justify-center">
-                                <ArrowRight size={20} />
-                            </div>
-                            <span>{t('referral.join_team')}</span>
+                {/* ===== REFERRAL LINK ===== */}
+                <div className="mb-6">
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em] mb-3">ลิงค์แนะนำส่วนตัว</p>
+                    <div className="bg-[#0d1f3c] border border-blue-800/40 rounded-2xl p-4">
+                        <p className="text-xs text-slate-400 font-mono truncate mb-3">{referralUrl}</p>
+                        <div className="grid grid-cols-2 gap-2">
+                            <button
+                                onClick={copyReferralLink}
+                                className={`flex items-center justify-center gap-2 py-2.5 rounded-xl font-black text-sm transition-all ${copied ? 'bg-emerald-500 text-white' : 'bg-white/10 text-white hover:bg-white/15'}`}
+                            >
+                                {copied ? <Check size={15} /> : <Copy size={15} />}
+                                {copied ? 'คัดลอกแล้ว!' : 'คัดลอก'}
+                            </button>
+                            <button
+                                onClick={handleShare}
+                                className="flex items-center justify-center gap-2 py-2.5 rounded-xl font-black text-sm bg-blue-600 text-white hover:bg-blue-500 transition-all"
+                            >
+                                <Share2 size={15} />
+                                แชร์
+                            </button>
                         </div>
-                        <div className="flex -space-x-2">
-                            {[1, 2, 3].map((i) => (
-                                <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-200 overflow-hidden">
-                                    <img src={`https://i.pravatar.cc/150?u=${referrer.id + i}`} alt="Teammate" />
-                                </div>
-                            ))}
-                        </div>
-                    </button>
-                </div>
-
-                {/* Trust Indicators */}
-                <div className="mt-12 pt-8 border-t border-white/5 grid grid-cols-2 gap-6">
-                    <div className="text-center">
-                        <div className="text-2xl font-black text-amber-500">100%</div>
-                        <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">AI Driven Support</div>
-                    </div>
-                    <div className="text-center">
-                        <div className="text-2xl font-black text-amber-500">24/7</div>
-                        <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Passive Income System</div>
                     </div>
                 </div>
 
-                {/* Footer Link */}
-                <p className="mt-12 text-center">
-                    <button
-                        onClick={() => onNavigate(AppView.LANDING)}
-                        className="text-slate-500 hover:text-white text-sm font-bold transition-colors"
-                    >
-                        {t('common.back')}
-                    </button>
-                </p>
+                {/* ===== CTA ===== */}
+                <button
+                    onClick={onJoinTeam}
+                    className="w-full group flex items-center justify-between p-5 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 rounded-2xl font-black text-lg hover:from-amber-400 hover:to-amber-500 transition-all shadow-2xl shadow-amber-500/30 active:scale-[0.98] mb-4"
+                >
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-slate-950/15 rounded-xl flex items-center justify-center">
+                            <ArrowRight size={22} />
+                        </div>
+                        <div className="text-left">
+                            <p className="font-black leading-tight">สมัครเป็นพาร์ทเนอร์</p>
+                            <p className="text-xs font-bold opacity-60">ร่วมทีม Unicorn Global Link</p>
+                        </div>
+                    </div>
+                    <ChevronRight size={20} className="opacity-60 group-hover:translate-x-1 transition-transform" />
+                </button>
+
+                {/* Footer */}
+                <div className="text-center pt-4 border-t border-white/5">
+                    <p className="text-slate-600 text-xs font-bold">
+                        Powered by <span className="text-amber-500">Unicorn Academy</span>
+                    </p>
+                </div>
 
             </div>
         </div>
