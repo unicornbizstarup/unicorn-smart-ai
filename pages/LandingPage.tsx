@@ -14,7 +14,8 @@ import {
     TrendingUp,
     Shield,
     Play,
-    Award
+    Award,
+    Globe
 } from 'lucide-react';
 import { AppView } from '../types';
 import { useLanguage } from '../hooks/useLanguage';
@@ -147,6 +148,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                             <Play size={18} className="text-amber-500" />
                             {t('hero.login')}
                         </button>
+                        <a
+                            href="https://unicorngloballink.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group w-full sm:w-auto px-10 py-5 text-lg font-bold text-slate-400 border border-white/10 rounded-2xl hover:text-white hover:border-amber-500/30 transition-all flex items-center justify-center gap-2"
+                        >
+                            <Globe size={18} className="text-amber-500/70 group-hover:text-amber-500 transition-colors" />
+                            เว็บบริษัท
+                        </a>
                     </div>
 
                     <div className={`grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-3xl mx-auto ${isHeroVisible ? 'animate-fade-in' : ''}`} style={{ animationDelay: '0.8s' }}>

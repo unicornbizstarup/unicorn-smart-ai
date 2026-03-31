@@ -12,7 +12,8 @@ import {
     ArrowLeft,
     ShieldCheck,
     Building2,
-    Clock
+    Clock,
+    Globe
 } from 'lucide-react';
 import { AppView } from '../types';
 import { useLanguage } from '../hooks/useLanguage';
@@ -148,6 +149,18 @@ const Contact: React.FC<ContactProps> = ({ onNavigate }) => {
                                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('contact.email.label')}</h3>
                                             <p className="text-sm font-black text-slate-900 leading-tight truncate">b.unicorn.official@gmail.com</p>
                                         </div>
+                                    </a>
+
+                                    {/* Website */}
+                                    <a href="https://unicorngloballink.com/" target="_blank" rel="noopener noreferrer" className="md:col-span-2 flex items-center gap-4 group/item p-4 rounded-2xl bg-amber-50 border border-amber-200 shadow-sm hover:shadow-xl hover:border-amber-400 transition-all hover:-translate-y-1">
+                                        <div className="w-12 h-12 rounded-xl bg-amber-500 flex items-center justify-center text-white group-hover/item:scale-110 transition-transform">
+                                            <Globe size={24} />
+                                        </div>
+                                        <div className="flex-1 overflow-hidden">
+                                            <h3 className="text-[10px] font-black text-amber-600 uppercase tracking-widest">เว็บไซต์บริษัท</h3>
+                                            <p className="text-base font-black text-slate-900 leading-tight">unicorngloballink.com</p>
+                                        </div>
+                                        <ExternalLink size={18} className="text-amber-500 shrink-0" />
                                     </a>
                                 </div>
                             </div>
