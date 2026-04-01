@@ -99,13 +99,21 @@ app.post('/api/chat', async (req, res) => {
       { role: 'user', parts: [{ text: lastMessage }] }
     ];
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
-      contents: contents,
-      config: {
-        systemInstruction: systemInstruction
-      }
-    });
+    const timeoutMs = 25000;
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('TIMEOUT')), timeoutMs)
+    );
+
+    const response = await Promise.race([
+      ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: contents,
+        config: {
+          systemInstruction: systemInstruction
+        }
+      }),
+      timeoutPromise
+    ]);
 
     const text = response.text;
 
@@ -115,6 +123,22 @@ app.post('/api/chat', async (req, res) => {
     console.error('Time:', new Date().toISOString());
     console.error('Message:', error.message);
     if (error.stack) console.error('Stack:', error.stack);
+
+    // ดัก Timeout
+    if (error.message === 'TIMEOUT') {
+      return res.status(503).json({
+        error: 'น้องยูนิใช้เวลานานเกินไปค่ะ กรุณาลองใหม่อีกครั้งนะคะ 🙏',
+        details: 'Request timeout'
+      });
+    }
+
+    // ดัก Error 503 (โหลดหนัก)
+    if (error.status === 503 || error.message?.includes('503') || error.message?.includes('UNAVAILABLE') || error.message?.includes('high demand')) {
+      return res.status(503).json({
+        error: 'ระบบ AI กำลังโหลดหนักค่ะ กรุณารอสักครู่แล้วลองใหม่นะคะ 🥺',
+        details: 'Service temporarily unavailable'
+      });
+    }
 
     // ดัก Error 429 (โควต้าเต็ม / Rate limit)
     if (error.status === 429 || error.status === 'RESOURCE_EXHAUSTED' || error.message?.includes('429') || error.message?.includes('Quota exceeded')) {
