@@ -19,38 +19,40 @@ import { ChatMessage } from '../types';
 
 type FocusArea = 'STARTUP' | 'SYSTEM456' | 'LEADERSHIP' | 'PERSONAL_BRAND';
 
-const scenariosByArea: Record<FocusArea, string[]> = {
+type Scenario = { label: string; message: string };
+
+const scenariosByArea: Record<FocusArea, Scenario[]> = {
   STARTUP: [
-    "วิธีแชร์ความประทับใจสินค้า",
-    "การแนะนำ Unicorn Link ให้คนใหม่",
-    "ฝึกนัดที่ปรึกษาเข้าห้องซูม",
-    "การสะสม 2,000 PV เพื่อเริ่มธุรกิจ"
+    { label: "วิธีแชร์ความประทับใจสินค้า", message: "วิธีแชร์ความประทับใจสินค้าให้น่าสนใจ" },
+    { label: "แนะนำ Unicorn Link ให้คนใหม่", message: "วิธีแนะนำ Unicorn Link ให้คนใหม่อย่างมืออาชีพ" },
+    { label: "ฝึกการนัดหมายผู้มุ่งหวัง", message: "ฝึกพูดนัดหมายผู้มุ่งหวังเข้าร่วมการนำเสนอธุรกิจ" },
+    { label: "การสะสม PV ให้ถึงเป้า", message: "วิธีการสะสม PV ให้ถึงเป้าหมายอย่างมีแผน" },
   ],
   SYSTEM456: [
-    "ฝึกพูด '5 WHY' เพื่อเปิดใจ",
-    "ซ้อมตอบข้อโต้แย้งเรื่องราคา",
-    "การทำ STP (เปิดโอกาสธุรกิจ)",
-    "เทคนิคการติดตาม (Follow-up)"
+    { label: "ฝึกพูด 5 Why เพื่อเปิดใจ", message: "ช่วยฝึกพูด '5 Why' เพื่อเปิดใจผู้มุ่งหวัง" },
+    { label: "ตอบข้อโต้แย้งเรื่องราคา", message: "วิธีตอบข้อโต้แย้งเมื่อลูกค้าบอกว่าแพงเกินไป" },
+    { label: "การทำ STP (เปิดโอกาสธุรกิจ)", message: "อธิบายวิธีการทำ STP เพื่อเปิดโอกาสธุรกิจ และการใช้ Unicorn Global Link ให้เกิดประโยชน์สูงสุด https://unicorngloballink.com/#opportunity" },
+    { label: "เทคนิคการติดตาม (Follow-up)", message: "เทคนิคการติดตามผู้มุ่งหวังอย่างมืออาชีพไม่รู้สึกรบกวน" },
   ],
   LEADERSHIP: [
-    "วิธีพูดปลอบใจทีมงานที่ท้อ",
-    "ซ้อมสอนแผนรายได้มือใหม่",
-    "เทคนิคการ Coaching หน้างาน",
-    "การจัด House Meeting ให้มีพลัง"
+    { label: "วิธีการทำ AAR (After Action Review)", message: "วิธีการทำ AAR (After Action Review) กับทีมงานหลังจบกิจกรรม" },
+    { label: "การทำ 1 on 1 กับทีมงาน", message: "วิธีการทำ 1 on 1 กับทีมงานให้ได้ผลดี" },
+    { label: "การโค้ชทีมงาน", message: "เทคนิคการโค้ชทีมงานให้เติบโตและมีแรงจูงใจ" },
+    { label: "จัด House Meeting ให้มีพลัง", message: "วิธีการจัด House Meeting ให้น่าสนใจและมีพลัง" },
   ],
   PERSONAL_BRAND: [
-    "ช่วยร่าง Bio ให้น่าเชื่อถือ",
-    "คิดคำคม (Quote) ประจำตัว",
-    "แนะนำจุดเด่น (Expertise)",
-    "ร่างโปรไฟล์แบบ 3 ภาษา"
+    { label: "ร่าง Bio ให้น่าเชื่อถือ", message: "ช่วยร่าง Bio ให้น่าเชื่อถือสำหรับนามบัตรดิจิทัล" },
+    { label: "คิดคำคม (Quote) ประจำตัว", message: "ช่วยคิดคำคม (Quote) ประจำตัวที่สื่อถึงตัวตนและธุรกิจ" },
+    { label: "แนะนำจุดเด่น (Expertise)", message: "ช่วยระบุและเขียนแนะนำจุดเด่น (Expertise) ของฉัน" },
+    { label: "ร่างโปรไฟล์แบบ 3 ภาษา", message: "ช่วยร่างโปรไฟล์แบบ 3 ภาษา (ไทย/อังกฤษ/พม่า)" },
   ]
 };
 
 const focus_options = [
-  { id: 'STARTUP', icon: Rocket, label: 'Start-Up' },
-  { id: 'SYSTEM456', icon: Shield, label: 'Systems' },
-  { id: 'LEADERSHIP', icon: GraduationCap, label: 'Leadership' },
-  { id: 'PERSONAL_BRAND', icon: User, label: 'Branding' }
+  { id: 'STARTUP', icon: Rocket, label: 'Start-Up', emoji: '🚀' },
+  { id: 'SYSTEM456', icon: Shield, label: 'System', emoji: '🔧' },
+  { id: 'LEADERSHIP', icon: GraduationCap, label: 'Leadership', emoji: '🏆' },
+  { id: 'PERSONAL_BRAND', icon: User, label: 'Branding', emoji: '🌟' }
 ];
 
 const SYSTEM_INSTRUCTION = `คุณคือ 'Uni Smart AI' (ชื่อเล่น: น้องยูนิ) โค้ชพี่เลี้ยง (Mentor Coach) และผู้เชี่ยวชาญการสร้างแบรนด์บุคคล (Personal Branding Expert) ของที่ปรึกษาการตลาดยูนิคอร์น! 🦄✨
@@ -72,7 +74,7 @@ const AICoach: React.FC = () => {
     {
       id: '1',
       role: 'assistant',
-      text: 'สวัสดีครับ! ผม \'Unicorn Smart AI\' (น้องยูนิ) เมนเทอร์ส่วนตัวของคุณ ยินดีต้อนรับเข้าสู่เส้นทางความสำเร็จครับ! วันนี้อยากให้ผมช่วยโค้ชประเด็นไหน เพื่อให้คุณเป็นที่ปรึกษาการตลาดมืออาชีพดีครับ?',
+      text: 'สวัสดีค่ะคุณพี่! 🦄 น้องยูนิยินดีต้อนรับนะคะ\n\nวันนี้น้องยูนิช่วยได้เลยค่ะ ลองกดปุ่มด้านล่าง หรือพิมพ์ถามได้เลยนะคะ 😊',
       timestamp: new Date()
     }
   ]);
@@ -232,7 +234,7 @@ const AICoach: React.FC = () => {
                   {m.role === 'user' ? <User size={16} className="md:w-[24px] md:h-[24px]" /> : <Shield size={16} className="md:w-[24px] md:h-[24px]" />}
                 </div>
                 <div className={`
-                  rounded-2xl md:rounded-[2rem] p-3 md:px-10 md:py-6 shadow-xl text-sm md:text-xl leading-relaxed font-medium relative group max-w-[95%] md:max-w-[85%]
+                  rounded-2xl md:rounded-[2rem] p-3 md:px-10 md:py-6 shadow-xl text-sm md:text-xl leading-relaxed font-medium relative group max-w-[95%] md:max-w-[85%] whitespace-pre-wrap
                   ${m.role === 'user'
                     ? 'bg-slate-950 text-white rounded-tr-none border border-slate-800'
                     : 'bg-white/90 backdrop-blur-md border border-white text-slate-800 rounded-tl-none'}
@@ -258,20 +260,21 @@ const AICoach: React.FC = () => {
           )}
         </div>
 
-        {/* Dynamic Training Suggestions */}
-        <div className="bg-white/40 backdrop-blur-md border-t border-white/50 py-2 md:py-3 overflow-x-auto whitespace-nowrap no-scrollbar px-3 md:px-8">
-          <div className="flex gap-2 md:gap-4 items-center">
-            <p className="flex items-center gap-1 md:gap-2 text-[9px] md:text-xs-plus font-black text-slate-400 uppercase tracking-widest md:tracking-[0.2em] pr-2 md:pr-4 border-r border-slate-200 shrink-0">
-              <History size={10} className="text-amber-500 md:w-[14px] md:h-[14px]" /> {/* Changed icon to History */} ฝึกซ้อม
+        {/* Dynamic Quick Reply Keywords by Focus Area */}
+        <div className="bg-amber-50/60 backdrop-blur-md border-t border-amber-100/60 py-2 md:py-3 overflow-x-auto whitespace-nowrap no-scrollbar px-3 md:px-8">
+          <div className="flex gap-2 md:gap-3 items-center">
+            <p className="flex items-center gap-1 text-[9px] md:text-xs-plus font-black text-amber-500 pr-2 md:pr-4 border-r border-amber-200 shrink-0 whitespace-nowrap">
+              {focus_options.find(f => f.id === focusArea)?.emoji}{' '}
+              {focus_options.find(f => f.id === focusArea)?.label}
             </p>
             {currentScenarios.map(s => (
               <button
-                key={s}
-                onClick={() => handleSendMessage(s)}
-                aria-label={`เลือกซ้อมหัวข้อ: ${s}`}
-                className="px-3 md:px-8 py-1.5 md:py-2.5 bg-white/60 border border-white rounded-lg md:rounded-[1.5rem] text-[11px] md:text-sm font-black text-slate-700 hover:border-amber-500 hover:text-amber-600 hover:bg-white transition-all flex items-center gap-2 md:gap-3 shrink-0 shadow-sm hover:shadow-xl hover:-translate-y-1 duration-300"
+                key={s.label}
+                onClick={() => handleSendMessage(s.message)}
+                aria-label={`ถาม: ${s.label}`}
+                className="px-3 md:px-5 py-1.5 md:py-2 bg-white border border-amber-200 rounded-full text-[11px] md:text-sm font-bold text-amber-700 hover:border-amber-500 hover:bg-amber-500 hover:text-white transition-all flex items-center gap-1.5 shrink-0 shadow-sm hover:shadow-lg hover:-translate-y-0.5 duration-200 whitespace-nowrap"
               >
-                {s}
+                {s.label}
               </button>
             ))}
           </div>
