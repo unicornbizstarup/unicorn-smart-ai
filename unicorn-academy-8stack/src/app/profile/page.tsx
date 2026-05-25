@@ -349,7 +349,9 @@ export default function ProfilePage() {
                 <div className="space-y-2 col-span-2">
                   <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block flex items-center gap-1.5">
                     <span>ลิงก์แนะนำตัวบอกต่อ (Referral Slug)</span>
-                    <HelpCircle size={12} className="text-white/30" title="จะถูกใช้เป็น URL สำหรับแนะนำทีม เช่น domain/referral/yourname" />
+                    <span title="จะถูกใช้เป็น URL สำหรับแนะนำทีม เช่น domain/referral/yourname" className="cursor-help">
+                      <HelpCircle size={12} className="text-white/30" />
+                    </span>
                   </label>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 font-bold text-sm">
