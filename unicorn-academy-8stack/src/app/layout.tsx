@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Playfair_Display, Sarabun } from "next/font/google";
 import "./globals.css";
 
-export const runtime = "edge";
-
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],

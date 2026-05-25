@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import type { Profile } from "@/types";
 import Image from "next/image";
 
+export const runtime = "edge";
+
 interface Props {
   params: Promise<{ slug: string }>;
 }

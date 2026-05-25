@@ -2,6 +2,8 @@ import { createServerSupabase } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
 import type { Profile, UserMission } from "@/types";
 
+export const runtime = "edge";
+
 export default async function DashboardPage() {
   const supabase = await createServerSupabase();
   const { data: { user } } = await supabase.auth.getUser();
