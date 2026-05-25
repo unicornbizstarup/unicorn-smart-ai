@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendLineNotify } from "@/lib/line-notify";
 
+export const runtime = "edge";
+
 export async function POST(req: NextRequest) {
   const { type, payload } = await req.json();
 
