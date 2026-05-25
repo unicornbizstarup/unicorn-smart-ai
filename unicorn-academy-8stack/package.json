@@ -19,6 +19,7 @@
     "@supabase/supabase-js": "^2",
     "@supabase/ssr": "^0",
     "resend": "^4",
+    "lucide-react": "^0.562.0",
     "@aws-sdk/client-s3": "^3",
     "@aws-sdk/s3-request-presigner": "^3"
   },
