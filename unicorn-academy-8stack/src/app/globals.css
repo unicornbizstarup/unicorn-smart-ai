@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gold: #c9a96e;
+  --dark: #080604;
+  --surface: rgba(255,255,255,0.05);
+  --surface-hover: rgba(255,255,255,0.08);
+  --border: rgba(201,169,110,0.2);
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl;
+  }
+  .glass-gold {
+    @apply bg-brand-gold/10 backdrop-blur-sm border border-brand-gold/20 rounded-2xl;
+  }
+  .btn-gold {
+    @apply bg-brand-gold text-brand-dark font-semibold px-6 py-3 rounded-xl
+           hover:bg-brand-gold/90 active:scale-95 transition-all duration-200;
+  }
+  .btn-outline {
+    @apply border border-brand-gold/40 text-brand-gold px-6 py-3 rounded-xl
+           hover:bg-brand-gold/10 active:scale-95 transition-all duration-200;
+  }
+}
