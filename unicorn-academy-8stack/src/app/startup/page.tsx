@@ -4,7 +4,6 @@ import type { Profile } from "@/types";
 import MemberLayout from "@/components/layout/MemberLayout";
 import Link from "next/link";
 
-export const runtime = "edge";
 
 interface StartupStep {
   num: number;

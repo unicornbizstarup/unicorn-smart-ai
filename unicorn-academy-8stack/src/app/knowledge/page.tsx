@@ -4,7 +4,6 @@ import type { Profile } from "@/types";
 import MemberLayout from "@/components/layout/MemberLayout";
 import KnowledgeClient from "./KnowledgeClient";
 
-export const runtime = "edge";
 
 export default async function MemberKnowledgePage() {
   const supabase = await createServerSupabase();

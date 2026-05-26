@@ -4,7 +4,6 @@ import type { Profile, UserMission } from "@/types";
 import MemberLayout from "@/components/layout/MemberLayout";
 import Link from "next/link";
 
-export const runtime = "edge";
 
 export default async function DashboardPage() {
   const supabase = await createServerSupabase();

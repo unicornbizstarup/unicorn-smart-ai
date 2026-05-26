@@ -1,9 +1,8 @@
 import { createServerSupabase } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import type { Profile } from "@/types";
 import MemberLayout from "@/components/layout/MemberLayout";
-
-export const runtime = "edge";
 
 interface FunctionEvent {
   frequency: "DAILY" | "WEEKLY" | "MONTHLY" | "QUARTERLY";
@@ -114,12 +113,12 @@ export default async function FunctionsPage() {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => alert(`คุณลงทะเบียนงาน ${event.title} สำเร็จ`)}
+                <Link
+                  href="#"
                   className="fn-link text-xs font-bold text-[#6b5e4a] hover:text-[#1a1209] flex items-center gap-1 transition-colors bg-transparent border-none cursor-pointer self-start"
                 >
                   ดูตารางเวลาและเข้าร่วม <span className="text-[9px] text-[#9a8a72]">↗</span>
-                </button>
+                </Link>
               </div>
             </div>
           ))}
@@ -135,12 +134,12 @@ export default async function FunctionsPage() {
             </div>
           </div>
           
-          <button
-            onClick={() => alert("กำลังเปิดตารางกิจกรรมปฏิทินกลาง")}
-            className="bg-[#c9a96e] hover:bg-[#a07c38] text-white font-bold text-xs rounded-lg px-4 py-2 border-none cursor-pointer transition-colors shadow-sm self-stretch sm:self-center"
+          <Link
+            href="#"
+            className="bg-[#c9a96e] hover:bg-[#a07c38] text-white font-bold text-xs rounded-lg px-4 py-2 border-none cursor-pointer transition-colors shadow-sm self-stretch sm:self-center text-center flex items-center justify-center"
           >
             ดูปฏิทินภาพรวม →
-          </button>
+          </Link>
         </div>
       </div>
     </MemberLayout>

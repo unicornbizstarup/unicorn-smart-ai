@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabase } from "@/lib/supabase-server";
 import { searchKnowledge, buildRagContext } from "@/lib/rag";
 
-export const runtime = "edge";
 
 export async function POST(req: NextRequest) {
   try {

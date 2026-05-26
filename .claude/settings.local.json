@@ -14,7 +14,11 @@
       "Bash(findstr \":3000\")",
       "Bash(findstr LISTENING)",
       "mcp__claude_ai_Cloudflare_Developer_Platform__accounts_list",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(npm install:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npx opennextjs-cloudflare:*)",
+      "Bash(node -e \"const l=require\\('./package-lock.json'\\); console.log\\('next version in lock:', l.packages['node_modules/next']?.version\\)\")"
     ]
   }
 }

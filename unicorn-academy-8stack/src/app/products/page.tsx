@@ -4,7 +4,6 @@ import type { Profile, Product, ProductCategory } from "@/types";
 import MemberLayout from "@/components/layout/MemberLayout";
 import ProductsClient from "./ProductsClient";
 
-export const runtime = "edge";
 
 export default async function MemberProductsPage() {
   const supabase = await createServerSupabase();
