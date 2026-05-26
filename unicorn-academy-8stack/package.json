@@ -19,7 +19,7 @@
     "@supabase/ssr": "^0",
     "@supabase/supabase-js": "^2",
     "lucide-react": "^0.562.0",
-    "next": "latest",
+    "next": "15",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "resend": "^4"
