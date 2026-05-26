@@ -9,7 +9,7 @@
     "lint": "next lint",
     "workers:dev": "wrangler dev --config workers/wrangler.toml",
     "workers:deploy": "wrangler deploy --config workers/wrangler.toml",
-    "pages:build": "opennextjs-cloudflare build && mkdir -p dist-pages && cp -r .open-next/assets/* dist-pages/ && cp .open-next/worker.js dist-pages/_worker.js && cp -r .open-next/cloudflare dist-pages/ && cp -r .open-next/middleware dist-pages/ && cp -r .open-next/.build dist-pages/ && cp -r .open-next/server-functions dist-pages/",
+    "pages:build": "opennextjs-cloudflare build && node copy-build-assets.js",
     "pages:preview": "opennextjs-cloudflare preview",
     "pages:deploy": "npm run pages:build && wrangler pages deploy dist-pages"
   },
