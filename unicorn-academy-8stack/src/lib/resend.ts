@@ -1,9 +1,11 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 export async function sendWelcomeEmail(to: string, name: string) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: process.env.RESEND_FROM!,
     to,
     subject: "ยินดีต้อนรับสู่ Unicorn Academy 🦄",
@@ -16,7 +18,7 @@ export async function sendWelcomeEmail(to: string, name: string) {
 }
 
 export async function sendMissionCompleteEmail(to: string, name: string, missionTitle: string, points: number) {
-  return resend.emails.send({
+  return getResend().emails.send({
     from: process.env.RESEND_FROM!,
     to,
     subject: `ยินดีด้วย! คุณทำภารกิจ "${missionTitle}" สำเร็จ 🎉`,
