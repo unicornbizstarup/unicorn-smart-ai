@@ -1,5 +1,4 @@
 // src/app/(admin)/admin/layout.tsx
-export const runtime = "edge";
 import { createServerSupabase } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
 import Link from "next/link";

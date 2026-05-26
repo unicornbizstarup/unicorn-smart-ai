@@ -1,5 +1,4 @@
 // src/app/(admin)/admin/knowledge/page.tsx
-export const runtime = "edge";
 import { createServiceSupabase } from "@/lib/supabase-server";
 import KnowledgeClient from "./KnowledgeClient";
 import type { KnowledgeDoc } from "@/types/index";
