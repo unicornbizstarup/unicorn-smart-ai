@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "opennextjs-cloudflare build && node copy-build-assets.js",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "workers:dev": "wrangler dev --config workers/wrangler.toml",
