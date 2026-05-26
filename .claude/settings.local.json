@@ -7,7 +7,14 @@
       "WebFetch(domain:www.indiamart.com)",
       "WebFetch(domain:mewjhcheciafyuxkngqn.supabase.co)",
       "Bash(find '/e/00.0_ห้องพัฒนาเวบและแอพด้วย AI/Unicorn_01\\) Unicorn Smart ai' -type f \\\\\\(-name *.tsx -o -name *.ts -o -name App.tsx -o -name types.ts \\\\\\))",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run:*)",
+      "Bash(netstat -ano)",
+      "Bash(findstr \":3000\")",
+      "Bash(findstr LISTENING)",
+      "mcp__claude_ai_Cloudflare_Developer_Platform__accounts_list",
+      "Bash(xargs grep:*)"
     ]
   }
 }
