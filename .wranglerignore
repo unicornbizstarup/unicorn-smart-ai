@@ -1,0 +1,2 @@
+# Wrangler ignore file
+# Empty file to bypass reading .gitignore for Cloudflare Pages asset upload
