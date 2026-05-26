@@ -1,4 +1,5 @@
 // src/app/(admin)/admin/products/[id]/page.tsx
+export const runtime = "edge";
 import { createServiceSupabase } from "@/lib/supabase-server";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";

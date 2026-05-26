@@ -1,4 +1,5 @@
 // src/app/(admin)/admin/categories/page.tsx
+export const runtime = "edge";
 import { createServiceSupabase } from "@/lib/supabase-server";
 import CategoriesClient from "./CategoriesClient";
 import type { ProductCategory } from "@/types/index";
