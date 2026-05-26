@@ -54,4 +54,7 @@ Thumbs.db
 .cloudflare/
 .open-next/
 **/ .open-next/
+dist-pages/
+**/dist-pages/
+
 

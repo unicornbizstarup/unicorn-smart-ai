@@ -1,6 +1,6 @@
 # wrangler.toml — Cloudflare Pages (Next.js app via OpenNext)
 name                   = "unicorn-smart-ai"
-pages_build_output_dir = ".open-next/assets"
+pages_build_output_dir = "dist-pages"
 compatibility_date     = "2025-05-26"
 compatibility_flags    = ["nodejs_compat"]
 
