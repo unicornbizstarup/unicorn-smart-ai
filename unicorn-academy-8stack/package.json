@@ -9,7 +9,7 @@
     "lint": "next lint",
     "workers:dev": "wrangler dev --config workers/wrangler.toml",
     "workers:deploy": "wrangler deploy --config workers/wrangler.toml",
-    "pages:build": "opennextjs-cloudflare build",
+    "pages:build": "opennextjs-cloudflare build && cp .open-next/worker.js .open-next/assets/_worker.js",
     "pages:preview": "opennextjs-cloudflare preview",
     "pages:deploy": "npm run pages:build && wrangler pages deploy .open-next/assets"
   },
