@@ -58,16 +58,18 @@ const focusOptions = [
   { id: "PERSONAL_BRAND", icon: User, label: "Branding", emoji: "🌟" }
 ];
 
+import MemberLayout from "@/components/layout/MemberLayout";
+
 export default function AICoachPage() {
   const router = useRouter();
   const supabase = createClient();
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const [messages, setMessages] = useState<AICoachMessage[]>([
+  const [profileRaw, setProfileRaw] = useState<any>(null);
+  const [messages, setMessages] = useState<Array<{ role: "user" | "model"; content: string }>>([
     {
-      role: "assistant",
+      role: "model",
       content: "สวัสดีค่ะพาร์ทเนอร์! 🦄 น้องยูนิ ยินดีต้อนรับสู่ห้องฝึกฝนอัจฉริยะนะคะ\n\nวันนี้น้องยูนิพร้อมเป็นคู่หูและคู่ซ้อมตอบข้อโต้แย้ง ฝึก STP หรือร่างแบรนดิ้งให้คุณพี่แล้วค่ะ ลองเลือกหัวข้อด้านบน หรือพิมพ์คุยกับน้องยูนิได้เลยนะคะ 😊✨",
-      timestamp: new Date().toISOString()
     }
   ]);
   const [inputText, setInputText] = useState("");
@@ -75,11 +77,20 @@ export default function AICoachPage() {
   const [focusArea, setFocusArea] = useState<FocusArea>("SYSTEM456");
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    async function loadData() {
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         router.push("/auth/login");
+        return;
       }
-    });
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+      setProfileRaw(profileData);
+    }
+    loadData();
   }, []);
 
   // Scroll to bottom when messages change
@@ -95,10 +106,9 @@ export default function AICoachPage() {
     const textToSend = textToOverride || inputText;
     if (!textToSend.trim() || isLoading) return;
 
-    const userMessage: AICoachMessage = {
-      role: "user",
+    const userMessage = {
+      role: "user" as const,
       content: textToSend,
-      timestamp: new Date().toISOString()
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -107,9 +117,8 @@ export default function AICoachPage() {
 
     try {
       // Format history to match Gemini API structure
-      // role: "user" -> "user", role: "assistant" -> "model"
       const formattedHistory = [...messages, userMessage].map(m => ({
-        role: m.role === "user" ? "user" : "model",
+        role: m.role,
         parts: [{ text: m.content }]
       }));
 
@@ -129,10 +138,9 @@ export default function AICoachPage() {
       const data = await res.json();
       const assistantText = data.candidates?.[0]?.content?.parts?.[0]?.text || "ขออภัยค่ะน้องยูนิมึนงงเล็กน้อย ไม่สามารถประมวลผลคำตอบได้ กรุณาลองส่งคำถามใหม่อีกครั้งนะคะ";
 
-      const assistantMessage: AICoachMessage = {
-        role: "assistant",
+      const assistantMessage = {
+        role: "model" as const,
         content: assistantText,
-        timestamp: new Date().toISOString()
       };
 
       setMessages(prev => [...prev, assistantMessage]);
@@ -140,9 +148,8 @@ export default function AICoachPage() {
       console.error("AI Coach error:", err);
       const errorMessage = err.message || "เกิดข้อผิดพลาดในการเชื่อมต่อระบบปัญญาประดิษฐ์";
       setMessages(prev => [...prev, {
-        role: "assistant",
+        role: "model" as const,
         content: `🆘 ขออภัยค่ะพาร์ทเนอร์ เกิดข้อผิดพลาดดังนี้: ${errorMessage}\n\nกรุณาลองเชื่อมต่อใหม่อีกครั้ง หรือสอบถามทีมสนับสนุนนะคะ`,
-        timestamp: new Date().toISOString()
       }]);
     } finally {
       setIsLoading(false);
@@ -153,27 +160,31 @@ export default function AICoachPage() {
     if (confirm("คุณแน่ใจหรือไม่ที่จะล้างการสนทนาทั้งหมด?")) {
       setMessages([
         {
-          role: "assistant",
+          role: "model",
           content: "ล้างห้องแชทเรียบร้อยแล้วค่ะ! 🦄 วันนี้น้องยูนิพร้อมช่วยให้พาร์ทเนอร์เก่งขึ้นแล้วค่ะ ลองพิมพ์คำถามหรือเลือกสถานการณ์ซ้อมได้เลยนะคะ ✨",
-          timestamp: new Date().toISOString()
         }
       ]);
     }
   };
 
   return (
-    <div className="min-h-screen bg-brand-dark text-white flex flex-col justify-between overflow-hidden">
-      {/* Decorative Blur Backgrounds */}
-      <div className="absolute top-1/4 -left-20 w-80 h-80 bg-brand-gold/5 rounded-full blur-[100px] select-none pointer-events-none" />
-      <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-yellow-600/5 rounded-full blur-[100px] select-none pointer-events-none" />
+    <MemberLayout
+      profile={profileRaw}
+      title="น้องยูนิ (AI Coach)"
+      subtitle="— คู่ซ้อมตอบข้อโต้แย้ง ฝึกพูด STP และร่างแบรนดิ้งของพาร์ทเนอร์อัจฉริยะ"
+    >
+      <div className="min-h-[calc(100vh-160px)] bg-brand-dark text-white flex flex-col justify-between overflow-hidden rounded-2xl relative shadow-xl">
+        {/* Decorative Blur Backgrounds */}
+        <div className="absolute top-1/4 -left-20 w-80 h-80 bg-brand-gold/5 rounded-full blur-[100px] select-none pointer-events-none" />
+        <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-yellow-600/5 rounded-full blur-[100px] select-none pointer-events-none" />
 
-      {/* Header */}
-      <header className="px-6 py-4 max-w-7xl w-full mx-auto flex flex-col md:flex-row items-center justify-between shrink-0 gap-4 border-b border-white/5 relative z-10">
-        <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
-          <Link href="/dashboard" className="flex items-center gap-2 group text-white/80 hover:text-white transition-colors">
-            <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="font-semibold text-sm">กลับหน้าแดชบอร์ด</span>
-          </Link>
+        {/* Header */}
+        <header className="px-6 py-4 w-full flex flex-col md:flex-row items-center justify-between shrink-0 gap-4 border-b border-white/5 relative z-10">
+          <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
+            <Link href="/dashboard" className="flex items-center gap-2 group text-white/80 hover:text-white transition-colors">
+              <ChevronLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
+              <span className="font-semibold text-xs">กลับหน้าแดชบอร์ด</span>
+            </Link>
 
           <span className="text-white font-bold text-xs bg-white/5 border border-white/10 px-3 py-1 rounded-full flex items-center gap-1.5 shrink-0 select-none animate-pulse">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
@@ -201,8 +212,7 @@ export default function AICoachPage() {
       </header>
 
       {/* Chat Space */}
-      <main className="flex-1 max-w-5xl w-full mx-auto p-4 md:p-6 flex flex-col overflow-hidden relative z-10">
-        <div className="flex-1 glass border-white/10 bg-white/[0.01] rounded-2xl flex flex-col overflow-hidden shadow-2xl relative">
+      <div className="flex-1 glass border-white/10 bg-white/[0.01] rounded-2xl flex flex-col overflow-hidden shadow-2xl relative z-10 m-4 md:m-6">
           
           {/* Scrollable messages container */}
           <div
@@ -212,7 +222,7 @@ export default function AICoachPage() {
             {messages.map((m, idx) => (
               <div
                 key={idx}
-                className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} animate-in fade-in duration-300`}
+                className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div className={`flex gap-3 max-w-[85%] ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
                   
@@ -301,12 +311,7 @@ export default function AICoachPage() {
             </div>
           </div>
         </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="py-4 text-center text-white/40 text-xs shrink-0 border-t border-white/5 relative z-10 select-none">
-        &copy; {new Date().getFullYear()} Unicorn Global Link Co., Ltd. - All Rights Reserved.
-      </footer>
-    </div>
+      </div>
+    </MemberLayout>
   );
 }

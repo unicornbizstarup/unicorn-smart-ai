@@ -21,12 +21,15 @@ import { createClient } from "@/lib/supabase";
 import Link from "next/link";
 import Image from "next/image";
 
+import MemberLayout from "@/components/layout/MemberLayout";
+
 export default function ProfilePage() {
   const router = useRouter();
   const supabase = createClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [user, setUser] = useState<any>(null);
+  const [profileRaw, setProfileRaw] = useState<any>(null);
   const [profile, setProfile] = useState<any>({
     full_name: "",
     specialization: "",
@@ -63,6 +66,7 @@ export default function ProfilePage() {
         if (profileError) throw profileError;
 
         if (profileData) {
+          setProfileRaw(profileData);
           setProfile({
             full_name: profileData.full_name || "",
             specialization: profileData.specialization || "",
@@ -135,6 +139,9 @@ export default function ProfilePage() {
 
       // 3. Update local state and profiles table in Supabase
       setProfile((prev: any) => ({ ...prev, avatar_url: publicUrl }));
+      if (profileRaw) {
+        setProfileRaw({ ...profileRaw, avatar_url: publicUrl });
+      }
 
       const { error: dbError } = await supabase
         .from("profiles")
@@ -189,6 +196,18 @@ export default function ProfilePage() {
       }
 
       setProfile((prev: any) => ({ ...prev, referral_slug: cleanSlug }));
+      if (profileRaw) {
+        setProfileRaw({
+          ...profileRaw,
+          full_name: profile.full_name,
+          specialization: profile.specialization,
+          bio: profile.bio,
+          line_id: profile.line_id,
+          line_oa: profile.line_oa,
+          youtube_url: profile.youtube_url,
+          referral_slug: cleanSlug,
+        });
+      }
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {
@@ -201,32 +220,36 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-brand-dark flex items-center justify-center">
+      <div className="min-h-screen bg-[#f7f4ef] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-10 h-10 text-brand-gold animate-spin" />
-          <p className="text-sm text-white/60 font-semibold">กำลังโหลดหน้านามบัตรดิจิทัล...</p>
+          <Loader2 className="w-10 h-10 text-[#b8924a] animate-spin" />
+          <p className="text-sm text-[#6b5e4a] font-semibold">กำลังโหลดหน้านามบัตรดิจิทัล...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-brand-dark text-white flex flex-col justify-between">
-      {/* Header */}
-      <header className="px-6 py-5 max-w-5xl w-full mx-auto flex items-center justify-between shrink-0 border-b border-white/5">
-        <Link href="/dashboard" className="flex items-center gap-2 group text-white/80 hover:text-white transition-colors">
-          <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-          <span className="font-semibold text-sm">กลับหน้าแดชบอร์ด</span>
-        </Link>
-        <span className="text-brand-gold font-bold tracking-widest text-xs uppercase">Digital Name Card</span>
-      </header>
+    <MemberLayout
+      profile={profileRaw}
+      title="โปรไฟล์และนามบัตรดิจิทัล"
+      subtitle="— จัดการข้อมูลส่วนตัว นามบัตรดิจิทัล และลิงก์สปอนเซอร์แนะนำสำหรับพาร์ทเนอร์"
+    >
+      <div className="max-w-4xl mx-auto text-[#1a1209]">
+        <div className="flex items-center justify-between mb-6">
+          <Link href="/dashboard" className="flex items-center gap-2 group text-[#6b5e4a] hover:text-[#b8924a] font-semibold text-xs transition-colors">
+            <ChevronLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
+            <span>กลับหน้าแดชบอร์ด</span>
+          </Link>
+          <span className="text-[#b8924a] font-bold tracking-widest text-[10px] uppercase bg-[#f5e8d0] px-3 py-1 rounded-full border border-[#e8dcc4]">
+            Digital Name Card
+          </span>
+        </div>
 
-      {/* Main Form */}
-      <main className="flex-1 max-w-4xl w-full mx-auto p-4 md:p-8">
         <form onSubmit={handleSubmit} className="grid md:grid-cols-3 gap-8 items-start">
-          {/* Avatar and branding preview card */}
-          <div className="md:col-span-1 glass p-6 border-white/10 flex flex-col items-center text-center space-y-6 bg-white/[0.01]">
-            <h3 className="text-xs font-black text-white/30 uppercase tracking-widest block w-full text-left">
+          {/* Avatar and branding preview card — intentional dark bg as "digital name card" */}
+          <div className="md:col-span-1 bg-gradient-to-b from-[#1e293b] to-[#0f172a] border border-[#334155] rounded-2xl p-6 flex flex-col items-center text-center space-y-6 shadow-xl">
+            <h3 className="text-xs font-black text-white/40 uppercase tracking-widest block w-full text-left">
               รูปภาพนามบัตร
             </h3>
 
@@ -284,12 +307,12 @@ export default function ProfilePage() {
               )}
             </div>
 
-            <div className="pt-4 border-t border-white/5 w-full space-y-3">
+            <div className="pt-4 border-t border-white/10 w-full space-y-3">
               <div className="text-left">
-                <span className="text-[9px] font-black text-white/30 uppercase tracking-widest block mb-1">
+                <span className="text-[9px] font-black text-white/40 uppercase tracking-widest block mb-1">
                   ลิงก์แนะนำตัวบอกต่อธุรกิจของคุณ
                 </span>
-                <div className="bg-white/5 p-3 rounded-xl border border-white/5 text-xs text-brand-gold/90 font-semibold break-all flex items-center justify-between">
+                <div className="bg-white/5 p-3 rounded-xl border border-white/10 text-xs text-[#b8924a] font-semibold break-all flex items-center justify-between">
                   <span className="truncate select-all">
                     /{profile.referral_slug || "your-link"}
                   </span>
@@ -318,21 +341,21 @@ export default function ProfilePage() {
 
             {saveSuccess && (
               <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 flex items-center gap-3">
-                <CheckCircle2 size={20} className="text-emerald-400 shrink-0" />
-                <p className="text-xs text-emerald-400 font-semibold">อัปเดตข้อมูลนามบัตรเรียบร้อยแล้วครับ! 🦄✨</p>
+                <CheckCircle2 size={20} className="text-emerald-600 shrink-0" />
+                <p className="text-xs text-emerald-600 font-semibold">อัปเดตข้อมูลนามบัตรเรียบร้อยแล้วครับ! 🦄✨</p>
               </div>
             )}
 
-            <div className="glass p-6 md:p-8 border-white/10 bg-white/[0.01] space-y-6">
+            <div className="bg-white border border-[#e8e2d9] rounded-2xl shadow-sm p-6 md:p-8 space-y-6">
               <div className="space-y-1">
-                <h3 className="text-lg font-display text-brand-gold">แก้ไขรายละเอียดนามบัตรดิจิทัล</h3>
-                <p className="text-xs text-white/50">กรอกข้อมูลส่วนบุคคลและช่องทางการติดต่อของพาร์ทเนอร์</p>
+                <h3 className="text-lg font-display text-[#b8924a]">แก้ไขรายละเอียดนามบัตรดิจิทัล</h3>
+                <p className="text-xs text-[#9a8a72]">กรอกข้อมูลส่วนบุคคลและช่องทางการติดต่อของพาร์ทเนอร์</p>
               </div>
 
               <div className="grid md:grid-cols-2 gap-5">
                 {/* Full name */}
                 <div className="space-y-2 col-span-2">
-                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block">
+                  <label className="text-[10px] font-black text-[#9a8a72] uppercase tracking-widest block">
                     ชื่อ - นามสกุลจริง
                   </label>
                   <input
@@ -341,20 +364,20 @@ export default function ProfilePage() {
                     value={profile.full_name}
                     onChange={handleInputChange}
                     placeholder="ระบุชื่อและนามสกุลที่ต้องการให้แสดงผล"
-                    className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-brand-gold/50 focus:ring-1 focus:ring-brand-gold/20 transition-all text-sm font-semibold"
+                    className="w-full px-4 py-3.5 bg-[#fafaf8] border border-[#e8e2d9] rounded-xl text-[#1a1209] placeholder-[#c4bcb0] focus:outline-none focus:border-[#d4a96e] focus:ring-1 focus:ring-[#d4a96e]/20 transition-all text-sm font-semibold"
                   />
                 </div>
 
                 {/* Referral slug */}
                 <div className="space-y-2 col-span-2">
-                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block flex items-center gap-1.5">
+                  <label className="text-[10px] font-black text-[#9a8a72] uppercase tracking-widest block flex items-center gap-1.5">
                     <span>ลิงก์แนะนำตัวบอกต่อ (Referral Slug)</span>
                     <span title="จะถูกใช้เป็น URL สำหรับแนะนำทีม เช่น domain/referral/yourname" className="cursor-help">
-                      <HelpCircle size={12} className="text-white/30" />
+                      <HelpCircle size={12} className="text-[#c4bcb0]" />
                     </span>
                   </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 font-bold text-sm">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#b0a28e] font-bold text-sm">
                       /referral/
                     </span>
                     <input
@@ -363,14 +386,14 @@ export default function ProfilePage() {
                       value={profile.referral_slug}
                       onChange={handleInputChange}
                       placeholder="your-unique-slug"
-                      className="w-full pl-24 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-brand-gold/50 focus:ring-1 focus:ring-brand-gold/20 transition-all text-sm font-semibold"
+                      className="w-full pl-24 pr-4 py-3.5 bg-[#fafaf8] border border-[#e8e2d9] rounded-xl text-[#1a1209] placeholder-[#c4bcb0] focus:outline-none focus:border-[#d4a96e] focus:ring-1 focus:ring-[#d4a96e]/20 transition-all text-sm font-semibold"
                     />
                   </div>
                 </div>
 
                 {/* Specialization */}
                 <div className="space-y-2 col-span-1">
-                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block">
+                  <label className="text-[10px] font-black text-[#9a8a72] uppercase tracking-widest block">
                     ความชื่นชอบ / ความถนัดพิเศษ
                   </label>
                   <input
@@ -379,13 +402,13 @@ export default function ProfilePage() {
                     value={profile.specialization}
                     onChange={handleInputChange}
                     placeholder="เช่น นักการตลาดออนไลน์, อาหารเสริมสุขภาพ"
-                    className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-brand-gold/50 focus:ring-1 focus:ring-brand-gold/20 transition-all text-sm font-semibold"
+                    className="w-full px-4 py-3.5 bg-[#fafaf8] border border-[#e8e2d9] rounded-xl text-[#1a1209] placeholder-[#c4bcb0] focus:outline-none focus:border-[#d4a96e] focus:ring-1 focus:ring-[#d4a96e]/20 transition-all text-sm font-semibold"
                   />
                 </div>
 
                 {/* Bio / Quote */}
                 <div className="space-y-2 col-span-1">
-                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block">
+                  <label className="text-[10px] font-black text-[#9a8a72] uppercase tracking-widest block">
                     สโลแกนดึงดูด (Bio / Quote)
                   </label>
                   <input
@@ -394,14 +417,14 @@ export default function ProfilePage() {
                     value={profile.bio}
                     onChange={handleInputChange}
                     placeholder="คำคม หรือเป้าหมายธุรกิจสั้นๆ ที่สร้างแรงบันดาลใจ"
-                    className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-brand-gold/50 focus:ring-1 focus:ring-brand-gold/20 transition-all text-sm font-semibold"
+                    className="w-full px-4 py-3.5 bg-[#fafaf8] border border-[#e8e2d9] rounded-xl text-[#1a1209] placeholder-[#c4bcb0] focus:outline-none focus:border-[#d4a96e] focus:ring-1 focus:ring-[#d4a96e]/20 transition-all text-sm font-semibold"
                   />
                 </div>
 
                 {/* LINE ID */}
                 <div className="space-y-2 col-span-1">
-                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block flex items-center gap-1">
-                    <MessageCircle size={12} className="text-emerald-400" /> LINE ID ส่วนตัว
+                  <label className="text-[10px] font-black text-[#9a8a72] uppercase tracking-widest block flex items-center gap-1">
+                    <MessageCircle size={12} className="text-emerald-600" /> LINE ID ส่วนตัว
                   </label>
                   <input
                     type="text"
@@ -409,14 +432,14 @@ export default function ProfilePage() {
                     value={profile.line_id}
                     onChange={handleInputChange}
                     placeholder="line-id"
-                    className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-brand-gold/50 focus:ring-1 focus:ring-brand-gold/20 transition-all text-sm font-semibold"
+                    className="w-full px-4 py-3.5 bg-[#fafaf8] border border-[#e8e2d9] rounded-xl text-[#1a1209] placeholder-[#c4bcb0] focus:outline-none focus:border-[#d4a96e] focus:ring-1 focus:ring-[#d4a96e]/20 transition-all text-sm font-semibold"
                   />
                 </div>
 
                 {/* LINE OA */}
                 <div className="space-y-2 col-span-1">
-                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block flex items-center gap-1">
-                    <MessageCircle size={12} className="text-emerald-500 animate-pulse" /> LINE OA ระบบทีม (ถ้ามี)
+                  <label className="text-[10px] font-black text-[#9a8a72] uppercase tracking-widest block flex items-center gap-1">
+                    <MessageCircle size={12} className="text-emerald-600 animate-pulse" /> LINE OA ระบบทีม (ถ้ามี)
                   </label>
                   <input
                     type="text"
@@ -424,13 +447,13 @@ export default function ProfilePage() {
                     value={profile.line_oa}
                     onChange={handleInputChange}
                     placeholder="@lineoa"
-                    className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-brand-gold/50 focus:ring-1 focus:ring-brand-gold/20 transition-all text-sm font-semibold"
+                    className="w-full px-4 py-3.5 bg-[#fafaf8] border border-[#e8e2d9] rounded-xl text-[#1a1209] placeholder-[#c4bcb0] focus:outline-none focus:border-[#d4a96e] focus:ring-1 focus:ring-[#d4a96e]/20 transition-all text-sm font-semibold"
                   />
                 </div>
 
                 {/* YouTube Link */}
                 <div className="space-y-2 col-span-2">
-                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block flex items-center gap-1">
+                  <label className="text-[10px] font-black text-[#9a8a72] uppercase tracking-widest block flex items-center gap-1">
                     <Tv size={12} className="text-red-500" /> ลิงก์ช่อง YouTube / คอนเทนต์วีดีโอของคุณ
                   </label>
                   <input
@@ -439,7 +462,7 @@ export default function ProfilePage() {
                     value={profile.youtube_url}
                     onChange={handleInputChange}
                     placeholder="https://youtube.com/c/yourchannel"
-                    className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-brand-gold/50 focus:ring-1 focus:ring-brand-gold/20 transition-all text-sm font-semibold"
+                    className="w-full px-4 py-3.5 bg-[#fafaf8] border border-[#e8e2d9] rounded-xl text-[#1a1209] placeholder-[#c4bcb0] focus:outline-none focus:border-[#d4a96e] focus:ring-1 focus:ring-[#d4a96e]/20 transition-all text-sm font-semibold"
                   />
                 </div>
               </div>
@@ -462,12 +485,7 @@ export default function ProfilePage() {
             </div>
           </div>
         </form>
-      </main>
-
-      {/* Footer */}
-      <footer className="py-5 text-center text-white/40 text-xs shrink-0 border-t border-white/5">
-        &copy; {new Date().getFullYear()} Unicorn Global Link Co., Ltd. - All Rights Reserved.
-      </footer>
-    </div>
+      </div>
+    </MemberLayout>
   );
 }

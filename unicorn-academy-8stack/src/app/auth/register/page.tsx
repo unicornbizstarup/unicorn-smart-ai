@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Lock,
@@ -16,7 +16,7 @@ import {
 import { createClient } from "@/lib/supabase";
 import Link from "next/link";
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createClient();
@@ -73,6 +73,8 @@ export default function RegisterPage() {
         options: {
           data: {
             full_name: fullName,
+            username: cleanUsername,
+            phone: "",
           },
         },
       });
@@ -149,7 +151,7 @@ export default function RegisterPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6 animate-in fade-in duration-300">
+            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6">
               <p className="text-xs text-red-400 font-semibold text-center">{error}</p>
             </div>
           )}
@@ -261,5 +263,24 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-brand-dark flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-1/4 right-1/4 w-80 h-80 bg-brand-gold/5 rounded-full blur-[120px]" />
+          <div className="absolute bottom-1/4 left-1/4 w-60 h-60 bg-emerald-500/5 rounded-full blur-[100px]" />
+        </div>
+        <div className="relative z-10 text-center">
+          <Loader2 className="w-10 h-10 animate-spin text-brand-gold mx-auto mb-4" />
+          <p className="text-white/60 text-sm font-semibold">กำลังโหลด...</p>
+        </div>
+      </div>
+    }>
+      <RegisterForm />
+    </Suspense>
   );
 }

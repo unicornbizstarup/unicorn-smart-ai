@@ -1,9 +1,15 @@
-name = "unicorn-ai-proxy"
-main = "workers/proxy.ts"
+# wrangler.toml — Cloudflare Workers Config
+
+name            = "unicorn-smart-ai-proxy"
+main            = "workers/proxy.ts"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
 ALLOWED_ORIGIN = "https://unicornsmartai.cloud"
 
-# Set secrets via: wrangler secret put GEMINI_API_KEY
+# Set secrets via CLI:
+# wrangler secret put GEMINI_API_KEY
+
+# Deploy: wrangler deploy
+# Dev:    wrangler dev

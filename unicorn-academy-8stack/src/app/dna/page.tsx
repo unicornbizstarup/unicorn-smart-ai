@@ -89,10 +89,13 @@ const WEALTH_ELEMENTS = {
   },
 };
 
+import MemberLayout from "@/components/layout/MemberLayout";
+
 export default function WealthDNAPage() {
   const router = useRouter();
   const supabase = createClient();
   const [user, setUser] = useState<any>(null);
+  const [profileRaw, setProfileRaw] = useState<any>(null);
   const [step, setStep] = useState<"intro" | "form" | "loading" | "result">("intro");
   const [birthDate, setBirthDate] = useState("");
   const [birthTime, setBirthTime] = useState("");
@@ -101,9 +104,19 @@ export default function WealthDNAPage() {
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    async function loadData() {
+      const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
-    });
+      if (user) {
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+        setProfileRaw(profileData);
+      }
+    }
+    loadData();
   }, []);
 
   const handleStart = () => setStep("form");
@@ -164,20 +177,30 @@ export default function WealthDNAPage() {
   const elementData = analyzedElement ? WEALTH_ELEMENTS[analyzedElement] : null;
 
   return (
-    <div className="min-h-screen bg-brand-dark text-white flex flex-col justify-between">
-      {/* Header */}
-      <header className="px-6 py-5 max-w-7xl w-full mx-auto flex items-center justify-between shrink-0">
-        <Link href="/dashboard" className="flex items-center gap-2 group text-white/80 hover:text-white transition-colors">
-          <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-          <span className="font-semibold text-sm">กลับหน้าแดชบอร์ด</span>
-        </Link>
-        <span className="text-brand-gold font-bold tracking-widest text-xs uppercase">Unicorn Academy</span>
-      </header>
+    <MemberLayout
+      profile={profileRaw}
+      title="Wealth DNA"
+      subtitle="— ถอดรหัสพื้นดวงธาตุเจ้าเรือนเพื่อค้นหา สไตล์การสร้างความมั่งคั่ง ที่ใช่คุณ"
+    >
+      <div className="max-w-4xl mx-auto text-[#1a1209]">
+        <div className="flex items-center justify-between mb-6">
+          <Link href="/dashboard" className="flex items-center gap-2 group text-[#6b5e4a] hover:text-[#b8924a] font-semibold text-xs transition-colors">
+            <ChevronLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
+            <span>กลับหน้าแดชบอร์ด</span>
+          </Link>
+          <span className="text-[#b8924a] font-bold tracking-widest text-[10px] uppercase bg-[#f5e8d0] px-3 py-1 rounded-full border border-[#e8dcc4]">
+            Unicorn Wealth DNA
+          </span>
+        </div>
 
-      <main className="flex-1 flex items-center justify-center p-4 md:p-8">
+        {/* ── Dark container for all DNA steps ── */}
+        <div className="bg-[#0f172a] rounded-2xl p-6 md:p-10 min-h-[480px] flex flex-col items-center justify-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-72 h-72 bg-[#b8924a]/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#b8924a]/3 rounded-full blur-3xl pointer-events-none" />
+
         {/* --- Intro Step --- */}
         {step === "intro" && (
-          <div className="max-w-2xl w-full text-center space-y-10 animate-in fade-in zoom-in duration-500">
+          <div className="max-w-2xl w-full text-center space-y-10 relative z-10">
             <div className="relative inline-block">
               <div className="text-8xl md:text-9xl select-none">🦄</div>
               <div className="absolute -top-4 -right-4 animate-pulse">
@@ -200,7 +223,7 @@ export default function WealthDNAPage() {
             <div className="flex flex-col items-center gap-3">
               <button
                 onClick={handleStart}
-                className="w-full md:w-auto px-10 py-5 bg-brand-gold text-brand-dark font-black text-lg rounded-2xl shadow-xl shadow-brand-gold/20 flex items-center justify-center gap-2 group hover:scale-105 active:scale-98 transition-all duration-300"
+                className="w-full md:w-auto px-10 py-5 bg-brand-gold text-brand-dark font-black text-lg rounded-2xl shadow-xl shadow-brand-gold/20 flex items-center justify-center gap-2 group hover:scale-105 active:scale-95 transition-all duration-300"
               >
                 <Sparkles size={20} /> เริ่มต้นวิเคราะห์ DNA <ArrowRight className="group-hover:translate-x-1 transition-transform" />
               </button>
@@ -211,7 +234,7 @@ export default function WealthDNAPage() {
 
         {/* --- Form Step --- */}
         {step === "form" && (
-          <div className="max-w-md w-full space-y-6 animate-in slide-in-from-bottom-6 duration-500">
+          <div className="max-w-md w-full space-y-6 relative z-10">
             <button
               onClick={() => setStep("intro")}
               className="flex items-center gap-1.5 text-white/60 hover:text-white transition-colors text-sm font-semibold"
@@ -272,7 +295,7 @@ export default function WealthDNAPage() {
 
         {/* --- Loading Step --- */}
         {step === "loading" && (
-          <div className="text-center space-y-6 animate-in fade-in duration-300">
+          <div className="text-center space-y-6 relative z-10">
             <div className="relative inline-block">
               <div className="w-24 h-24 border-4 border-brand-gold/10 border-t-brand-gold rounded-full animate-spin" />
               <Bot className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-brand-gold animate-bounce" size={28} />
@@ -286,7 +309,7 @@ export default function WealthDNAPage() {
 
         {/* --- Result Step --- */}
         {step === "result" && elementData && (
-          <div className="max-w-4xl w-full space-y-6 animate-in fade-in slide-in-from-top-6 duration-700 pb-12">
+          <div className="max-w-4xl w-full space-y-6 relative z-10 pb-12">
             {/* Card Result Header */}
             <div className={`rounded-3xl p-8 md:p-12 text-white bg-gradient-to-br border shadow-2xl relative overflow-hidden ${elementData.color}`}>
               <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
@@ -389,19 +412,15 @@ export default function WealthDNAPage() {
                   );
                   alert("คัดลอกข้อความแชร์ความรวยไปยังคลิปบอร์ดแล้วครับ!");
                 }}
-                className="px-8 py-4.5 bg-white/5 border border-white/10 rounded-xl font-bold text-base hover:bg-white/10 active:scale-98 transition-all flex items-center justify-center gap-2"
+                className="px-8 py-4.5 bg-white/5 border border-white/10 rounded-xl font-bold text-base hover:bg-white/10 active:scale-95 transition-all flex items-center justify-center gap-2"
               >
                 <Share2 size={20} /> แชร์ผลลัพธ์
               </button>
             </div>
           </div>
         )}
-      </main>
-
-      {/* Footer */}
-      <footer className="py-5 text-center text-white/40 text-xs shrink-0 border-t border-white/5">
-        &copy; {new Date().getFullYear()} Unicorn Global Link Co., Ltd. - All Rights Reserved.
-      </footer>
-    </div>
+        </div>{/* end dark DNA container */}
+      </div>
+    </MemberLayout>
   );
 }

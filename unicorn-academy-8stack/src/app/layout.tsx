@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Sarabun } from "next/font/google";
+import { Prompt, Sarabun } from "next/font/google";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
-  subsets: ["latin"],
+const prompt = Prompt({
+  variable: "--font-prompt",
+  subsets: ["thai", "latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
 const sarabun = Sarabun({
@@ -30,7 +31,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="th">
-      <body className={`${playfair.variable} ${sarabun.variable} font-body bg-brand-dark text-white antialiased`}>
+      <body className={`${prompt.variable} ${sarabun.variable} font-body antialiased`}>
         {children}
       </body>
     </html>

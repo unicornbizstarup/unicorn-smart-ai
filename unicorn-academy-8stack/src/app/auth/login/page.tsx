@@ -59,6 +59,33 @@ export default function LoginPage() {
     }
   };
 
+  const handleBypass = async () => {
+    setError("");
+    setIsLoading(true);
+
+    const fakeEmail = "densmartai@gmail.com";
+    const testerPassword = "Tester123456!";
+
+    try {
+      // 1. Sign in directly with the working test user that exists in the database
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email: fakeEmail,
+        password: testerPassword,
+      });
+
+      if (authError) throw authError;
+
+      // 2. Redirect to dashboard on success
+      router.push("/dashboard");
+      router.refresh();
+    } catch (err: any) {
+      console.error("Bypass error:", err);
+      setError(err.message || "ไม่สามารถข้ามการเข้าระบบได้");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-brand-dark flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background Decorative Lights */}
@@ -92,7 +119,7 @@ export default function LoginPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6">
               <p className="text-xs text-red-400 font-semibold text-center">{error}</p>
             </div>
           )}
@@ -154,6 +181,18 @@ export default function LoginPage() {
                   <span>เข้าสู่ระบบ</span>
                 </>
               )}
+            </button>
+
+            {/* Bypass Button for Internal Testing */}
+            <button
+              type="button"
+              onClick={handleBypass}
+              disabled={isLoading}
+              className="w-full py-3.5 bg-yellow-500/10 hover:bg-yellow-500/20 text-brand-gold border border-brand-gold/30 font-bold rounded-xl transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-xs tracking-wider mt-3"
+              id="login-bypass"
+            >
+              <Sparkles size={14} className="text-brand-gold animate-pulse" />
+              <span>🚀 ปลดล็อกเข้าทดสอบภายใน (Internal Dev Bypass)</span>
             </button>
           </form>
 
