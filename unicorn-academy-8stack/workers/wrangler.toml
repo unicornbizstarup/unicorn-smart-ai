@@ -1,0 +1,11 @@
+# workers/wrangler.toml — Cloudflare Proxy Worker (separate from Pages)
+name               = "unicorn-smart-ai-proxy"
+main               = "proxy.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ALLOWED_ORIGIN = "https://unicornsmartai.cloud"
+
+# Deploy: wrangler deploy --config workers/wrangler.toml
+# Dev:    wrangler dev --config workers/wrangler.toml
