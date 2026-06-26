@@ -75,8 +75,6 @@ const AppContent: React.FC = () => {
     { name: 'nav.contact', icon: PhoneCall, view: AppView.CONTACT },
   ] as const;
 
-  const [isMenuExpanded, setIsMenuExpanded] = useState(false);
-
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     try {
       const saved = localStorage.getItem('unicorn_current_user');
@@ -96,7 +94,6 @@ const AppContent: React.FC = () => {
     const savedUser = localStorage.getItem('unicorn_current_user');
     return savedUser ? AppView.DASHBOARD : AppView.LANDING;
   });
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   // Check for existing session and referral parameters on mount
   useEffect(() => {
@@ -449,194 +446,122 @@ const AppContent: React.FC = () => {
 
   // ===== MAIN APP (logged in) =====
   return (
-    <div className="min-h-screen bg-slate-50 flex">
-      {/* Sidebar for Desktop */}
-      <aside className={`
-        fixed inset-y-0 left-0 z-50 w-72 bg-slate-950 text-white transition-all duration-500 transform 
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
-        lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 border-r border-white/5 shadow-2xl lg:overflow-y-auto scrollbar-hide
-      `}>
-        <div className="p-6 lg:p-8 h-full flex flex-col">
-          <button
-            className="flex items-center gap-4 mb-12 group cursor-pointer text-left focus:outline-none"
-            onClick={() => setCurrentView(AppView.DASHBOARD)}
-            aria-label="ไปที่หน้าแดชบอร์ดหลัก"
-          >
-            <div className="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center font-black text-2xl shadow-xl shadow-amber-500/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">U</div>
-            <div>
-              <h1 className="text-xl font-black tracking-tighter text-white">UNICORN</h1>
-              <p className="text-xs-plus text-amber-500 font-bold tracking-[0.3em] uppercase opacity-80">Academy</p>
-            </div>
-          </button>
-
-          <nav className="space-y-6 flex-1 overflow-y-auto scrollbar-hide pr-2">
-            {/* Core Features Section */}
-            <div className="space-y-3">
-              <p className="px-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4">Core Intelligence</p>
-              {coreNavigation.map((item) => (
-                <button
-                  key={item.name}
-                  onClick={() => {
-                    setCurrentView(item.view);
-                    setSidebarOpen(false);
-                  }}
-                  aria-label={`ไปที่หน้า ${t(item.name)}`}
-                  className={`
-                    w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-500 group relative overflow-hidden
-                    ${currentView === item.view
-                      ? (item.featured 
-                          ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-2xl shadow-amber-500/40 scale-[1.03] font-black'
-                          : 'bg-amber-500 text-slate-950 shadow-xl shadow-amber-500/20 scale-[1.02] font-black')
-                      : (item.featured
-                          ? 'bg-amber-500/10 border border-amber-500/30 text-amber-500 hover:bg-amber-500/20'
-                          : 'text-slate-400 hover:bg-white/5 hover:text-white')}
-                  `}
-                >
-                  <item.icon size={item.featured ? 24 : 22} className={`transition-all duration-500 group-hover:scale-110 ${currentView === item.view ? 'text-slate-950' : (item.featured ? 'text-amber-500' : 'text-slate-500 group-hover:text-amber-400')}`} />
-                  <span className={`${item.featured ? 'text-lg font-black' : 'font-semibold'} tracking-wide`}>{t(item.name)}</span>
-                  {currentView === item.view && <ChevronRight size={18} className="ml-auto opacity-50" />}
-                  {item.featured && !currentView.includes('ai_coach') && (
-                    <div className="absolute top-0 right-0 p-2">
-                      <Sparkles size={12} className="text-amber-500/50 animate-pulse" />
-                    </div>
-                  )}
-                </button>
-              ))}
-            </div>
-
-            {/* Combined Menu Section */}
-            <div className="space-y-2 pt-2">
+    <div className="min-h-screen bg-[#f1eeeb] flex items-center justify-center p-0 sm:p-4">
+      {/* Centered Mobile Frame Wrapper */}
+      <div className="w-full max-w-[430px] min-h-screen sm:min-h-[850px] sm:max-h-[900px] bg-bg-page shadow-2xl relative flex flex-col pb-20 overflow-x-hidden sm:rounded-[2.5rem] sm:border-[8px] sm:border-slate-800">
+        
+        {/* Header Bar - Height 56px */}
+        <header className="h-14 bg-white/80 backdrop-blur-md border-b border-border-default flex items-center justify-between px-4 shrink-0 sticky top-0 z-30">
+          <div className="flex items-center gap-2">
+            {currentView !== AppView.DASHBOARD && (
               <button
-                onClick={() => setIsMenuExpanded(!isMenuExpanded)}
-                className="w-full flex items-center justify-between px-5 py-3 text-slate-500 hover:text-white transition-colors group"
+                onClick={() => setCurrentView(AppView.DASHBOARD)}
+                aria-label="ย้อนกลับ"
+                className="p-1 text-text-secondary hover:text-brand-gold rounded-lg transition-colors"
               >
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] group-hover:text-amber-500 transition-colors">Platform Features</p>
-                {isMenuExpanded ? <ChevronDown size={14} className="opacity-50" /> : <ChevronRight size={14} className="opacity-50" />}
+                <ChevronRight className="w-6 h-6 rotate-180 text-text-secondary" />
               </button>
-              
-              <div className={`space-y-1 transition-all duration-500 overflow-hidden ${isMenuExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                {secondaryNavigation.map((item) => (
-                  <button
-                    key={item.name}
-                    onClick={() => {
-                      setCurrentView(item.view);
-                      setSidebarOpen(false);
-                    }}
-                    aria-label={`ไปที่หน้า ${t(item.name)}`}
-                    className={`
-                      w-full flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 group
-                      ${currentView === item.view
-                        ? 'bg-slate-800 text-amber-400 font-bold'
-                        : 'text-slate-400 hover:bg-white/5 hover:text-white'}
-                    `}
-                  >
-                    <item.icon size={18} className={`transition-transform duration-500 group-hover:scale-110 ${currentView === item.view ? 'text-amber-400' : 'text-slate-600 group-hover:text-amber-500'}`} />
-                    <span className="text-sm tracking-wide">{t(item.name)}</span>
-                  </button>
-                ))}
-              </div>
-              
-              {/* For mobile or when collapsed, if an item in secondary is active, show it as a single row perhaps? 
-                  Better: keep it expanded if an item inside is selected on mount */}
-            </div>
-          </nav>
-
-          <div className="mt-auto pt-8 space-y-3">
-            <button
-              onClick={() => {
-                setCurrentView(AppView.PROFILE);
-                setSidebarOpen(false);
-              }}
-              aria-label="ดูข้อมูลส่วนตัวทางธุรกิจ"
-              className={`
-                w-full text-left bg-white/5 rounded-[2rem] p-5 border transition-all group focus:outline-none focus:ring-2 focus:ring-amber-500/50
-                ${currentView === AppView.PROFILE ? 'border-amber-500/50 bg-amber-500/10' : 'border-white/10 hover:border-amber-500/30'}
-              `}
-            >
-              <p className="text-xs-plus text-slate-500 mb-3 uppercase tracking-[0.2em] font-black">Business Star</p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-400 via-amber-500 to-amber-600 shadow-lg group-hover:scale-110 transition-transform duration-500" />
-                <div>
-                  <p className="text-sm font-bold tracking-tight text-white">{currentUser.fullName}</p>
-                  <div className="flex items-center gap-1">
-                    <Trophy size={10} className="text-amber-500" />
-                    <p className="text-xs-plus text-slate-400 font-bold uppercase">Super Star</p>
-                  </div>
-                </div>
-              </div>
-            </button>
-
-            {/* Logout Button */}
-            <button
-              onClick={handleLogout}
-              aria-label="ออกจากระบบ"
-              className="w-full flex items-center gap-3 px-5 py-3 text-slate-500 hover:text-red-400 hover:bg-red-500/5 rounded-2xl transition-all group"
-            >
-              <LogOut size={18} className="group-hover:scale-110 transition-transform" />
-              <span className="text-sm font-bold">ออกจากระบบ</span>
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className={`flex-1 flex flex-col ${currentView === AppView.AI_COACH ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
-        {/* Header */}
-        <header className="h-16 lg:h-20 bg-white/70 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 lg:px-8 shrink-0 sticky top-0 z-30">
-          <div className="flex items-center gap-3 lg:gap-4">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              aria-label="เปิดเมนูข้าง"
-              className="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
-            >
-              <Menu size={24} />
-            </button>
-            <h2 className="text-lg lg:text-xl font-black text-slate-900 tracking-tight">
+            )}
+            <h2 className="text-sm font-display font-bold text-text-primary tracking-tight">
               {currentView === AppView.PROFILE ? 'ข้อมูลส่วนตัว' : (
                 [...coreNavigation, ...secondaryNavigation].find(n => n.view === currentView) 
                 ? t([...coreNavigation, ...secondaryNavigation].find(n => n.view === currentView)!.name) 
-                : ''
+                : 'Unicorn Smart'
               )}
             </h2>
           </div>
 
-          <div className="flex items-center gap-2 lg:gap-3">
-            <button
-              aria-label="แจ้งเตือน"
-              className="relative p-2 lg:p-3 text-slate-500 hover:bg-slate-100 hover:text-amber-500 rounded-2xl transition-all group"
-            >
-              <div className="absolute top-2.5 right-2.5 lg:top-3 lg:right-3 w-2 h-2 lg:w-2.5 lg:h-2.5 bg-amber-500 rounded-full border-2 border-white animate-ping" />
-              <div className="absolute top-2.5 right-2.5 lg:top-3 lg:right-3 w-2 h-2 lg:w-2.5 lg:h-2.5 bg-amber-500 rounded-full border-2 border-white" />
-              <CalendarDays size={20} className="lg:w-[22px] lg:h-[22px] group-hover:rotate-12 transition-transform" />
-            </button>
+          <div className="flex items-center gap-2">
             <LanguageSelector direction="down" />
-            <div className="h-8 w-px bg-slate-200 mx-1 hidden sm:block" />
-            <div
-              className="hidden sm:flex items-center gap-3 pl-2 cursor-pointer group"
+            <button
               onClick={() => setCurrentView(AppView.PROFILE)}
+              className="w-8 h-8 rounded-full bg-bg-hover border border-border-default overflow-hidden active:scale-95 transition-transform"
             >
-              <div className="text-right">
-                <p className="text-xs font-black text-slate-900 leading-none group-hover:text-amber-600 transition-colors">
-                  {currentUser?.fullName || 'Guest User'}
-                </p>
-                <p className="text-[10px] text-amber-500 font-bold uppercase tracking-tighter whitespace-nowrap">
-                  {currentUser?.isAdmin ? 'ADMIN' : (currentUser?.ubcLevel ? `UBC ${currentUser.ubcLevel}` : 'Partner')}
-                </p>
-              </div>
-              <div className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200 overflow-hidden group-hover:ring-2 group-hover:ring-amber-500/50 transition-all">
-                <img src={currentUser?.avatarUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=UnicornPartner"} alt="Avatar" className="w-full h-full object-cover" />
-              </div>
-            </div>
+              <img src={currentUser?.avatarUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=UnicornPartner"} alt="Avatar" className="w-full h-full object-cover" />
+            </button>
           </div>
         </header>
 
-        {/* Content Area */}
-        <div className={`flex-1 ${currentView === AppView.AI_COACH ? 'overflow-y-auto h-full' : ''} ${currentView === AppView.AI_COACH ? 'p-0' : 'p-2 lg:p-4'} bg-slate-50`}>
+        {/* Content Area - Scrollable */}
+        <div className="flex-1 overflow-y-auto p-3">
           <div className="w-full h-full">
             {currentView === AppView.DASHBOARD && <Dashboard onNavigate={setCurrentView} currentUser={currentUser} />}
-            {currentView === AppView.SYSTEM_456 && <System456 onNavigate={setCurrentView} />}
-            {currentView === AppView.START_UP && <StartUp onNavigate={setCurrentView} />}
-            {currentView === AppView.FUNCTIONS && <Functions onNavigate={setCurrentView} currentUser={currentUser} />}
+            {currentView === AppView.SYSTEM_456 && (
+              <div className="space-y-4">
+                {/* Custom top sub-nav bar for Courses in Mobile layout to navigate between System 456, Start Up, Functions */}
+                <div className="flex bg-white p-1 rounded-xl border border-border-default gap-1 text-center text-xs font-bold mb-4 shadow-sm">
+                  <button 
+                    onClick={() => setCurrentView(AppView.SYSTEM_456)} 
+                    className="flex-1 py-2 rounded-lg bg-brand-gold-light text-brand-gold"
+                  >
+                    ระบบ 4-5-6
+                  </button>
+                  <button 
+                    onClick={() => setCurrentView(AppView.START_UP)} 
+                    className="flex-1 py-2 rounded-lg text-text-secondary hover:bg-bg-hover"
+                  >
+                    5 เริ่มต้น
+                  </button>
+                  <button 
+                    onClick={() => setCurrentView(AppView.FUNCTIONS)} 
+                    className="flex-1 py-2 rounded-lg text-text-secondary hover:bg-bg-hover"
+                  >
+                    ฟังก์ชัน
+                  </button>
+                </div>
+                <System456 onNavigate={setCurrentView} />
+              </div>
+            )}
+            {currentView === AppView.START_UP && (
+              <div className="space-y-4">
+                <div className="flex bg-white p-1 rounded-xl border border-border-default gap-1 text-center text-xs font-bold mb-4 shadow-sm">
+                  <button 
+                    onClick={() => setCurrentView(AppView.SYSTEM_456)} 
+                    className="flex-1 py-2 rounded-lg text-text-secondary hover:bg-bg-hover"
+                  >
+                    ระบบ 4-5-6
+                  </button>
+                  <button 
+                    onClick={() => setCurrentView(AppView.START_UP)} 
+                    className="flex-1 py-2 rounded-lg bg-brand-gold-light text-brand-gold"
+                  >
+                    5 เริ่มต้น
+                  </button>
+                  <button 
+                    onClick={() => setCurrentView(AppView.FUNCTIONS)} 
+                    className="flex-1 py-2 rounded-lg text-text-secondary hover:bg-bg-hover"
+                  >
+                    ฟังก์ชัน
+                  </button>
+                </div>
+                <StartUp onNavigate={setCurrentView} />
+              </div>
+            )}
+            {currentView === AppView.FUNCTIONS && (
+              <div className="space-y-4">
+                <div className="flex bg-white p-1 rounded-xl border border-border-default gap-1 text-center text-xs font-bold mb-4 shadow-sm">
+                  <button 
+                    onClick={() => setCurrentView(AppView.SYSTEM_456)} 
+                    className="flex-1 py-2 rounded-lg text-text-secondary hover:bg-bg-hover"
+                  >
+                    ระบบ 4-5-6
+                  </button>
+                  <button 
+                    onClick={() => setCurrentView(AppView.START_UP)} 
+                    className="flex-1 py-2 rounded-lg text-text-secondary hover:bg-bg-hover"
+                  >
+                    5 เริ่มต้น
+                  </button>
+                  <button 
+                    onClick={() => setCurrentView(AppView.FUNCTIONS)} 
+                    className="flex-1 py-2 rounded-lg bg-brand-gold-light text-brand-gold"
+                  >
+                    ฟังก์ชัน
+                  </button>
+                </div>
+                <Functions onNavigate={setCurrentView} currentUser={currentUser} />
+              </div>
+            )}
             {currentView === AppView.AI_COACH && <AICoach onNavigate={setCurrentView} />}
             {currentView === AppView.LIBRARY && <Library onNavigate={setCurrentView} />}
             {currentView === AppView.PROFILE && <Profile currentUser={currentUser} onUpdateUser={updateUser} onNavigate={setCurrentView} />}
@@ -648,20 +573,67 @@ const AppContent: React.FC = () => {
             {currentView === AppView.PRIVACY_POLICY && <PrivacyPolicy onNavigate={setCurrentView} />}
           </div>
         </div>
-      </main>
 
-      {/* Mobile Overlay */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+        {/* Sticky Floating Bottom Navigation Bar */}
+        <nav className="bottom-nav">
+          {/* 1. Home tab */}
+          <button
+            onClick={() => setCurrentView(AppView.DASHBOARD)}
+            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all ${
+              currentView === AppView.DASHBOARD 
+                ? 'text-brand-gold font-bold scale-105' 
+                : 'text-text-muted hover:text-text-secondary'
+            }`}
+          >
+            <LayoutDashboard className="w-5 h-5" />
+            <span className="text-[10px] tracking-wide">หน้าหลัก</span>
+          </button>
 
-      {/* Report Issue Modal - Available on all authenticated pages */}
-      {currentUser && currentView !== AppView.LANDING && currentView !== AppView.LOGIN && currentView !== AppView.REGISTER && (
-        <ReportIssueModal />
-      )}
+          {/* 2. Courses tab */}
+          <button
+            onClick={() => setCurrentView(AppView.SYSTEM_456)}
+            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all ${
+              [AppView.SYSTEM_456, AppView.START_UP, AppView.FUNCTIONS, AppView.LIBRARY, AppView.PRODUCT_CATALOG, AppView.UBC_PROGRAM].includes(currentView)
+                ? 'text-brand-gold font-bold scale-105' 
+                : 'text-text-muted hover:text-text-secondary'
+            }`}
+          >
+            <Layers className="w-5 h-5" />
+            <span className="text-[10px] tracking-wide">หลักสูตร</span>
+          </button>
+
+          {/* 3. AI Coach tab - Nong Uni (Using Sparkles icon to avoid GPT bot look) */}
+          <button
+            onClick={() => setCurrentView(AppView.AI_COACH)}
+            className={`flex flex-col items-center justify-center -translate-y-4 w-14 h-14 bg-gradient-to-tr from-brand-gold to-brand-gold-muted rounded-full shadow-lg text-white active:scale-95 transition-all ${
+              currentView === AppView.AI_COACH 
+                ? 'ring-4 ring-brand-gold-light scale-110 shadow-xl' 
+                : ''
+            }`}
+            aria-label="แชทกับน้องยูนิ"
+          >
+            <Sparkles className="w-6 h-6 animate-pulse" />
+          </button>
+
+          {/* 4. Profile tab */}
+          <button
+            onClick={() => setCurrentView(AppView.PROFILE)}
+            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all ${
+              [AppView.PROFILE, AppView.WEALTH_DNA].includes(currentView)
+                ? 'text-brand-gold font-bold scale-105' 
+                : 'text-text-muted hover:text-text-secondary'
+            }`}
+          >
+            <Trophy className="w-5 h-5" />
+            <span className="text-[10px] tracking-wide">โปรไฟล์</span>
+          </button>
+        </nav>
+
+        {/* Report Issue Modal - Available on all pages inside the frame */}
+        {currentUser && currentView !== AppView.LANDING && currentView !== AppView.LOGIN && currentView !== AppView.REGISTER && (
+          <ReportIssueModal />
+        )}
+      </div>
     </div>
   );
 };

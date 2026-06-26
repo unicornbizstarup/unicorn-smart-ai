@@ -18,7 +18,17 @@
       "Bash(npm install:*)",
       "Bash(npm uninstall:*)",
       "Bash(npx opennextjs-cloudflare:*)",
-      "Bash(node -e \"const l=require\\('./package-lock.json'\\); console.log\\('next version in lock:', l.packages['node_modules/next']?.version\\)\")"
+      "Bash(node -e \"const l=require\\('./package-lock.json'\\); console.log\\('next version in lock:', l.packages['node_modules/next']?.version\\)\")",
+      "Bash(npx esbuild:*)",
+      "Bash(CLOUDFLARE_ACCOUNT_ID=68c560285b7ea0bf145d8da5ba2d6da5 npx wrangler pages deploy build/client --project-name unicorn-smart-ai)",
+      "Bash(curl:*)",
+      "Bash(CLOUDFLARE_ACCOUNT_ID=68c560285b7ea0bf145d8da5ba2d6da5 npx wrangler pages deploy build/client --project-name unicorn-smart-ai --commit-dirty=true)",
+      "Bash(timeout 15 npx wrangler pages deployment tail --project-name unicorn-smart-ai)",
+      "Bash(npx wrangler:*)",
+      "Bash(node -e ':*)",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\('/dev/stdin','utf-8'\\)\\); console.log\\('version:', d.version, '\\\\nmain:', d.main, '\\\\nexports keys:', Object.keys\\(d.exports||{}\\).slice\\(0,5\\)\\)\")",
+      "Bash(node -e \"const pkg = require\\('E:/00.1_DenD3v_AI/Unicorn_01_Unicorn_Smart_ai/unicorn-academy-8stack/node_modules/@cloudflare/vite-plugin/package.json'\\); console.log\\('v:', pkg.version\\);\")",
+      "Bash(node:*)"
     ]
   }
 }

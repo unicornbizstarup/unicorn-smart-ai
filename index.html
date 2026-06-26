@@ -24,29 +24,53 @@
     <meta property="twitter:image" content="/og-image.jpg">
 
     <link rel="icon" type="image/jpeg" href="https://mewjhcheciafyuxkngqn.supabase.co/storage/v1/object/public/media/Logo%20Unicorn%20global%20link.jpg">
-    <meta name="theme-color" content="#f59e0b">
+    <meta name="theme-color" content="#b8924a">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "brand-gold": "#b8924a",
+              "brand-gold-hover": "#a07c38",
+              "brand-gold-light": "#f5e8d0",
+              "brand-gold-muted": "#d4a96e",
+              "brand-dark": "#1a1209",
+              "bg-page": "#f7f4ef",
+              "bg-card": "#ffffff",
+              "bg-hover": "#faf5ec",
+              "bg-active": "#f5e8d0",
+              "text-primary": "#1a1209",
+              "text-secondary": "#6b5e4a",
+              "text-muted": "#9e8e78",
+              "border-default": "#ece6dc",
+              "border-muted": "#f0ebe3",
+              "border-strong": "#d4c9b8",
+            },
+            fontFamily: {
+              display: ["Playfair Display", "Georgia", "serif"],
+              body: ["Sarabun", "Noto Sans Thai", "system-ui", "sans-serif"],
+            }
+          }
+        }
+      }
+    </script>
     <style>
         body {
-            font-family: 'Prompt', sans-serif;
-            background: radial-gradient(circle at top right, #f8fafc 0%, #f1f5f9 100%);
+            font-family: 'Sarabun', 'Noto Sans Thai', sans-serif;
+            background: #f7f4ef;
             min-height: 100vh;
+            color: #1a1209;
         }
         .bg-gradient-gold {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            background: linear-gradient(135deg, #b8924a 0%, #a07c38 100%);
         }
         .bg-gradient-blue {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            background: linear-gradient(135deg, #1a1209 0%, #6b5e4a 100%);
         }
         .text-gold {
-            color: #d97706;
-        }
-        .text-glitch {
-            text-shadow: 
-                2px 2px 0px rgba(255, 0, 80, 0.6), 
-                -2px -2px 0px rgba(0, 255, 230, 0.6);
-            position: relative;
+            color: #b8924a;
         }
         .animate-float {
             animation: float 6s ease-in-out infinite;
