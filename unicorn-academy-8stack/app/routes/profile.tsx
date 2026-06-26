@@ -173,10 +173,10 @@ export default function ProfilePage() {
           </span>
         </div>
 
-        <form onSubmit={handleSubmit} className="grid md:grid-cols-3 gap-8 items-start">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6 items-stretch">
           {/* Avatar and branding preview card */}
-          <div className="md:col-span-1 bg-gradient-to-b from-[#1a1209] to-[#2d2112] border border-border-strong rounded-2xl p-6 flex flex-col items-center text-center space-y-6 shadow-md">
-            <h3 className="text-xs font-black text-white/40 uppercase tracking-widest block w-full text-left">
+          <div className="w-full bg-gradient-to-b from-[#1a1209] to-[#2d2112] border border-border-strong rounded-2xl p-6 flex flex-col items-center text-center space-y-6 shadow-md">
+            <h3 className="text-xs font-black !text-white/45 uppercase tracking-widest block w-full text-left">
               รูปภาพนามบัตร
             </h3>
 
@@ -219,7 +219,7 @@ export default function ProfilePage() {
             />
 
             <div className="space-y-2 w-full">
-              <h2 className="text-xl font-display text-brand-gold truncate font-bold">
+              <h2 className="text-xl font-display !text-brand-gold truncate font-bold">
                 {profile.full_name || "ชื่อผู้ใช้"}
               </h2>
               <p className="text-xs text-white/70 italic leading-relaxed">
@@ -234,7 +234,7 @@ export default function ProfilePage() {
 
             <div className="pt-4 border-t border-white/10 w-full space-y-3">
               <div className="text-left">
-                <span className="text-[9px] font-black text-white/40 uppercase tracking-widest block mb-1">
+                <span className="text-[9px] font-black !text-white/40 uppercase tracking-widest block mb-1">
                   ลิงก์แนะนำตัวบอกต่อธุรกิจของคุณ
                 </span>
                 <div className="bg-white/5 p-3 rounded-xl border border-white/10 text-xs text-brand-gold font-semibold break-all flex items-center justify-between">
@@ -255,7 +255,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Form details input */}
-          <div className="md:col-span-2 space-y-6">
+          <div className="w-full space-y-6">
             {/* Status alerts */}
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
@@ -277,9 +277,9 @@ export default function ProfilePage() {
                 <p className="text-xs text-text-secondary">กรอกข้อมูลส่วนบุคคลและช่องทางการติดต่อของพาร์ทเนอร์</p>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 gap-5">
                 {/* Full name */}
-                <div className="space-y-2 col-span-2">
+                <div className="space-y-2">
                   <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest block">
                     ชื่อ - นามสกุลจริง
                   </label>
@@ -294,7 +294,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Referral slug */}
-                <div className="space-y-2 col-span-2">
+                <div className="space-y-2">
                   <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest block flex items-center gap-1.5">
                     <span>ลิงก์แนะนำตัวบอกต่อ (Referral Slug)</span>
                     <span title="จะถูกใช้เป็น URL สำหรับแนะนำทีม เช่น domain/r/yourname" className="cursor-help">
@@ -317,7 +317,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Specialization */}
-                <div className="space-y-2 col-span-1">
+                <div className="space-y-2">
                   <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest block">
                     ความชื่นชอบ / ความถนัดพิเศษ
                   </label>
@@ -332,7 +332,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Bio / Quote */}
-                <div className="space-y-2 col-span-1">
+                <div className="space-y-2">
                   <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest block">
                     สโลแกนดึงดูด (Bio / Quote)
                   </label>
@@ -347,7 +347,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* LINE ID */}
-                <div className="space-y-2 col-span-1">
+                <div className="space-y-2">
                   <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest block flex items-center gap-1">
                     <MessageCircle size={12} className="text-emerald-600" /> LINE ID ส่วนตัว
                   </label>
@@ -362,7 +362,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* LINE OA */}
-                <div className="space-y-2 col-span-1">
+                <div className="space-y-2">
                   <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest block flex items-center gap-1">
                     <MessageCircle size={12} className="text-emerald-600" /> LINE OA ระบบทีม (ถ้ามี)
                   </label>
@@ -377,7 +377,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* YouTube Link */}
-                <div className="space-y-2 col-span-2">
+                <div className="space-y-2">
                   <label className="text-[10px] font-black text-text-secondary uppercase tracking-widest block flex items-center gap-1">
                     <Tv size={12} className="text-red-500" /> ลิงก์ช่อง YouTube / คอนเทนต์วีดีโอของคุณ
                   </label>

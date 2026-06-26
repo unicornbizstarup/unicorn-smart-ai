@@ -100,7 +100,7 @@ export default function FunctionsPage() {
           <div className="inline-flex items-center gap-1.5 bg-brand-gold-light/40 border border-brand-gold-muted/20 rounded-full px-4 py-1.5 text-[10px] font-black tracking-wider text-brand-gold mb-3 uppercase">
             <span className="w-1.5 h-1.5 rounded-full bg-brand-gold" /> SYSTEM STRATEGY
           </div>
-          <h2 className="text-2xl sm:text-3xl font-display font-bold leading-tight">
+          <h2 className="text-2xl sm:text-3xl font-display font-bold leading-tight text-text-primary">
             Function <span className="text-brand-gold font-normal">to Function</span>
           </h2>
           <p className="text-text-muted text-xs mt-2 leading-relaxed">
@@ -109,7 +109,7 @@ export default function FunctionsPage() {
         </div>
 
         {/* Grid 4 Columns */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-4">
           {FUNCTION_EVENTS.map((event) => (
             <div key={event.frequency} className="flex flex-col space-y-3">
               {/* Header Title Card */}
@@ -150,18 +150,18 @@ export default function FunctionsPage() {
         </div>
 
         {/* Monthly Calendar Banner */}
-        <div className="p-6 bg-gradient-to-r from-brand-dark to-[#2c1d0c] rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4 text-white shadow-md">
-          <div className="flex items-center gap-4 text-center sm:text-left">
+        <div className="p-5 bg-gradient-to-br from-brand-dark to-[#2c1d0c] rounded-2xl flex flex-col items-center gap-4 text-white shadow-md text-center">
+          <div className="flex flex-col items-center gap-2">
             <span className="text-3xl select-none">📅</span>
             <div>
-              <h3 className="text-sm md:text-base font-bold text-white mb-0.5">ปฏิทินกิจกรรมและการฝึกอบรมประจำเดือน</h3>
-              <p className="text-[11px] text-gray-300">ดูกำหนดการล่วงหน้าเพื่อเตรียมระบบและทำการส่งทีมงานเข้าร่วมห้องเรียน</p>
+              <h3 className="text-sm font-bold !text-white mb-1">ปฏิทินกิจกรรมและการฝึกอบรมประจำเดือน</h3>
+              <p className="text-[11px] text-gray-300 leading-relaxed">ดูกำหนดการล่วงหน้าเพื่อเตรียมระบบและทำการส่งทีมงานเข้าร่วมห้องเรียน</p>
             </div>
           </div>
           
           <Link
             to="#"
-            className="bg-brand-gold hover:bg-brand-gold-hover text-white font-bold text-xs rounded-xl px-5 py-2.5 transition-all text-center flex items-center justify-center shrink-0 shadow-sm"
+            className="w-full bg-brand-gold hover:bg-brand-gold-hover text-white font-bold text-xs rounded-xl py-2.5 transition-all text-center flex items-center justify-center shadow-sm"
           >
             ดูปฏิทินภาพรวม →
           </Link>

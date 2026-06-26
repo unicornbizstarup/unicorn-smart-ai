@@ -219,7 +219,7 @@ export default function MemberKnowledgePage() {
         </div>
 
         {/* Knowledge Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-4">
           {filteredItems.map((item) => (
             <div key={item.id} className="card-premium bg-white border border-border-default rounded-3xl overflow-hidden shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
               {/* Top Preview */}

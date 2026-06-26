@@ -459,7 +459,7 @@ export default function MissionsPage() {
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand-gold/20 border border-brand-gold/30 text-brand-gold-light rounded-full text-[10px] font-black uppercase tracking-wider">
                 🎓 Unicorn Academy
               </div>
-              <h1 className="text-2xl md:text-3xl font-display text-white leading-tight">
+              <h1 className="text-2xl md:text-3xl font-display !text-white leading-tight">
                 โปรแกรมพัฒนา UBC
               </h1>
               <p className="text-xs md:text-sm text-gray-300 max-w-xl leading-relaxed">
@@ -486,7 +486,7 @@ export default function MissionsPage() {
               </div>
               <div>
                 <div className="text-[9px] text-brand-gold-light font-bold uppercase tracking-wider">ความก้าวหน้ารวม</div>
-                <div className="text-xs font-black text-white mt-0.5">
+                <div className="text-xs font-black !text-white mt-0.5">
                   ระดับปัจจุบัน: <span className="text-brand-gold">UBC {profile?.ubc_level ?? 1}</span>
                 </div>
                 <div className="text-[10px] text-gray-400 mt-0.5">
@@ -498,7 +498,7 @@ export default function MissionsPage() {
         </div>
 
         {/* 2. Grid Cards for Level Filtering */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 gap-2.5">
           {([1, 2, 3, 4] as const).map((lvl) => {
             const lvlProgress = getProgressByLevel(lvl);
             const isActive = activeTab === lvl;
@@ -539,7 +539,7 @@ export default function MissionsPage() {
 
         {/* 3. Level Detail Specifications */}
         <div className="card-premium bg-white border border-border-default rounded-3xl p-5 md:p-6 shadow-sm">
-          <div className="flex flex-col lg:flex-row gap-6 justify-between">
+          <div className="flex flex-col gap-6">
             {/* Left Block */}
             <div className="space-y-4 max-w-sm">
               <div className="inline-flex gap-2 items-center bg-brand-gold-light/40 border border-brand-gold-muted/20 text-brand-gold px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm">
@@ -566,7 +566,7 @@ export default function MissionsPage() {
                   </span>
                 </div>
                 
-                <div className="grid md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   {/* Mindset Checklist */}
                   <div className="space-y-2.5">
                     <div className="text-[10px] font-black text-amber-600 uppercase tracking-widest flex items-center gap-1">

@@ -238,7 +238,7 @@ export default function MemberProductsPage() {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-5">
           {filteredProducts.map((p) => {
             const profit = p.retail_price - p.member_price;
             const showDetails = activeDetailsId === p.id;
