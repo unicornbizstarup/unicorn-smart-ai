@@ -120,7 +120,7 @@ export default function HomePage() {
               { 
                 title: "AI & Digital Tools", 
                 desc: "เครื่องมืออัจฉริยะและน้องยูนิ AI Coach ที่ช่วยย่อเวลาการเรียนรู้และขยายธุรกิจ", 
-                icon: "🤖", 
+                icon: "✨", 
                 bg: "bg-white" 
               },
               { 

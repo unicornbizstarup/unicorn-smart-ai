@@ -246,7 +246,7 @@ export default function ReferralPage() {
           {[
             { icon: "⚡", label: "Eco-System", desc: "ระบบนิเวศทางธุรกิจสมบูรณ์แบบที่สนับสนุนและเติบโตไปด้วยกันทุกสายงาน", bg: "bg-brand-gold-light/40 border-brand-gold-muted/20 text-brand-gold" },
             { icon: "🏆", label: "Product Strength", desc: "วิจัยและคัดสรรสินค้าคุณภาพสูง มีผลลัพธ์ชัดเจนและมีอัตราซื้อซ้ำสูง", bg: "bg-purple-50 border-purple-100 text-purple-700" },
-            { icon: "🤖", label: "AI & Digital Tools", desc: "เครื่องมือวิเคราะห์ ดึงพาร์ทเนอร์ และวางสตรีมระบบช่วยคุณตลอด 24 ชั่วโมง", bg: "bg-red-50 border-red-100 text-red-700" },
+            { icon: "✨", label: "AI & Digital Tools", desc: "เครื่องมือวิเคราะห์ ดึงพาร์ทเนอร์ และวางสตรีมระบบช่วยคุณตลอด 24 ชั่วโมง", bg: "bg-brand-gold-light/40 border-brand-gold-muted/20 text-brand-gold" },
             { icon: "⭐", label: "High Reward", desc: "ผลตอบแทนคุ้มค่าตั้งแต่วันแรกที่สมัคร แผนปันผล 8 ช่องทางที่มั่นคงและโปร่งใส", bg: "bg-amber-50 border-amber-100 text-amber-700" },
           ].map((a) => (
             <div key={a.label} className="bg-white border border-border-default rounded-2xl p-4.5 shadow-sm">
