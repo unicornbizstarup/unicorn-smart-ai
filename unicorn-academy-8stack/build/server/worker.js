@@ -4,8 +4,8 @@ import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
 import { createServerClient, serializeCookieHeader, parseCookieHeader, createBrowserClient } from "@supabase/ssr";
 import { createClient as createClient$1 } from "@supabase/supabase-js";
-import React, { useState, Suspense, useRef, useEffect, useMemo } from "react";
-import { ArrowLeft, Lock, EyeOff, Eye, Loader2, LogIn, Sparkles, User, CheckCircle2, UserPlus, Menu, ChevronLeft, Camera, Link as Link$1, AlertCircle, HelpCircle, MessageCircle, Tv, Save, Rocket, Shield, GraduationCap, Bot, RefreshCw, Send, Airplay, Waves, Zap, ArrowRight, Calendar, Clock, Lightbulb, ShoppingBag, ChevronRight, Share2, Award, Play, Search, MapPin, Users } from "lucide-react";
+import { useState, Suspense, useRef, useEffect, useMemo } from "react";
+import { ArrowLeft, Lock, EyeOff, Eye, Loader2, LogIn, Sparkles, User, CheckCircle2, UserPlus, ChevronLeft, LayoutDashboard, Layers, Trophy, Camera, Link as Link$1, AlertCircle, HelpCircle, MessageCircle, Tv, Save, Rocket, Shield, GraduationCap, Bot, RefreshCw, Send, Airplay, Waves, Zap, ArrowRight, Calendar, Clock, Lightbulb, ShoppingBag, ChevronRight, Share2, Award, Play, Search, MapPin, Users } from "lucide-react";
 import { Resend } from "resend";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -892,301 +892,137 @@ const route4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   __proto__: null,
   loader: loader$g
 }, Symbol.toStringTag, { value: "Module" }));
-function Sidebar({ profile: profile2, isOpen = false, onClose }) {
+function MemberLayout({ children, profile: profile2, title, subtitle, actions }) {
   const location = useLocation();
-  const pathname = location.pathname;
-  const level = (profile2 == null ? void 0 : profile2.ubc_level) ?? 1;
-  const element = (profile2 == null ? void 0 : profile2.wealth_element) ?? "FIRE";
-  (profile2 == null ? void 0 : profile2.id) === "mewjhcheciafyuxkngqn" || true;
-  const [isOpenReport, setIsOpenReport] = useState(false);
-  const [reportName, setReportName] = useState((profile2 == null ? void 0 : profile2.display_name) || (profile2 == null ? void 0 : profile2.full_name) || "");
-  const [reportContact, setReportContact] = useState("");
-  const [reportDesc, setReportDesc] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-  React.useEffect(() => {
-    if (profile2) {
-      setReportName(profile2.display_name || profile2.full_name || "");
-    }
-  }, [profile2]);
-  const getInitials = (name) => {
-    if (!name) return "KD";
-    const parts = name.trim().split(" ");
-    if (parts.length >= 2) {
-      return (parts[0][0] + parts[1][0]).toUpperCase();
-    }
-    return name.slice(0, 2).toUpperCase();
-  };
-  const menuGroups = [
-    {
-      title: "MAIN",
-      items: [
-        { href: "/dashboard", label: "Dashboard", badge: null, external: false },
-        { href: "/ai-coach", label: "AI Coach", badge: "3", external: false },
-        { href: "/missions", label: "Missions", badge: null, external: false },
-        { href: "/dna", label: "Wealth DNA", badge: null, external: false }
-      ]
-    },
-    {
-      title: "PROFILE",
-      items: [
-        { href: "/profile", label: "Name Card", badge: null, external: false },
-        { href: `/referral/${(profile2 == null ? void 0 : profile2.referral_slug) || ""}`, label: "Referral Link", badge: null, external: false },
-        { href: "https://unicorngloballink.com/#contact", label: "Contact Us", badge: null, external: true }
-      ]
-    }
-  ];
-  const handleReportSubmit = async (e) => {
-    e.preventDefault();
-    if (!reportName.trim() || !reportContact.trim() || !reportDesc.trim()) {
-      setSubmitError("กรุณากรอกข้อมูลให้ครบถ้วนทุกช่องครับ");
-      return;
-    }
-    setSubmitting(true);
-    setSubmitError("");
-    try {
-      const res = await fetch("/api/notify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "report_issue",
-          payload: {
-            name: reportName,
-            contact: reportContact,
-            description: reportDesc
-          }
-        })
-      });
-      if (!res.ok) throw new Error("การส่งข้อมูลล้มเหลว");
-      setSubmitSuccess(true);
-      setReportContact("");
-      setReportDesc("");
-    } catch (err) {
-      console.error("Report submit error:", err);
-      setSubmitError(err.message || "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-  return /* @__PURE__ */ jsxs("aside", { className: `flex flex-col justify-between border-r border-border-default bg-bg-sidebar w-[220px] fixed top-0 left-0 h-screen z-40 transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`, children: [
-    /* @__PURE__ */ jsxs("div", { children: [
-      /* @__PURE__ */ jsxs("div", { className: "p-4 border-b border-border-muted flex items-center gap-2", children: [
-        /* @__PURE__ */ jsx(
-          "div",
+  const currentPath = location.pathname;
+  const isAdmin = (profile2 == null ? void 0 : profile2.id) === "mewjhcheciafyuxkngqn" || (profile2 == null ? void 0 : profile2.is_admin) === true;
+  const isDashboardActive = currentPath === "/dashboard";
+  const isCoursesActive = ["/startup", "/products", "/knowledge", "/functions", "/missions", "/ubc-program"].some((path) => currentPath.startsWith(path));
+  const isAiCoachActive = currentPath.startsWith("/ai-coach");
+  const isProfileActive = currentPath.startsWith("/profile") || currentPath.startsWith("/dna");
+  return /* @__PURE__ */ jsx("div", { className: "min-h-screen bg-[#f1eeeb] flex items-center justify-center p-0 sm:p-4 font-body", children: /* @__PURE__ */ jsxs("div", { className: "w-full max-w-[430px] min-h-screen sm:min-h-[850px] sm:max-h-[900px] bg-bg-page shadow-2xl relative flex flex-col pb-20 overflow-x-hidden sm:rounded-[2.5rem] sm:border-[8px] sm:border-slate-800", children: [
+    /* @__PURE__ */ jsxs("header", { className: "h-14 bg-white/85 backdrop-blur-md border-b border-border-default flex items-center justify-between px-4 shrink-0 sticky top-0 z-30", children: [
+      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 min-w-0", children: [
+        !isDashboardActive && /* @__PURE__ */ jsx(
+          Link,
           {
-            className: "w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-sm",
-            style: { background: "linear-gradient(135deg,var(--brand-gold),var(--brand-gold-hover))" },
-            children: "🦄"
+            to: "/dashboard",
+            "aria-label": "ย้อนกลับ",
+            className: "p-1 text-text-secondary hover:text-brand-gold rounded-lg transition-colors flex-shrink-0",
+            children: /* @__PURE__ */ jsx(ChevronLeft, { className: "w-5 h-5 text-text-secondary" })
           }
         ),
-        /* @__PURE__ */ jsxs("div", { children: [
-          /* @__PURE__ */ jsx("div", { className: "font-display font-bold text-sm text-text-primary leading-tight", children: "Unicorn Academy" }),
-          /* @__PURE__ */ jsx("div", { className: "text-2xs text-text-muted uppercase tracking-wider", children: "Smart AI Platform" })
-        ] })
+        /* @__PURE__ */ jsx("h1", { className: "font-display font-bold text-text-primary text-sm leading-tight truncate", children: title })
       ] }),
-      /* @__PURE__ */ jsxs("nav", { className: "p-4 space-y-6", children: [
-        menuGroups.map((group) => /* @__PURE__ */ jsxs("div", { className: "space-y-1.5", children: [
-          /* @__PURE__ */ jsx("div", { className: "px-3 py-1 text-[10px] font-black text-text-muted uppercase tracking-widest", children: group.title }),
-          /* @__PURE__ */ jsx("div", { className: "space-y-0.5", children: group.items.map((item) => {
-            const active = pathname === item.href;
-            if (item.external) {
-              return /* @__PURE__ */ jsxs(
-                "a",
-                {
-                  href: item.href,
-                  target: "_blank",
-                  rel: "noopener noreferrer",
-                  className: "flex items-center justify-between px-3 py-2 rounded-xl text-[12px] font-bold transition-all text-text-secondary hover:bg-bg-hover hover:text-text-primary",
-                  children: [
-                    /* @__PURE__ */ jsx("span", { children: item.label }),
-                    /* @__PURE__ */ jsx("span", { className: "text-[10px] opacity-40", children: "↗" })
-                  ]
-                },
-                item.label
-              );
-            }
-            return /* @__PURE__ */ jsxs(
-              Link,
-              {
-                to: item.href,
-                onClick: onClose,
-                className: `flex items-center justify-between px-3 py-2 rounded-xl text-[12px] font-bold transition-all ${active ? "bg-bg-active text-text-gold" : "text-text-secondary hover:bg-bg-hover hover:text-text-primary"}`,
-                children: [
-                  /* @__PURE__ */ jsx("span", { children: item.label }),
-                  item.badge && /* @__PURE__ */ jsx("span", { className: `w-4 h-4 rounded-full text-[9px] font-black flex items-center justify-center ${active ? "bg-brand-gold text-white" : "bg-brand-gold-light text-brand-gold"}`, children: item.badge })
-                ]
-              },
-              item.label
-            );
-          }) })
-        ] }, group.title)),
-        /* @__PURE__ */ jsxs("div", { className: "space-y-1.5", children: [
-          /* @__PURE__ */ jsx("div", { className: "px-3 py-1 text-[10px] font-black text-text-muted uppercase tracking-widest", children: "ADMIN" }),
-          /* @__PURE__ */ jsx(
-            Link,
-            {
-              to: "/admin",
-              onClick: onClose,
-              className: `flex items-center px-3 py-2 rounded-xl text-[12px] font-bold transition-all ${pathname.startsWith("/admin") ? "bg-bg-active text-text-gold" : "text-text-secondary hover:bg-bg-hover hover:text-text-primary"}`,
-              children: /* @__PURE__ */ jsx("span", { children: "Settings Panel" })
-            }
-          )
-        ] }),
-        /* @__PURE__ */ jsx("div", { className: "pt-4 px-1", children: /* @__PURE__ */ jsxs(
-          "button",
+      /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-2 flex-shrink-0", children: [
+        isAdmin && /* @__PURE__ */ jsx(
+          Link,
           {
-            onClick: () => setIsOpenReport(true),
-            className: "w-full py-2 px-3 rounded-xl border border-border-default bg-bg-input text-text-muted text-[11px] font-black uppercase tracking-tighter transition-all hover:bg-white hover:border-brand-gold hover:text-brand-gold hover:shadow-md flex items-center justify-center gap-2",
-            children: [
-              /* @__PURE__ */ jsx("span", { children: "⚠️" }),
-              /* @__PURE__ */ jsx("span", { children: "แจ้งระบบ / Support" })
-            ]
+            to: "/admin",
+            className: "btn-outline !text-[9px] !px-2.5 !py-1 !rounded-full !font-black !uppercase !tracking-tighter transition-all",
+            children: "⚙️ Admin"
           }
-        ) })
-      ] })
-    ] }),
-    /* @__PURE__ */ jsx("div", { className: "p-4 border-t border-border-muted bg-bg-hover", children: /* @__PURE__ */ jsxs(Link, { to: "/profile", className: "flex items-center gap-3 p-2 rounded-2xl hover:bg-white hover:shadow-sm transition-all group", children: [
-      /* @__PURE__ */ jsx("div", { className: "w-10 h-10 rounded-xl bg-white border border-border-default flex items-center justify-center text-xs font-black text-text-primary flex-shrink-0 shadow-sm group-hover:scale-105 transition-transform", children: getInitials((profile2 == null ? void 0 : profile2.display_name) || (profile2 == null ? void 0 : profile2.full_name)) }),
-      /* @__PURE__ */ jsxs("div", { className: "min-w-0 overflow-hidden", children: [
-        /* @__PURE__ */ jsx("div", { className: "text-[12px] font-black text-text-primary truncate", children: (profile2 == null ? void 0 : profile2.display_name) || (profile2 == null ? void 0 : profile2.full_name) || "Partner" }),
-        /* @__PURE__ */ jsxs("div", { className: "text-[9px] text-text-muted font-bold uppercase tracking-wider", children: [
-          "UBC LVL ",
-          level,
-          " · ",
-          element
-        ] })
-      ] })
-    ] }) }),
-    isOpenReport && /* @__PURE__ */ jsx("div", { className: "fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4", children: /* @__PURE__ */ jsxs("div", { className: "card-premium p-8 w-full max-w-sm relative", children: [
-      /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between mb-6", children: [
-        /* @__PURE__ */ jsx("h3", { className: "font-display font-black text-lg text-text-primary uppercase tracking-tight", children: "แจ้งปัญหาระบบ" }),
-        /* @__PURE__ */ jsx("button", { onClick: () => setIsOpenReport(false), className: "w-8 h-8 rounded-full bg-bg-input flex items-center justify-center text-text-muted hover:text-text-primary transition-colors", children: "✕" })
-      ] }),
-      submitSuccess ? /* @__PURE__ */ jsxs("div", { className: "text-center py-6 space-y-4", children: [
-        /* @__PURE__ */ jsx("div", { className: "text-5xl", children: "✨" }),
-        /* @__PURE__ */ jsx("h4", { className: "font-black text-text-primary uppercase", children: "ส่งข้อมูลสำเร็จ!" }),
-        /* @__PURE__ */ jsx("p", { className: "text-[13px] text-text-secondary leading-relaxed", children: "ทีมงานได้รับเรื่องเรียบร้อยแล้วครับ พาร์ทเนอร์สามารถกลับไปใช้งานระบบต่อได้เลยครับ" }),
+        ),
         /* @__PURE__ */ jsx(
-          "button",
+          Link,
           {
-            onClick: () => {
-              setIsOpenReport(false);
-              setSubmitSuccess(false);
-            },
-            className: "btn-gold w-full",
-            children: "ตกลง"
+            to: "/profile",
+            className: "w-8 h-8 rounded-full bg-bg-hover border border-border-default overflow-hidden active:scale-95 transition-transform",
+            children: /* @__PURE__ */ jsx("img", { src: (profile2 == null ? void 0 : profile2.avatar_url) || "https://api.dicebear.com/7.x/avataaars/svg?seed=UnicornPartner", alt: "Avatar", className: "w-full h-full object-cover" })
           }
         )
-      ] }) : /* @__PURE__ */ jsxs("form", { onSubmit: handleReportSubmit, className: "space-y-4", children: [
-        /* @__PURE__ */ jsxs("div", { className: "space-y-1.5", children: [
-          /* @__PURE__ */ jsx("label", { className: "text-[10px] font-black text-text-muted uppercase tracking-widest block", children: "ชื่อพาร์ทเนอร์" }),
-          /* @__PURE__ */ jsx(
-            "input",
-            {
-              type: "text",
-              required: true,
-              value: reportName,
-              onChange: (e) => setReportName(e.target.value),
-              className: "w-full px-4 py-3 bg-bg-input border border-border-default rounded-xl text-sm font-bold focus:outline-none focus:border-brand-gold transition-colors text-text-primary"
-            }
-          )
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "space-y-1.5", children: [
-          /* @__PURE__ */ jsx("label", { className: "text-[10px] font-black text-text-muted uppercase tracking-widest block", children: "ช่องทางติดต่อกลับ" }),
-          /* @__PURE__ */ jsx(
-            "input",
-            {
-              type: "text",
-              required: true,
-              value: reportContact,
-              onChange: (e) => setReportContact(e.target.value),
-              placeholder: "LINE ID / เบอร์โทร",
-              className: "w-full px-4 py-3 bg-bg-input border border-border-default rounded-xl text-sm font-bold focus:outline-none focus:border-brand-gold transition-colors text-text-primary"
-            }
-          )
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "space-y-1.5", children: [
-          /* @__PURE__ */ jsx("label", { className: "text-[10px] font-black text-text-muted uppercase tracking-widest block", children: "รายละเอียด" }),
-          /* @__PURE__ */ jsx(
-            "textarea",
-            {
-              required: true,
-              rows: 4,
-              value: reportDesc,
-              onChange: (e) => setReportDesc(e.target.value),
-              className: "w-full px-4 py-3 bg-bg-input border border-border-default rounded-xl text-sm font-bold focus:outline-none focus:border-brand-gold resize-none transition-colors text-text-primary"
-            }
-          )
-        ] }),
-        submitError && /* @__PURE__ */ jsxs("div", { className: "text-[11px] text-red-500 font-bold bg-red-50 border border-red-100 rounded-xl p-3", children: [
-          "⚠️ ",
-          submitError
-        ] }),
-        /* @__PURE__ */ jsx("div", { className: "pt-4", children: /* @__PURE__ */ jsx(
-          "button",
-          {
-            type: "submit",
-            disabled: submitting,
-            className: "btn-gold w-full py-4 disabled:opacity-50",
-            children: submitting ? "กำลังส่ง..." : "ส่งข้อมูล"
-          }
-        ) })
       ] })
-    ] }) })
-  ] });
-}
-function MemberLayout({ children, profile: profile2, title, subtitle, actions }) {
-  (profile2 == null ? void 0 : profile2.id) === "mewjhcheciafyuxkngqn" || true;
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  return /* @__PURE__ */ jsxs("div", { className: "sidebar-layout min-h-screen bg-bg-page", children: [
-    sidebarOpen && /* @__PURE__ */ jsx(
-      "div",
-      {
-        className: "fixed inset-0 bg-slate-900/40 z-30 md:hidden backdrop-blur-sm",
-        onClick: () => setSidebarOpen(false)
-      }
-    ),
-    /* @__PURE__ */ jsx(
-      Sidebar,
-      {
-        profile: profile2,
-        isOpen: sidebarOpen,
-        onClose: () => setSidebarOpen(false)
-      }
-    ),
-    /* @__PURE__ */ jsxs("div", { className: "main-content flex-1 ml-0 md:ml-[220px] min-h-screen flex flex-col min-w-0", children: [
-      /* @__PURE__ */ jsxs("header", { className: "topbar bg-bg-card border-b border-border-default px-4 md:px-6 py-4 flex items-center justify-between sticky top-0 z-20", children: [
-        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 min-w-0", children: [
-          /* @__PURE__ */ jsx(
-            "button",
-            {
-              className: "md:hidden p-2 rounded-xl hover:bg-bg-hover text-text-secondary transition-colors flex-shrink-0",
-              onClick: () => setSidebarOpen(true),
-              "aria-label": "เปิดเมนู",
-              children: /* @__PURE__ */ jsx(Menu, { size: 20 })
-            }
-          ),
-          /* @__PURE__ */ jsxs("div", { className: "min-w-0", children: [
-            /* @__PURE__ */ jsx("h1", { className: "font-display font-bold text-text-primary text-lg leading-tight truncate", children: title }),
-            subtitle && /* @__PURE__ */ jsx("p", { className: "text-xs text-text-muted font-medium mt-0.5 hidden sm:block truncate uppercase tracking-wider", children: subtitle })
-          ] })
-        ] }),
-        /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 flex-shrink-0", children: [
-          /* @__PURE__ */ jsx("div", { className: "hidden md:flex items-center gap-2", children: actions }),
-          /* @__PURE__ */ jsx(
-            Link,
-            {
-              to: "/admin",
-              className: "btn-outline !text-[11px] !px-4 !py-2 !rounded-full !font-black !uppercase !tracking-tighter transition-all",
-              children: "⚙️ Admin Panel"
-            }
-          )
-        ] })
+    ] }),
+    /* @__PURE__ */ jsxs("main", { className: "flex-1 overflow-y-auto p-4 w-full", children: [
+      isCoursesActive && /* @__PURE__ */ jsxs("div", { className: "flex bg-white p-1 rounded-xl border border-border-default gap-1 text-center text-[10px] font-bold mb-4 shadow-sm overflow-x-auto scrollbar-hide", children: [
+        /* @__PURE__ */ jsx(
+          Link,
+          {
+            to: "/startup",
+            className: `flex-1 py-1.5 px-2 rounded-lg whitespace-nowrap transition-colors ${currentPath.startsWith("/startup") ? "bg-brand-gold-light text-brand-gold" : "text-text-secondary hover:bg-bg-hover"}`,
+            children: "5 เริ่มต้น"
+          }
+        ),
+        /* @__PURE__ */ jsx(
+          Link,
+          {
+            to: "/products",
+            className: `flex-1 py-1.5 px-2 rounded-lg whitespace-nowrap transition-colors ${currentPath.startsWith("/products") ? "bg-brand-gold-light text-brand-gold" : "text-text-secondary hover:bg-bg-hover"}`,
+            children: "สินค้า"
+          }
+        ),
+        /* @__PURE__ */ jsx(
+          Link,
+          {
+            to: "/knowledge",
+            className: `flex-1 py-1.5 px-2 rounded-lg whitespace-nowrap transition-colors ${currentPath.startsWith("/knowledge") ? "bg-brand-gold-light text-brand-gold" : "text-text-secondary hover:bg-bg-hover"}`,
+            children: "ความรู้"
+          }
+        ),
+        /* @__PURE__ */ jsx(
+          Link,
+          {
+            to: "/functions",
+            className: `flex-1 py-1.5 px-2 rounded-lg whitespace-nowrap transition-colors ${currentPath.startsWith("/functions") ? "bg-brand-gold-light text-brand-gold" : "text-text-secondary hover:bg-bg-hover"}`,
+            children: "ฟังก์ชัน"
+          }
+        ),
+        /* @__PURE__ */ jsx(
+          Link,
+          {
+            to: "/missions",
+            className: `flex-1 py-1.5 px-2 rounded-lg whitespace-nowrap transition-colors ${currentPath.startsWith("/missions") ? "bg-brand-gold-light text-brand-gold" : "text-text-secondary hover:bg-bg-hover"}`,
+            children: "ภารกิจ"
+          }
+        )
       ] }),
-      /* @__PURE__ */ jsx("main", { className: "flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full", children })
+      children
+    ] }),
+    /* @__PURE__ */ jsxs("nav", { className: "bottom-nav", children: [
+      /* @__PURE__ */ jsxs(
+        Link,
+        {
+          to: "/dashboard",
+          className: `flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all ${isDashboardActive ? "text-brand-gold font-bold scale-105" : "text-text-muted hover:text-text-secondary"}`,
+          children: [
+            /* @__PURE__ */ jsx(LayoutDashboard, { className: "w-5 h-5" }),
+            /* @__PURE__ */ jsx("span", { className: "text-[10px] tracking-wide", children: "หน้าหลัก" })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxs(
+        Link,
+        {
+          to: "/startup",
+          className: `flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all ${isCoursesActive ? "text-brand-gold font-bold scale-105" : "text-text-muted hover:text-text-secondary"}`,
+          children: [
+            /* @__PURE__ */ jsx(Layers, { className: "w-5 h-5" }),
+            /* @__PURE__ */ jsx("span", { className: "text-[10px] tracking-wide", children: "หลักสูตร" })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsx(
+        Link,
+        {
+          to: "/ai-coach",
+          className: `flex flex-col items-center justify-center -translate-y-4 w-14 h-14 bg-gradient-to-tr from-brand-gold to-brand-gold-muted rounded-full shadow-lg text-white active:scale-95 transition-all ${isAiCoachActive ? "ring-4 ring-brand-gold-light scale-110 shadow-xl" : ""}`,
+          "aria-label": "แชทกับน้องยูนิ",
+          children: /* @__PURE__ */ jsx(Sparkles, { className: "w-6 h-6 animate-pulse" })
+        }
+      ),
+      /* @__PURE__ */ jsxs(
+        Link,
+        {
+          to: "/profile",
+          className: `flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all ${isProfileActive ? "text-brand-gold font-bold scale-105" : "text-text-muted hover:text-text-secondary"}`,
+          children: [
+            /* @__PURE__ */ jsx(Trophy, { className: "w-5 h-5" }),
+            /* @__PURE__ */ jsx("span", { className: "text-[10px] tracking-wide", children: "โปรไฟล์" })
+          ]
+        }
+      )
     ] })
-  ] });
+  ] }) });
 }
 function meta$f() {
   return [{
@@ -7429,7 +7265,7 @@ const route26 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePrope
   __proto__: null,
   action
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-DQ12CMG0.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": true, "module": "/assets/root-BAmMSZFr.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js"], "css": ["/assets/root-BKIbG0vP.css"], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/home": { "id": "routes/home", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/home-CHNX8m4e.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.login": { "id": "routes/auth.login", "parentId": "root", "path": "auth/login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/auth.login-BRO1yDoU.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js", "/assets/supabase-Bgahf4s8.js", "/assets/lock-mkxaEWcG.js", "/assets/loader-circle-fzoYMWxT.js", "/assets/createLucideIcon-BUuMwb1i.js", "/assets/sparkles-DhtfqQXn.js", "/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.register": { "id": "routes/auth.register", "parentId": "root", "path": "auth/register", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/auth.register-GTQlIwuP.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js", "/assets/supabase-Bgahf4s8.js", "/assets/loader-circle-fzoYMWxT.js", "/assets/lock-mkxaEWcG.js", "/assets/sparkles-DhtfqQXn.js", "/assets/user-DW6ub3Ox.js", "/assets/circle-check-Bs20E6gh.js", "/assets/createLucideIcon-BUuMwb1i.js", "/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.callback": { "id": "routes/auth.callback", "parentId": "root", "path": "auth/callback", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/auth.callback-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/dashboard": { "id": "routes/dashboard", "parentId": "root", "path": "dashboard", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/dashboard-DYbue_ce.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-CvrBDtwP.js", "/assets/createLucideIcon-BUuMwb1i.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/profile": { "id": "routes/profile", "parentId": "root", "path": "profile", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/profile-B_q-repI.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-CvrBDtwP.js", "/assets/chevron-left-BSt_3vI3.js", "/assets/user-DW6ub3Ox.js", "/assets/createLucideIcon-BUuMwb1i.js", "/assets/loader-circle-fzoYMWxT.js", "/assets/circle-check-Bs20E6gh.js", "/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/ai-coach": { "id": "routes/ai-coach", "parentId": "root", "path": "ai-coach", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/ai-coach-LkZmU0Lv.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-CvrBDtwP.js", "/assets/chevron-left-BSt_3vI3.js", "/assets/createLucideIcon-BUuMwb1i.js", "/assets/shield-Qzm5ssvW.js", "/assets/user-DW6ub3Ox.js", "/assets/send-BeESdERe.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/dna": { "id": "routes/dna", "parentId": "root", "path": "dna", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/dna-DuX5RJKF.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-CvrBDtwP.js", "/assets/chevron-left-BSt_3vI3.js", "/assets/createLucideIcon-BUuMwb1i.js", "/assets/shield-Qzm5ssvW.js", "/assets/sparkles-DhtfqQXn.js", "/assets/circle-check-Bs20E6gh.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/missions": { "id": "routes/missions", "parentId": "root", "path": "missions", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/missions-Dh4KtJqz.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-CvrBDtwP.js", "/assets/chevron-left-BSt_3vI3.js", "/assets/createLucideIcon-BUuMwb1i.js", "/assets/circle-check-Bs20E6gh.js", "/assets/loader-circle-fzoYMWxT.js", "/assets/send-BeESdERe.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/startup": { "id": "routes/startup", "parentId": "root", "path": "startup", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/startup-CIj6rsG_.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-CvrBDtwP.js", "/assets/chevron-left-BSt_3vI3.js", "/assets/createLucideIcon-BUuMwb1i.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/products": { "id": "routes/products", "parentId": "root", "path": "products", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/products-Xj80X6GH.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-CvrBDtwP.js", "/assets/chevron-left-BSt_3vI3.js", "/assets/search-C_ETRpLD.js", "/assets/createLucideIcon-BUuMwb1i.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/knowledge": { "id": "routes/knowledge", "parentId": "root", "path": "knowledge", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/knowledge-BpsbAKUu.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-CvrBDtwP.js", "/assets/chevron-left-BSt_3vI3.js", "/assets/search-C_ETRpLD.js", "/assets/createLucideIcon-BUuMwb1i.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/functions": { "id": "routes/functions", "parentId": "root", "path": "functions", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/functions-Dl9d8c1R.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-CvrBDtwP.js", "/assets/chevron-left-BSt_3vI3.js", "/assets/createLucideIcon-BUuMwb1i.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/referral.$slug": { "id": "routes/referral.$slug", "parentId": "root", "path": "r/:slug", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/referral._slug-BP0YZsmJ.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.dashboard": { "id": "routes/admin.dashboard", "parentId": "root", "path": "admin", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.dashboard-Dhy5fEFs.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js", "/assets/AdminLayout-DSqo5pPF.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.index": { "id": "routes/admin.products.index", "parentId": "root", "path": "admin/products", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.index-Iv9zi6Pn.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js", "/assets/AdminLayout-DSqo5pPF.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.new": { "id": "routes/admin.products.new", "parentId": "root", "path": "admin/products/new", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.new-CKIOAbQJ.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js", "/assets/AdminLayout-DSqo5pPF.js", "/assets/ProductForm-C0kApf0e.js", "/assets/chevron-left-BSt_3vI3.js", "/assets/createLucideIcon-BUuMwb1i.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.edit": { "id": "routes/admin.products.edit", "parentId": "root", "path": "admin/products/:id", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.edit-oZCwJoke.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/lib-Bd-4dOOm.js", "/assets/AdminLayout-DSqo5pPF.js", "/assets/ProductForm-C0kApf0e.js", "/assets/chevron-left-BSt_3vI3.js", "/assets/createLucideIcon-BUuMwb1i.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.categories": { "id": "routes/admin.categories", "parentId": "root", "path": "admin/categories", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.categories-v68etU7K.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/AdminLayout-DSqo5pPF.js", "/assets/lib-Bd-4dOOm.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.knowledge": { "id": "routes/admin.knowledge", "parentId": "root", "path": "admin/knowledge", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.knowledge-DzXx-eW_.js", "imports": ["/assets/jsx-runtime-QmCdlelV.js", "/assets/AdminLayout-DSqo5pPF.js", "/assets/lib-Bd-4dOOm.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.ai-coach": { "id": "routes/api.ai-coach", "parentId": "root", "path": "api/ai-coach", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.ai-coach-CeQpOKCs.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.contact": { "id": "routes/api.contact", "parentId": "root", "path": "api/contact", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.contact-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.notify": { "id": "routes/api.notify", "parentId": "root", "path": "api/notify", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.notify-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.upload": { "id": "routes/api.upload", "parentId": "root", "path": "api/upload", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.upload-D-72jSv7.js", "imports": ["/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.referral.track": { "id": "routes/api.referral.track", "parentId": "root", "path": "api/referral/track", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.referral.track-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.referral.claim": { "id": "routes/api.referral.claim", "parentId": "root", "path": "api/referral/claim", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.referral.claim-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 } }, "url": "/assets/manifest-146cfa37.js", "version": "146cfa37", "sri": void 0 };
+const serverManifest = { "entry": { "module": "/assets/entry.client-DA1MqMBr.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": true, "module": "/assets/root-CEj7Y-4b.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js"], "css": ["/assets/root-BHyiPfQs.css"], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/home": { "id": "routes/home", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/home-DFpkWr3P.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.login": { "id": "routes/auth.login", "parentId": "root", "path": "auth/login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/auth.login-i2r_uylg.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/supabase-Bgahf4s8.js", "/assets/lock-tg-j5y1W.js", "/assets/loader-circle-ClugHvzK.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/sparkles-VBYeQTwZ.js", "/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.register": { "id": "routes/auth.register", "parentId": "root", "path": "auth/register", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/auth.register-YugqmBkq.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/supabase-Bgahf4s8.js", "/assets/loader-circle-ClugHvzK.js", "/assets/lock-tg-j5y1W.js", "/assets/sparkles-VBYeQTwZ.js", "/assets/user-CiFcqzNc.js", "/assets/circle-check-dz77gtWt.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.callback": { "id": "routes/auth.callback", "parentId": "root", "path": "auth/callback", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/auth.callback-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/dashboard": { "id": "routes/dashboard", "parentId": "root", "path": "dashboard", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/dashboard-Dur34O85.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-BH7ZFD7q.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/sparkles-VBYeQTwZ.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/profile": { "id": "routes/profile", "parentId": "root", "path": "profile", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/profile-DnPSZ3Fk.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-BH7ZFD7q.js", "/assets/chevron-left-CKKzi769.js", "/assets/user-CiFcqzNc.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/loader-circle-ClugHvzK.js", "/assets/circle-check-dz77gtWt.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/sparkles-VBYeQTwZ.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/ai-coach": { "id": "routes/ai-coach", "parentId": "root", "path": "ai-coach", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/ai-coach-CpQAxxI5.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-BH7ZFD7q.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/shield-C6Ik3Uqz.js", "/assets/user-CiFcqzNc.js", "/assets/send-BpXsP_Uv.js", "/assets/sparkles-VBYeQTwZ.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/dna": { "id": "routes/dna", "parentId": "root", "path": "dna", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/dna-9DTqdyKN.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-BH7ZFD7q.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/shield-C6Ik3Uqz.js", "/assets/sparkles-VBYeQTwZ.js", "/assets/circle-check-dz77gtWt.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/missions": { "id": "routes/missions", "parentId": "root", "path": "missions", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/missions-nopRdUP6.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-BH7ZFD7q.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/circle-check-dz77gtWt.js", "/assets/loader-circle-ClugHvzK.js", "/assets/send-BpXsP_Uv.js", "/assets/sparkles-VBYeQTwZ.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/startup": { "id": "routes/startup", "parentId": "root", "path": "startup", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/startup-CsXO-Yhk.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-BH7ZFD7q.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/sparkles-VBYeQTwZ.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/products": { "id": "routes/products", "parentId": "root", "path": "products", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/products-CRYIrcId.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-BH7ZFD7q.js", "/assets/chevron-left-CKKzi769.js", "/assets/search-C1mijbOb.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/sparkles-VBYeQTwZ.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/knowledge": { "id": "routes/knowledge", "parentId": "root", "path": "knowledge", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/knowledge-yHI_zBhL.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-BH7ZFD7q.js", "/assets/chevron-left-CKKzi769.js", "/assets/search-C1mijbOb.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/sparkles-VBYeQTwZ.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/functions": { "id": "routes/functions", "parentId": "root", "path": "functions", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/functions-zze1n5uG.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-BH7ZFD7q.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/sparkles-VBYeQTwZ.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/referral.$slug": { "id": "routes/referral.$slug", "parentId": "root", "path": "r/:slug", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/referral._slug-w8Mro7T2.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.dashboard": { "id": "routes/admin.dashboard", "parentId": "root", "path": "admin", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.dashboard-Dzq4cQny.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/AdminLayout-DEw3PqKp.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.index": { "id": "routes/admin.products.index", "parentId": "root", "path": "admin/products", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.index-DJM-9Q4S.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/AdminLayout-DEw3PqKp.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.new": { "id": "routes/admin.products.new", "parentId": "root", "path": "admin/products/new", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.new-Cs_z3k1L.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/AdminLayout-DEw3PqKp.js", "/assets/ProductForm-Cz_7Fz2b.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.edit": { "id": "routes/admin.products.edit", "parentId": "root", "path": "admin/products/:id", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.edit-CKhOpx1x.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/AdminLayout-DEw3PqKp.js", "/assets/ProductForm-Cz_7Fz2b.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.categories": { "id": "routes/admin.categories", "parentId": "root", "path": "admin/categories", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.categories-CFH2H94f.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/AdminLayout-DEw3PqKp.js", "/assets/lib-D1UVQ_Lx.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.knowledge": { "id": "routes/admin.knowledge", "parentId": "root", "path": "admin/knowledge", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.knowledge-CyTWLtLY.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/AdminLayout-DEw3PqKp.js", "/assets/lib-D1UVQ_Lx.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.ai-coach": { "id": "routes/api.ai-coach", "parentId": "root", "path": "api/ai-coach", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.ai-coach-CeQpOKCs.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.contact": { "id": "routes/api.contact", "parentId": "root", "path": "api/contact", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.contact-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.notify": { "id": "routes/api.notify", "parentId": "root", "path": "api/notify", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.notify-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.upload": { "id": "routes/api.upload", "parentId": "root", "path": "api/upload", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.upload-D-72jSv7.js", "imports": ["/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.referral.track": { "id": "routes/api.referral.track", "parentId": "root", "path": "api/referral/track", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.referral.track-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.referral.claim": { "id": "routes/api.referral.claim", "parentId": "root", "path": "api/referral/claim", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.referral.claim-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 } }, "url": "/assets/manifest-51531664.js", "version": "51531664", "sri": void 0 };
 const assetsBuildDirectory = "build\\client";
 const basename = "/";
 const future = { "unstable_optimizeDeps": false };
