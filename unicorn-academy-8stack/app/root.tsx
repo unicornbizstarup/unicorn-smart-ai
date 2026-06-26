@@ -25,11 +25,12 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader(_: LoaderFunctionArgs) {
+  // Read from process.env (Cloudflare Workers [vars] bindings via nodejs_compat)
   return {
     ENV: {
-      VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-      VITE_SUPABASE_ANON_KEY: process.env.VITE_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
+      VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+      VITE_SUPABASE_ANON_KEY: process.env.VITE_SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
     },
   };
 }
