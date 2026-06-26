@@ -16,7 +16,7 @@ import { execSync } from "child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const serverBundle = join(__dirname, "build", "server", "index.js");
+const serverBundle = join(__dirname, "build", "server", "worker.js");
 const workerOutput = join(__dirname, "build", "client", "_worker.js");
 const workerEntry = join(__dirname, "worker-entry.js");
 
@@ -25,10 +25,9 @@ if (!existsSync(serverBundle)) {
   process.exit(1);
 }
 
-// Create a temporary worker entry that imports the server bundle
 const entryContent = `
 import { createPagesFunctionHandler } from "@react-router/cloudflare";
-import * as build from "./build/server/index.js";
+import * as build from "./build/server/worker.js";
 
 const handler = createPagesFunctionHandler({
   build,
@@ -39,6 +38,16 @@ const handler = createPagesFunctionHandler({
 
 export default {
   async fetch(request, env, ctx) {
+    // 1. Try to serve static assets first (SPA Client-side files)
+    try {
+      const assetResponse = await env.ASSETS.fetch(request);
+      if (assetResponse.status !== 404) {
+        return assetResponse;
+      }
+    } catch (e) {}
+
+    // 2. Fall back to React Router API / SSR
+    globalThis.CF_ENV = env;
     return handler({
       request,
       env,

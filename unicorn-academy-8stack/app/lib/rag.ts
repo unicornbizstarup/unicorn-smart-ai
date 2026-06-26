@@ -4,11 +4,16 @@
 // ═══════════════════════════════════════════════════════
 import type { KnowledgeSearchResult } from "@/types/index";
 
-const WORKERS_URL = process.env.WORKERS_URL!;
+function getWorkersUrl(): string {
+  // @ts-ignore
+  const cfEnv = (typeof globalThis !== "undefined" ? (globalThis as any).CF_ENV : null) || {};
+  return cfEnv.WORKERS_URL || process.env.WORKERS_URL || "https://unicorn-smart-ai-proxy.lifetutorthailand.workers.dev";
+}
 
 // ── Generate embedding via CF Workers → Gemini ──
 export async function embedText(text: string): Promise<number[]> {
-  const res = await fetch(`${WORKERS_URL}/embed`, {
+  const workersUrl = getWorkersUrl();
+  const res = await fetch(`${workersUrl}/embed`, {
     method:  "POST",
     headers: { "Content-Type": "application/json" },
     body:    JSON.stringify({ text: text.slice(0, 8192) }), // Gemini limit

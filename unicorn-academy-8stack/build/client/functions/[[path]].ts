@@ -1,16 +1,10 @@
 /**
- * functions/[[path]].ts — Cloudflare Pages Functions SSR handler
- *
- * Serves static assets first (via ASSETS binding),
- * then falls back to React Router SSR.
- *
- * getLoadContext returns undefined so React Router creates
- * a default RouterContextProvider (required in react-router v8.0.1+).
+ * build/client/functions/[[path]].ts — Cloudflare Pages Functions SSR handler
+ * Generated automatically at build time.
  */
 import { createRequestHandler } from "@react-router/cloudflare";
-
-// @ts-ignore — generated at build time
-import * as build from "../build/server/worker.js";
+// @ts-ignore — resolved from build/client/server-bundle.js
+import * as build from "../server-bundle.js";
 
 const handler = createRequestHandler({
   build,

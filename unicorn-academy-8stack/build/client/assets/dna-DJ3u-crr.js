@@ -1,4 +1,4 @@
-import{w as I,u as M,a as R,r as l,j as e}from"./jsx-runtime-CS9HHHez.js";import{L as u}from"./lib-D1UVQ_Lx.js";import"./api.ai-coach-CeQpOKCs.js";import{c as D}from"./supabase-Bgahf4s8.js";import{M as L}from"./MemberLayout-BH7ZFD7q.js";import{C as g}from"./chevron-left-CKKzi769.js";import{c as r}from"./createLucideIcon-DXbFMavo.js";import{S as $,B as W}from"./shield-C6Ik3Uqz.js";import{S as f}from"./sparkles-VBYeQTwZ.js";import{C as y}from"./circle-check-dz77gtWt.js";/**
+import{w as I,u as M,a as R,r as l,j as e}from"./jsx-runtime-CS9HHHez.js";import{L as u}from"./lib-D1UVQ_Lx.js";import"./api.ai-coach-CeQpOKCs.js";import{c as D}from"./supabase-Bgahf4s8.js";import{M as L}from"./MemberLayout-DWQT76sm.js";import{C as g}from"./chevron-left-CKKzi769.js";import{c as r}from"./createLucideIcon-DXbFMavo.js";import{S as $,B as W}from"./shield-C6Ik3Uqz.js";import{S as f}from"./sparkles-VBYeQTwZ.js";import{C as y}from"./circle-check-dz77gtWt.js";/**
  * @license lucide-react v0.562.0 - ISC
  *
  * This source code is licensed under the ISC license.

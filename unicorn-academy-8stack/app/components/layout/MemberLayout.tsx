@@ -24,9 +24,9 @@ export default function MemberLayout({ children, profile, title, subtitle, actio
   const isProfileActive = currentPath.startsWith("/profile") || currentPath.startsWith("/dna");
 
   return (
-    <div className="min-h-screen bg-[#f1eeeb] flex items-center justify-center p-0 sm:p-4 font-body">
+    <div className="min-h-screen bg-[var(--bg-page)] flex items-center justify-center p-0 sm:p-6 font-body">
       {/* Centered Mobile Frame Wrapper */}
-      <div className="w-full max-w-[430px] min-h-screen sm:min-h-[850px] sm:max-h-[900px] bg-bg-page shadow-2xl relative flex flex-col pb-20 overflow-x-hidden sm:rounded-[2.5rem] sm:border-[8px] sm:border-slate-800">
+      <div className="w-full max-w-[430px] min-h-screen sm:min-h-[850px] sm:max-h-[900px] bg-[var(--bg-page)] shadow-2xl relative flex flex-col pb-20 overflow-x-hidden sm:rounded-[2.5rem] sm:border-[6px] sm:border-[var(--border-strong)]">
         
         {/* Header Bar - Height 56px */}
         <header className="h-14 bg-white/85 backdrop-blur-md border-b border-border-default flex items-center justify-between px-4 shrink-0 sticky top-0 z-30">

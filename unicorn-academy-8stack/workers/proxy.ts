@@ -60,15 +60,22 @@ export default {
           message: string;
         };
 
+        // Filter out empty content entries to prevent Gemini "empty output" error
+        const filteredHistory = history.filter(
+          h => h.content && h.content.trim().length > 0
+        );
+
+        const safeMessage = message?.trim() || "สวัสดี";
+
         const contents = [
-          ...history.map(h => ({
+          ...filteredHistory.map(h => ({
             role:  h.role === "user" ? "user" : "model",
             parts: [{ text: h.content }],
           })),
-          { role: "user", parts: [{ text: message }] },
+          { role: "user", parts: [{ text: safeMessage }] },
         ];
 
-        const res = await fetch(
+        const geminiRes = await fetch(
           `${GEMINI_BASE}/models/gemini-2.0-flash:generateContent?key=${env.GEMINI_API_KEY}`,
           {
             method:  "POST",
@@ -80,9 +87,25 @@ export default {
             }),
           }
         );
-        const data = await res.json() as {
-          candidates?: Array<{ content: { parts: Array<{ text: string }> } }>
+
+        // Check HTTP status first
+        if (!geminiRes.ok) {
+          const errText = await geminiRes.text();
+          console.error(`Gemini API error ${geminiRes.status}:`, errText);
+          return json({ error: `Gemini API error: ${geminiRes.status}`, detail: errText }, 502);
+        }
+
+        const data = await geminiRes.json() as {
+          candidates?: Array<{ content: { parts: Array<{ text: string }> } }>;
+          error?: { message: string; code: number };
         };
+
+        // Check for API-level error in response body
+        if (data.error) {
+          console.error("Gemini API body error:", data.error);
+          return json({ error: data.error.message }, 502);
+        }
+
         const reply = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "ขออภัย ไม่สามารถตอบได้ในขณะนี้";
         return json({ reply });
       }

@@ -2,11 +2,16 @@ import { createServerClient, parseCookieHeader, serializeCookieHeader } from "@s
 import { createClient } from "@supabase/supabase-js";
 
 export function createServerSupabase(request: Request, responseHeaders: Headers = new Headers()) {
-  const url = process.env.VITE_SUPABASE_URL ||
+  // @ts-ignore
+  const cfEnv = (typeof globalThis !== "undefined" ? (globalThis as any).CF_ENV : null) || {};
+
+  const url = cfEnv.VITE_SUPABASE_URL ||
+    process.env.VITE_SUPABASE_URL ||
     process.env.NEXT_PUBLIC_SUPABASE_URL ||
     "https://placeholder.supabase.co";
 
-  const anonKey = process.env.VITE_SUPABASE_ANON_KEY ||
+  const anonKey = cfEnv.VITE_SUPABASE_ANON_KEY ||
+    process.env.VITE_SUPABASE_ANON_KEY ||
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
     "placeholder-build-key";
 
@@ -28,11 +33,16 @@ export function createServerSupabase(request: Request, responseHeaders: Headers 
 }
 
 export function createServiceSupabase() {
-  const url = process.env.VITE_SUPABASE_URL ||
+  // @ts-ignore
+  const cfEnv = (typeof globalThis !== "undefined" ? (globalThis as any).CF_ENV : null) || {};
+
+  const url = cfEnv.VITE_SUPABASE_URL ||
+    process.env.VITE_SUPABASE_URL ||
     process.env.NEXT_PUBLIC_SUPABASE_URL ||
     "https://placeholder.supabase.co";
 
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  const serviceKey = cfEnv.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
     "placeholder-build-key";
 
   return createClient(url, serviceKey, {

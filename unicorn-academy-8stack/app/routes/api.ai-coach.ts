@@ -74,7 +74,9 @@ ${ragContext}`;
     const message = lastMsg.parts?.[0]?.text || lastMsg.content || "";
 
     // 5. Query Workers Proxy chat endpoint
-    const workersUrl = process.env.WORKERS_URL || "https://workers-proxy.unicorn.workers.dev";
+    // @ts-ignore
+    const cfEnv = (typeof globalThis !== "undefined" ? (globalThis as any).CF_ENV : null) || {};
+    const workersUrl = cfEnv.WORKERS_URL || process.env.WORKERS_URL || "https://unicorn-smart-ai-proxy.unicornbizstarup.workers.dev";
     const res = await fetch(`${workersUrl}/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -86,10 +88,16 @@ ${ragContext}`;
     });
 
     if (!res.ok) {
-      throw new Error(`Workers proxy endpoint failed with status ${res.status}`);
+      const errBody = await res.text();
+      console.error("Worker error response:", res.status, errBody);
+      throw new Error(`Workers proxy error ${res.status}: ${errBody}`);
     }
 
-    const { reply } = await res.json() as { reply: string };
+    const workerData = await res.json() as { reply?: string; error?: string };
+    if (workerData.error) {
+      throw new Error(`Gemini API error: ${workerData.error}`);
+    }
+    const reply = workerData.reply ?? "ขออภัย ไม่สามารถตอบได้ในขณะนี้";
 
     return new Response(JSON.stringify({
       candidates: [

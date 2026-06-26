@@ -169,32 +169,32 @@ export default function AICoachPage() {
     >
       <div className="flex flex-col h-[calc(100vh-180px)] bg-bg-card border border-border-default rounded-3xl overflow-hidden shadow-md relative font-body">
         {/* Header */}
-        <header className="px-6 py-4 flex flex-col sm:flex-row items-center justify-between shrink-0 gap-4 border-b border-border-default bg-white relative z-10">
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
-            <Link to="/dashboard" className="flex items-center gap-1.5 text-text-secondary hover:text-brand-gold transition-colors font-semibold text-xs">
+        <header className="px-4 py-3 flex flex-col gap-3 shrink-0 border-b border-border-default bg-white relative z-10 w-full">
+          <div className="flex items-center justify-between w-full">
+            <Link to="/dashboard" className="flex items-center gap-1 text-text-secondary hover:text-brand-gold transition-colors font-semibold text-xs py-1">
               <ChevronLeft size={16} />
               <span>แดชบอร์ด</span>
             </Link>
 
-            <span className="text-emerald-700 font-bold text-xs bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-full flex items-center gap-1.5 shrink-0 select-none">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-emerald-700 font-bold text-[11px] bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full flex items-center gap-1.5 shrink-0 select-none">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               น้องยูนิ ออนไลน์ 24 ชม.
             </span>
           </div>
 
           {/* Focus Selector */}
-          <div className="flex bg-bg-input p-1 rounded-xl border border-border-default overflow-x-auto no-scrollbar max-w-full">
+          <div className="flex bg-bg-input p-1 rounded-xl border border-border-default overflow-x-auto no-scrollbar w-full justify-between gap-1">
             {focusOptions.map((f) => (
               <button
                 key={f.id}
                 onClick={() => setFocusArea(f.id as FocusArea)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
+                className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap ${
                   focusArea === f.id
                     ? "bg-brand-gold text-white shadow-sm"
                     : "text-text-secondary hover:text-text-primary hover:bg-white/50"
                 }`}
               >
-                <f.icon size={13} />
+                <f.icon size={12} />
                 <span>{f.label}</span>
               </button>
             ))}
