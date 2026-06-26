@@ -1,0 +1,344 @@
+
+<style>
+:root {
+  --gold: #b8924a;
+  --gold-light: #f5e8d0;
+  --gold-muted: #d4a96e;
+  --dark: #1a1209;
+  --sidebar-bg: #ffffff;
+  --sidebar-border: #e8e2d9;
+  --body-bg: #f7f4ef;
+  --card-bg: #ffffff;
+  --card-border: #ece6dc;
+  --text-primary: #1a1209;
+  --text-secondary: #6b5e4a;
+  --text-muted: #9e8e78;
+  --nav-active: #faf5ec;
+  --badge-green: #d1f0e0;
+  --badge-green-text: #1a6640;
+  --badge-amber: #fde8c0;
+  --badge-amber-text: #7a4e10;
+  --badge-blue: #dbeafe;
+  --badge-blue-text: #1e3a8a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', system-ui, sans-serif; }
+
+.app { display: flex; height: 560px; background: var(--body-bg); border-radius: 12px; overflow: hidden; border: 0.5px solid var(--card-border); font-size: 13px; }
+
+/* Sidebar */
+.sidebar { width: 210px; background: var(--sidebar-bg); border-right: 0.5px solid var(--sidebar-border); display: flex; flex-direction: column; flex-shrink: 0; }
+
+.logo-area { padding: 16px 16px 12px; border-bottom: 0.5px solid var(--sidebar-border); }
+.logo-row { display: flex; align-items: center; gap: 8px; }
+.logo-icon { width: 28px; height: 28px; background: var(--gold); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.logo-text { font-size: 13px; font-weight: 600; color: var(--text-primary); letter-spacing: 0.01em; }
+.logo-sub { font-size: 10px; color: var(--text-muted); margin-top: 1px; letter-spacing: 0.05em; text-transform: uppercase; }
+
+.nav-section { padding: 10px 8px 4px; }
+.nav-label { font-size: 10px; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; padding: 0 8px; margin-bottom: 4px; }
+
+.nav-item { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: 8px; cursor: pointer; color: var(--text-secondary); font-size: 12.5px; transition: background 0.15s; margin-bottom: 1px; }
+.nav-item:hover { background: var(--nav-active); }
+.nav-item.active { background: var(--gold-light); color: var(--gold); font-weight: 600; }
+.nav-item.active .nav-icon { color: var(--gold); }
+.nav-icon { width: 16px; height: 16px; opacity: 0.65; }
+.nav-item.active .nav-icon { opacity: 1; }
+
+.badge-num { margin-left: auto; background: var(--gold); color: white; font-size: 10px; font-weight: 600; border-radius: 10px; padding: 1px 6px; min-width: 18px; text-align: center; }
+
+.sidebar-footer { margin-top: auto; padding: 12px; border-top: 0.5px solid var(--sidebar-border); }
+.user-row { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px; cursor: pointer; }
+.user-row:hover { background: var(--nav-active); }
+.avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--gold-light), var(--gold-muted)); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--gold); border: 1.5px solid var(--gold-muted); flex-shrink: 0; }
+.user-name { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+.user-level { font-size: 10px; color: var(--text-muted); }
+
+/* Main content */
+.main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; min-width: 0; }
+
+/* Top bar */
+.topbar { background: var(--card-bg); border-bottom: 0.5px solid var(--card-border); padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.topbar-title { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.topbar-sub { font-size: 12px; color: var(--text-muted); margin-left: 2px; }
+.topbar-actions { margin-left: auto; display: flex; gap: 8px; }
+.btn-gold { background: var(--gold); color: white; border: none; border-radius: 7px; padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer; letter-spacing: 0.02em; }
+.btn-outline { background: transparent; color: var(--text-secondary); border: 0.5px solid var(--card-border); border-radius: 7px; padding: 6px 12px; font-size: 12px; cursor: pointer; }
+.btn-outline:hover { background: var(--nav-active); }
+
+/* Content area */
+.content { padding: 18px 20px; flex: 1; }
+
+/* Stats row */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px; }
+.stat-card { background: var(--card-bg); border: 0.5px solid var(--card-border); border-radius: 10px; padding: 12px 14px; }
+.stat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.03em; text-transform: uppercase; margin-bottom: 6px; }
+.stat-value { font-size: 22px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+.stat-change { font-size: 11px; margin-top: 4px; }
+.up { color: #16a34a; }
+.down { color: #dc2626; }
+.stat-icon { float: right; margin-top: -2px; font-size: 20px; opacity: 0.2; }
+
+/* Two-column grid */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.full-col { grid-column: 1 / -1; }
+
+.card { background: var(--card-bg); border: 0.5px solid var(--card-border); border-radius: 10px; padding: 14px 16px; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.card-title { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.card-action { font-size: 11px; color: var(--gold); cursor: pointer; font-weight: 600; }
+
+/* Mission list */
+.mission-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--card-border); }
+.mission-item:last-child { border-bottom: none; }
+.mission-icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.icon-mindset { background: #ffe8f0; }
+.icon-skillset { background: #e8f0ff; }
+.icon-toolset { background: #e8fff0; }
+.mission-title { font-size: 12.5px; font-weight: 600; color: var(--text-primary); }
+.mission-cat { font-size: 10px; color: var(--text-muted); margin-top: 1px; text-transform: uppercase; letter-spacing: 0.04em; }
+.mission-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.badge { font-size: 10px; font-weight: 600; border-radius: 6px; padding: 2px 8px; }
+.badge-green { background: var(--badge-green); color: var(--badge-green-text); }
+.badge-amber { background: var(--badge-amber); color: var(--badge-amber-text); }
+.badge-blue { background: var(--badge-blue); color: var(--badge-blue-text); }
+
+/* UBC level progress */
+.ubc-bar-wrap { margin-top: 8px; }
+.ubc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.ubc-label { font-size: 12px; color: var(--text-secondary); }
+.ubc-val { font-size: 12px; font-weight: 600; color: var(--gold); }
+.progress-track { height: 6px; background: var(--gold-light); border-radius: 6px; overflow: hidden; margin-bottom: 10px; }
+.progress-fill { height: 100%; background: var(--gold); border-radius: 6px; transition: width 1s ease; }
+
+/* Wealth DNA */
+.dna-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+.dna-element { border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 8px; }
+.dna-earth { background: #f0f5e8; }
+.dna-water { background: #e8f3ff; }
+.dna-air   { background: #f0eeff; }
+.dna-fire  { background: #fff3e8; }
+.dna-icon  { font-size: 18px; }
+.dna-name  { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+.dna-score { font-size: 11px; color: var(--text-muted); }
+.dna-active { ring: 2px solid var(--gold); outline: 2px solid var(--gold-muted); }
+
+/* Quick links */
+.quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.quick-btn { background: var(--body-bg); border: 0.5px solid var(--card-border); border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; transition: border-color 0.15s; }
+.quick-btn:hover { border-color: var(--gold-muted); background: var(--gold-light); }
+.quick-btn-icon { font-size: 18px; margin-bottom: 4px; }
+.quick-btn-label { font-size: 11px; color: var(--text-secondary); font-weight: 600; }
+</style>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="logo-area">
+      <div class="logo-row">
+        <div class="logo-icon">🦄</div>
+        <div>
+          <div class="logo-text">Unicorn Academy</div>
+          <div class="logo-sub">Smart AI Platform</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Main</div>
+      <div class="nav-item active">
+        <i class="ti ti-layout-dashboard nav-icon" aria-hidden="true"></i>
+        Dashboard
+      </div>
+      <div class="nav-item">
+        <i class="ti ti-brain nav-icon" aria-hidden="true"></i>
+        น้องยูนิ (AI Coach)
+        <span class="badge-num">3</span>
+      </div>
+      <div class="nav-item">
+        <i class="ti ti-trophy nav-icon" aria-hidden="true"></i>
+        Missions
+      </div>
+      <div class="nav-item">
+        <i class="ti ti-dna nav-icon" aria-hidden="true"></i>
+        Wealth DNA
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Profile</div>
+      <div class="nav-item">
+        <i class="ti ti-id-badge nav-icon" aria-hidden="true"></i>
+        Name Card
+      </div>
+      <div class="nav-item">
+        <i class="ti ti-link nav-icon" aria-hidden="true"></i>
+        Referral Link
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Admin</div>
+      <div class="nav-item">
+        <i class="ti ti-settings nav-icon" aria-hidden="true"></i>
+        Settings
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-row">
+        <div class="avatar">KD</div>
+        <div>
+          <div class="user-name">ครูเด่น</div>
+          <div class="user-level">UBC Level 3 · FIRE 🔥</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <span class="topbar-title">Dashboard</span>
+        <span class="topbar-sub"> — สวัสดีตอนเช้า ครูเด่น 👋</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-outline">รายงาน</button>
+        <button class="btn-gold">+ เพิ่ม Mission</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">UBC Score <span class="stat-icon">⚡</span></div>
+          <div class="stat-value">4,820</div>
+          <div class="stat-change up">↑ +240 สัปดาห์นี้</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Missions Done <span class="stat-icon">✅</span></div>
+          <div class="stat-value">28</div>
+          <div class="stat-change up">↑ 3 ภารกิจใหม่</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Referrals <span class="stat-icon">👥</span></div>
+          <div class="stat-value">12</div>
+          <div class="stat-change up">↑ +2 คนใหม่</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">AI Sessions <span class="stat-icon">🤖</span></div>
+          <div class="stat-value">64</div>
+          <div class="stat-change">เดือนนี้</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Active Missions</span>
+            <span class="card-action">ดูทั้งหมด →</span>
+          </div>
+          <div class="mission-item">
+            <div class="mission-icon icon-mindset">🧠</div>
+            <div>
+              <div class="mission-title">Growth Mindset 30 วัน</div>
+              <div class="mission-cat">Mindset</div>
+            </div>
+            <div class="mission-right">
+              <span class="badge badge-amber">In Progress</span>
+            </div>
+          </div>
+          <div class="mission-item">
+            <div class="mission-icon icon-skillset">🎯</div>
+            <div>
+              <div class="mission-title">Pitch Like a Pro</div>
+              <div class="mission-cat">Skillset</div>
+            </div>
+            <div class="mission-right">
+              <span class="badge badge-green">Completed</span>
+            </div>
+          </div>
+          <div class="mission-item">
+            <div class="mission-icon icon-toolset">🛠️</div>
+            <div>
+              <div class="mission-title">AI Tools Mastery</div>
+              <div class="mission-cat">Toolset</div>
+            </div>
+            <div class="mission-right">
+              <span class="badge badge-blue">Verified</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">UBC Level Progress</span>
+            <span class="card-action">Level 3</span>
+          </div>
+          <div class="ubc-bar-wrap">
+            <div class="ubc-row"><span class="ubc-label">Mindset</span><span class="ubc-val">82%</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:82%"></div></div>
+            <div class="ubc-row"><span class="ubc-label">Skillset</span><span class="ubc-val">67%</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:67%"></div></div>
+            <div class="ubc-row"><span class="ubc-label">Toolset</span><span class="ubc-val">55%</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:55%"></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Wealth DNA</span>
+            <span class="card-action">แก้ไข</span>
+          </div>
+          <div class="dna-grid">
+            <div class="dna-element dna-earth">
+              <span class="dna-icon">🌍</span>
+              <div><div class="dna-name">Earth</div><div class="dna-score">Score 74</div></div>
+            </div>
+            <div class="dna-element dna-water">
+              <span class="dna-icon">💧</span>
+              <div><div class="dna-name">Water</div><div class="dna-score">Score 61</div></div>
+            </div>
+            <div class="dna-element dna-fire dna-active">
+              <span class="dna-icon">🔥</span>
+              <div><div class="dna-name">Fire ✦</div><div class="dna-score">Score 91</div></div>
+            </div>
+            <div class="dna-element dna-air">
+              <span class="dna-icon">💨</span>
+              <div><div class="dna-name">Air</div><div class="dna-score">Score 58</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">Quick Actions</span></div>
+          <div class="quick-grid">
+            <div class="quick-btn">
+              <div class="quick-btn-icon">🤖</div>
+              <div class="quick-btn-label">ถามน้องยูนิ</div>
+            </div>
+            <div class="quick-btn">
+              <div class="quick-btn-icon">🔗</div>
+              <div class="quick-btn-label">Referral Link</div>
+            </div>
+            <div class="quick-btn">
+              <div class="quick-btn-icon">🪪</div>
+              <div class="quick-btn-label">Name Card</div>
+            </div>
+            <div class="quick-btn">
+              <div class="quick-btn-icon">📊</div>
+              <div class="quick-btn-label">รายงาน</div>
+            </div>
+            <div class="quick-btn">
+              <div class="quick-btn-icon">🎯</div>
+              <div class="quick-btn-label">New Mission</div>
+            </div>
+            <div class="quick-btn">
+              <div class="quick-btn-icon">🧬</div>
+              <div class="quick-btn-label">DNA Quiz</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,387 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#c0281e;--red-mid:#d63b20;--orange:#e8621a;--amber:#f5a623;
+  --dark:#0d0d0d;--dark2:#141414;--dark3:#1a1a1a;--dark4:#222;
+  --card-border:rgba(255,255,255,.08);--card-hover:rgba(255,255,255,.04);
+  --t1:#ffffff;--t2:rgba(255,255,255,.75);--t3:rgba(255,255,255,.45);--t4:rgba(255,255,255,.25);
+  --gold:#f5a623;--gold-dim:rgba(245,166,35,.15);--gold-border:rgba(245,166,35,.3);
+  --red-dim:rgba(192,40,30,.15);--red-border:rgba(192,40,30,.3);
+}
+.page{background:var(--dark);color:var(--t1);font-family:'Sarabun',system-ui,sans-serif;font-size:14px;line-height:1.6}
+
+/* ── TOP BRAND BAR ── */
+.brand-bar{background:var(--dark2);border-bottom:.5px solid var(--card-border);padding:10px 20px;display:flex;align-items:center;gap:10px}
+.brand-u{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#c0281e,#e8621a);display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:900;flex-shrink:0}
+.brand-text-main{font-size:13px;font-weight:800;color:#fff;letter-spacing:.03em}
+.brand-text-sub{font-size:9px;font-weight:600;color:var(--t3);letter-spacing:.1em;text-transform:uppercase}
+.brand-bar-right{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:10px;color:var(--t3)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0}
+
+/* ── ACCENT LINE ── */
+.accent-line{height:3px;background:linear-gradient(90deg,#c0281e 0%,#e8621a 50%,#f5a623 100%)}
+
+/* ── HERO ── */
+.hero{padding:32px 20px 24px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(192,40,30,.18) 0%,transparent 70%);pointer-events:none}
+.hero-avatar{width:72px;height:72px;border-radius:18px;background:linear-gradient(135deg,#c0281e,#e8621a);display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;font-weight:900;margin:0 auto 12px;border:2px solid rgba(245,166,35,.35);position:relative;z-index:1}
+.hero-ubc{display:inline-flex;align-items:center;gap:5px;background:var(--gold-dim);border:.5px solid var(--gold-border);border-radius:20px;padding:3px 12px;font-size:10px;font-weight:800;color:var(--gold);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px}
+.hero-name{font-size:20px;font-weight:900;color:#fff;line-height:1.15;margin-bottom:3px}
+.hero-role{font-size:12.5px;color:var(--t3);font-weight:600;letter-spacing:.03em;margin-bottom:14px}
+.hero-quote{font-size:13px;color:var(--t2);font-style:italic;line-height:1.6;max-width:300px;margin:0 auto 18px;padding:0 8px}
+.hero-quote::before{content:'"';color:var(--gold);font-size:20px;line-height:0;vertical-align:-.3em;margin-right:2px}
+.hero-quote::after{content:'"';color:var(--gold);font-size:20px;line-height:0;vertical-align:-.3em;margin-left:2px}
+
+/* ── PHOTOS ── */
+.photos-section{padding:0 16px 24px}
+.photos-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.photo-card{border-radius:10px;overflow:hidden;aspect-ratio:3/4;position:relative;background:var(--dark3);border:.5px solid var(--card-border)}
+.photo-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.photo-icon{font-size:28px;color:var(--t4)}
+.photo-label{font-size:10px;color:var(--t4);font-weight:600;text-align:center;padding:0 8px}
+.photo-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(13,13,13,.85) 100%)}
+.photo-caption{position:absolute;bottom:8px;left:8px;right:8px;font-size:10px;font-weight:700;color:#fff}
+
+/* ── BIO ── */
+.bio-section{margin:0 16px 20px;background:var(--dark3);border:.5px solid var(--card-border);border-radius:12px;overflow:hidden}
+.bio-header{padding:12px 14px;border-bottom:.5px solid var(--card-border);display:flex;align-items:center;gap:8px}
+.bio-icon{width:24px;height:24px;border-radius:6px;background:var(--red-dim);border:.5px solid var(--red-border);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--orange)}
+.bio-title{font-size:11.5px;font-weight:800;color:#fff}
+.bio-body{padding:14px}
+.bio-name-big{font-size:16px;font-weight:900;color:#fff;margin-bottom:2px}
+.bio-title-role{font-size:11.5px;color:var(--gold);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.bio-title-role::before{content:'';width:16px;height:2px;border-radius:1px;background:linear-gradient(90deg,var(--red),var(--orange));flex-shrink:0}
+.bio-desc{font-size:12.5px;color:var(--t2);line-height:1.7}
+.skill-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.skill-chip{background:rgba(255,255,255,.06);border:.5px solid var(--card-border);border-radius:20px;padding:3px 10px;font-size:10.5px;font-weight:600;color:var(--t2)}
+
+/* ── DIVIDER TITLE ── */
+.section-header{text-align:center;padding:20px 20px 14px}
+.section-supertag{display:inline-flex;align-items:center;gap:5px;background:var(--gold-dim);border:.5px solid var(--gold-border);border-radius:20px;padding:4px 12px;font-size:9.5px;font-weight:800;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.section-tag-dot{width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.section-title{font-size:22px;font-weight:900;color:#fff;line-height:1.2}
+.section-title span{color:var(--amber)}
+.section-desc{font-size:12.5px;color:var(--t3);margin-top:6px;line-height:1.6}
+
+/* ── PRODUCTS ── */
+.products-section{padding:0 16px 24px}
+.products-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.product-card{background:var(--dark3);border:.5px solid var(--card-border);border-radius:10px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;transition:border-color .2s;cursor:default}
+.product-card:hover{border-color:rgba(255,255,255,.16)}
+.product-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ic-health{background:rgba(16,185,129,.15);border:.5px solid rgba(16,185,129,.25);color:#34d399}
+.ic-skin{background:rgba(236,72,153,.15);border:.5px solid rgba(236,72,153,.25);color:#f472b6}
+.ic-personal{background:rgba(99,102,241,.15);border:.5px solid rgba(99,102,241,.25);color:#818cf8}
+.ic-agri{background:rgba(132,204,22,.15);border:.5px solid rgba(132,204,22,.25);color:#a3e635}
+.ic-tech{background:rgba(245,166,35,.15);border:.5px solid rgba(245,166,35,.25);color:#f5a623}
+.product-name{font-size:12.5px;font-weight:800;color:#fff;margin-bottom:2px}
+.product-desc{font-size:11px;color:var(--t3);line-height:1.4}
+.product-wide{grid-column:1/-1}
+
+/* ── BIZ ADVANTAGES ── */
+.adv-section{padding:0 16px 24px}
+.adv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.adv-card{background:var(--dark3);border:.5px solid var(--card-border);border-radius:10px;padding:14px}
+.adv-icon-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.adv-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-eco{background:rgba(245,166,35,.15);border:.5px solid rgba(245,166,35,.25);color:var(--gold)}
+.ai-product{background:rgba(139,92,246,.15);border:.5px solid rgba(139,92,246,.25);color:#a78bfa}
+.ai-digital{background:rgba(192,40,30,.15);border:.5px solid rgba(192,40,30,.3);color:#f87171}
+.ai-reward{background:rgba(234,179,8,.15);border:.5px solid rgba(234,179,8,.25);color:#fbbf24}
+.adv-title{font-size:11px;font-weight:800;color:#fff;letter-spacing:.04em;text-transform:uppercase}
+.adv-desc{font-size:11.5px;color:var(--t3);line-height:1.5}
+
+/* ── CTA ── */
+.cta-section{padding:4px 16px 24px}
+.cta-card{background:linear-gradient(135deg,rgba(192,40,30,.2),rgba(232,98,26,.15));border:.5px solid rgba(192,40,30,.35);border-radius:14px;padding:20px 16px;text-align:center}
+.cta-title{font-size:17px;font-weight:900;color:#fff;margin-bottom:4px}
+.cta-desc{font-size:12px;color:var(--t3);margin-bottom:16px;line-height:1.5}
+.cta-btn{width:100%;background:linear-gradient(135deg,#c0281e,#e8621a);border:none;border-radius:12px;padding:14px 20px;color:#fff;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;letter-spacing:.02em}
+.cta-sub{font-size:11px;color:var(--t4);display:flex;align-items:center;justify-content:center;gap:5px}
+.cta-line{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:.5px solid var(--card-border);border-radius:8px;padding:8px 12px;margin-top:10px;font-size:11.5px;color:var(--t2)}
+.cta-line strong{color:#fff}
+
+/* ── FEATURES MINI ── */
+.features-strip{display:flex;gap:8px;padding:0 16px 20px;overflow-x:auto}
+.feat-item{background:var(--dark3);border:.5px solid var(--card-border);border-radius:8px;padding:10px 12px;min-width:130px;flex-shrink:0}
+.feat-icon-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.feat-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.fd-red{background:var(--red)}
+.fd-orange{background:var(--orange)}
+.fd-gold{background:var(--gold)}
+.fd-green{background:#22c55e}
+.fd-purple{background:#7c3aed}
+.feat-label{font-size:10.5px;font-weight:800;color:#fff;letter-spacing:.02em}
+.feat-desc{font-size:10px;color:var(--t3);line-height:1.4}
+
+/* ── FOOTER ── */
+.footer{background:var(--dark2);border-top:.5px solid var(--card-border);padding:14px 20px;text-align:center}
+.footer-brand{font-size:11px;color:var(--t4)}
+.footer-brand span{color:var(--gold)}
+.footer-url{font-size:11px;color:var(--t3);font-family:monospace;margin-top:3px}
+.footer-url strong{color:rgba(245,166,35,.8)}
+</style>
+
+<h2 class="sr-only">Unicorn Global Link — Sale Page ของ ครูเด่น มาสเตอร์ฟา</h2>
+
+<div class="page">
+  <div class="accent-line"></div>
+
+  <!-- BRAND BAR -->
+  <div class="brand-bar">
+    <div class="brand-u">U</div>
+    <div>
+      <div class="brand-text-main">UNICORN GLOBAL LINK</div>
+      <div class="brand-text-sub">Smart AI Platform</div>
+    </div>
+    <div class="brand-bar-right">
+      <div class="live-dot"></div>
+      Verified Partner
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-avatar">KD</div>
+    <div class="hero-ubc">
+      <i class="ti ti-star" style="font-size:11px" aria-hidden="true"></i>
+      UBC 3 · MASTER
+    </div>
+    <div class="hero-name">อนุสรณ์ หนองนา<br>(ครูเด่น)</div>
+    <div class="hero-role">Master Facilitator · ที่ปรึกษาธุรกิจ</div>
+    <div class="hero-quote">ที่ปรึกษาธุรกิจ 18 ปี ช่วยสร้างรายได้อย่างเป็นระบบ</div>
+  </div>
+
+  <!-- PHOTOS -->
+  <div class="photos-section">
+    <div class="photos-grid">
+      <div class="photo-card">
+        <div class="photo-placeholder">
+          <i class="ti ti-camera photo-icon" aria-hidden="true"></i>
+          <div class="photo-label">รูปภาพ 1</div>
+        </div>
+      </div>
+      <div class="photo-card">
+        <div class="photo-placeholder">
+          <i class="ti ti-camera photo-icon" aria-hidden="true"></i>
+          <div class="photo-label">รูปภาพ 2</div>
+        </div>
+      </div>
+      <div class="photo-card">
+        <div class="photo-placeholder">
+          <i class="ti ti-camera photo-icon" aria-hidden="true"></i>
+          <div class="photo-label">รูปภาพ 3</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BIO -->
+  <div class="bio-section">
+    <div class="bio-header">
+      <div class="bio-icon"><i class="ti ti-user" aria-hidden="true"></i></div>
+      <div class="bio-title">เกี่ยวกับผู้แนะนำ</div>
+    </div>
+    <div class="bio-body">
+      <div class="bio-name-big">ครูเด่น มาสเตอร์ฟา</div>
+      <div class="bio-title-role">Master Facilitator · [ครูเด่น]</div>
+      <div class="bio-desc">วิทยากรผู้เชี่ยวชาญด้านการพัฒนาทักษะผู้นำ การพูด การโค้ช การสร้างวิทยากร พัฒนาเครื่องมือการสอน และออกแบบกระบวนการเรียนรู้แบบครบวงจร เพื่อยกระดับบุคคลและองค์กรให้เติบโตอย่างยั่งยืน</div>
+      <div class="skill-row">
+        <span class="skill-chip">Leadership</span>
+        <span class="skill-chip">Facilitation</span>
+        <span class="skill-chip">AI Coaching</span>
+        <span class="skill-chip">Public Speaking</span>
+        <span class="skill-chip">CAP Vision</span>
+        <span class="skill-chip">18+ ปี</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SYSTEM FEATURES STRIP -->
+  <div class="section-header" style="padding-bottom:10px">
+    <div class="section-supertag">
+      <div class="section-tag-dot"></div>
+      Smart AI Platform
+    </div>
+    <div class="section-title">ระบบที่คุณจะได้ใช้</div>
+  </div>
+
+  <div class="features-strip">
+    <div class="feat-item">
+      <div class="feat-icon-row">
+        <div class="feat-dot fd-red"></div>
+        <div class="feat-label">AI Coach</div>
+      </div>
+      <div class="feat-desc">น้องยูนิช่วยวางแผนธุรกิจส่วนตัว 24 ชม.</div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon-row">
+        <div class="feat-dot fd-orange"></div>
+        <div class="feat-label">Wealth DNA</div>
+      </div>
+      <div class="feat-desc">วิเคราะห์ธาตุและศักยภาพของคุณ</div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon-row">
+        <div class="feat-dot fd-gold"></div>
+        <div class="feat-label">Mission System</div>
+      </div>
+      <div class="feat-desc">เติบโตอย่างเป็นระบบทีละขั้น</div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon-row">
+        <div class="feat-dot fd-green"></div>
+        <div class="feat-label">5 รายได้</div>
+      </div>
+      <div class="feat-desc">ระบบสร้างรายได้หลายทางยั่งยืน</div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon-row">
+        <div class="feat-dot fd-purple"></div>
+        <div class="feat-label">Name Card</div>
+      </div>
+      <div class="feat-desc">Sale page ส่วนตัวสร้าง Personal Brand</div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="section-header">
+    <div class="section-supertag">
+      <div class="section-tag-dot"></div>
+      Product Lines
+    </div>
+    <div class="section-title">หมวดหมู่<span> สินค้า</span></div>
+    <div class="section-desc">สินค้านวัตกรรม 5 หมวด ตอบโจทย์ทุกไลฟ์สไตล์</div>
+  </div>
+
+  <div class="products-section">
+    <div class="products-grid">
+      <div class="product-card">
+        <div class="product-icon ic-health">
+          <i class="ti ti-heart-rate-monitor" style="font-size:17px" aria-hidden="true"></i>
+        </div>
+        <div>
+          <div class="product-name">Health Care</div>
+          <div class="product-desc">สุขภาพ ดูแลร่างกาย ภูมิคุ้มกัน</div>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon ic-skin">
+          <i class="ti ti-sparkles" style="font-size:17px" aria-hidden="true"></i>
+        </div>
+        <div>
+          <div class="product-name">Skin Care</div>
+          <div class="product-desc">ดูแลผิวพรรณ ความงาม</div>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon ic-personal">
+          <i class="ti ti-user-circle" style="font-size:17px" aria-hidden="true"></i>
+        </div>
+        <div>
+          <div class="product-name">Personal Care</div>
+          <div class="product-desc">ของใช้ส่วนตัว ดูแลชีวิตประจำวัน</div>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon ic-agri">
+          <i class="ti ti-plant" style="font-size:17px" aria-hidden="true"></i>
+        </div>
+        <div>
+          <div class="product-name">Agriculture</div>
+          <div class="product-desc">เกษตร ออร์แกนิก สิ่งแวดล้อม</div>
+        </div>
+      </div>
+      <div class="product-card product-wide">
+        <div class="product-icon ic-tech">
+          <i class="ti ti-cpu" style="font-size:17px" aria-hidden="true"></i>
+        </div>
+        <div>
+          <div class="product-name">Technology</div>
+          <div class="product-desc">นวัตกรรมเทคโนโลยี AI Tools &amp; Digital Products เพื่อธุรกิจยุคใหม่</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BIZ ADVANTAGES -->
+  <div class="section-header">
+    <div class="section-supertag">
+      <div class="section-tag-dot"></div>
+      Biz Start Up Platform
+    </div>
+    <div class="section-title">กลยุทธ์<span> ธุรกิจ</span></div>
+    <div class="section-desc">ทำไมระบบ Unicorn จึงแตกต่าง</div>
+  </div>
+
+  <div class="adv-section">
+    <div class="adv-grid">
+      <div class="adv-card">
+        <div class="adv-icon-row">
+          <div class="adv-icon ai-eco">
+            <i class="ti ti-bolt" style="font-size:16px" aria-hidden="true"></i>
+          </div>
+          <div class="adv-title">Eco-System</div>
+        </div>
+        <div class="adv-desc">ระบบนิเวศทางธุรกิจที่ครบวงจรที่สุด รองรับการเติบโตทุกระดับ</div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-icon-row">
+          <div class="adv-icon ai-product">
+            <i class="ti ti-award" style="font-size:16px" aria-hidden="true"></i>
+          </div>
+          <div class="adv-title">Product Strength</div>
+        </div>
+        <div class="adv-desc">นวัตกรรมสินค้าคุณภาพสูง ตอบโจทย์ไลฟ์สไตล์ทุกกลุ่ม</div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-icon-row">
+          <div class="adv-icon ai-digital">
+            <i class="ti ti-robot" style="font-size:16px" aria-hidden="true"></i>
+          </div>
+          <div class="adv-title">AI &amp; Digital Tools</div>
+        </div>
+        <div class="adv-desc">เครื่องมืออัจฉริยะช่วยขยายธุรกิจ ทำงานแทนคุณตลอด 24 ชม.</div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-icon-row">
+          <div class="adv-icon ai-reward">
+            <i class="ti ti-star" style="font-size:16px" aria-hidden="true"></i>
+          </div>
+          <div class="adv-title">High Reward</div>
+        </div>
+        <div class="adv-desc">ผลตอบแทนที่คุ้มค่าและยั่งยืน ระบบ 5 รายได้ที่พิสูจน์แล้ว</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="cta-card">
+      <div class="cta-title">พร้อมเริ่มต้นแล้วใช่ไหม?</div>
+      <div class="cta-desc">สมัครฟรี เริ่มได้เลยวันนี้<br>ผู้แนะนำพร้อมดูแลคุณตลอดการเติบโต</div>
+
+      <button class="cta-btn" onclick="sendPrompt('ต้องการเขียนโค้ดส่วน CTA ที่เชื่อมกับ LINE OA ของผู้แนะนำ')">
+        <i class="ti ti-arrow-right" style="font-size:16px" aria-hidden="true"></i>
+        สมัครเป็นพาร์ทเนอร์
+      </button>
+
+      <div class="cta-sub">
+        <i class="ti ti-shield-check" style="font-size:13px;color:#22c55e" aria-hidden="true"></i>
+        สมัครฟรี — ไม่มีค่าใช้จ่ายแรกเข้า
+      </div>
+
+      <div class="cta-line">
+        <i class="ti ti-message-circle" style="font-size:16px;color:#06C755;flex-shrink:0" aria-hidden="true"></i>
+        <span>ติดต่อผ่าน LINE OA ของ <strong>ครูเด่น มาสเตอร์ฟา</strong> โดยตรง — รหัสผู้แนะนำผูกอัตโนมัติ</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-brand">Powered by <span>Unicorn Academy</span></div>
+    <div class="footer-url">unicornsmartai.cloud/<strong>unicorncoachden</strong></div>
+  </div>
+</div>

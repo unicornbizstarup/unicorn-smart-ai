@@ -1,11 +1,8 @@
-# wrangler.toml — Cloudflare Pages (Next.js app via OpenNext)
+# wrangler.toml — Cloudflare Pages (React Router app)
 name                   = "unicorn-smart-ai"
-pages_build_output_dir = "dist-pages"
+pages_build_output_dir = "build/client"
 compatibility_date     = "2025-05-26"
 compatibility_flags    = ["nodejs_compat"]
 
 [vars]
 ALLOWED_ORIGIN = "https://unicornsmartai.cloud"
-
-# Proxy Worker is deployed separately via:
-#   wrangler deploy --config workers/wrangler.toml

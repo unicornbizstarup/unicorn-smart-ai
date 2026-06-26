@@ -1,0 +1,395 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',system-ui,sans-serif}
+
+:root{
+  --red:#c0281e;
+  --red-mid:#d63b20;
+  --orange:#e8621a;
+  --amber:#f5a623;
+  --silver:#8c8c8c;
+  --silver-light:#c8c8c8;
+  --silver-bg:#f5f4f2;
+  --chrome:#e8e6e2;
+  --bg:#f7f5f2;
+  --card:#ffffff;
+  --border:#e4e0da;
+  --border-mid:#d0cbc3;
+  --t1:#1a1209;
+  --t2:#4a4035;
+  --t3:#8a7e6e;
+  --navy:#0f1f3d;
+}
+
+.wrap{background:var(--bg);border-radius:14px;overflow:hidden;border:.5px solid var(--border);font-size:13px;color:var(--t1)}
+
+/* ── HEADER BAND ── */
+.header-band{height:5px;background:linear-gradient(90deg,#c0281e 0%,#d63b20 35%,#e8621a 65%,#f5a623 100%)}
+
+/* ── TOP BAR ── */
+.topbar{background:var(--card);border-bottom:.5px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.brand-row{display:flex;align-items:center;gap:10px}
+.brand-u{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#c0281e,#e8621a);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:900;letter-spacing:-.5px}
+.brand-name{font-size:14px;font-weight:800;color:var(--t1);letter-spacing:.01em}
+.brand-sub{font-size:10px;color:var(--t3);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.status-pill{display:flex;align-items:center;gap:5px;background:#fef3f2;border:.5px solid #fca5a5;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--red)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+/* ── HERO CARD ── */
+.hero-card{margin:16px;border-radius:12px;overflow:hidden;border:.5px solid var(--border-mid)}
+.hero-top{padding:18px 20px;background:var(--t1);position:relative;overflow:hidden}
+.hero-top::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(255,255,255,.012) 20px,rgba(255,255,255,.012) 21px)}
+.hero-accent{width:3px;height:100%;background:linear-gradient(180deg,#f5a623,#c0281e);position:absolute;left:0;top:0;bottom:0}
+.hero-content{padding-left:12px}
+.hero-label{font-size:9.5px;font-weight:800;letter-spacing:.1em;color:var(--silver-light);text-transform:uppercase;margin-bottom:8px}
+.hero-title{font-size:22px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:4px}
+.hero-title span{color:var(--amber)}
+.hero-desc{font-size:12px;color:rgba(255,255,255,.55);line-height:1.5}
+.hero-badges{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.hero-badge{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.08);border:.5px solid rgba(255,255,255,.14);border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;color:rgba(255,255,255,.75);letter-spacing:.02em}
+.hero-badge-icon{font-size:12px;color:var(--amber)}
+
+/* ── CONTENT AREA ── */
+.content{padding:0 16px 16px}
+
+/* ── SECTION TITLE ── */
+.sec-title{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin:14px 0 8px}
+.sec-line{flex:1;height:.5px;background:var(--border)}
+.sec-accent{width:16px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--red),var(--orange))}
+
+/* ── URL CARD ── */
+.url-card{background:var(--card);border:.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.url-card-header{padding:10px 14px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.url-card-title{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--t1)}
+.url-icon{width:22px;height:22px;border-radius:5px;background:#fef3f2;border:.5px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--red-mid)}
+.url-card-body{padding:12px 14px}
+.url-display{background:var(--silver-bg);border:.5px solid var(--border);border-radius:7px;padding:10px 12px;font-size:12.5px;font-family:monospace;color:var(--t2);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.url-slug{color:var(--red);font-weight:700}
+.url-copy-btn{background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--silver);padding:4px 8px;border-radius:5px;border:.5px solid var(--border)}
+.url-copy-btn:hover{background:var(--silver-bg)}
+
+/* Security note */
+.security-note{background:#fafaf9;border:.5px solid var(--border);border-radius:6px;padding:8px 10px;font-size:11px;color:var(--t3);display:flex;align-items:flex-start;gap:7px;line-height:1.5}
+.sec-note-icon{color:var(--silver);font-size:14px;flex-shrink:0;margin-top:1px}
+.sec-note-icon-accent{color:var(--amber);font-size:14px;flex-shrink:0;margin-top:1px}
+
+/* ── SHARE BUTTONS ── */
+.share-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px}
+.share-btn{border:none;border-radius:8px;padding:9px 8px;font-size:11.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity .15s}
+.share-btn:active{opacity:.8}
+.btn-primary{background:linear-gradient(135deg,#c0281e,#e8621a);color:#fff}
+.btn-secondary{background:var(--t1);color:#fff}
+.btn-outline{background:var(--card);color:var(--t2);border:.5px solid var(--border-mid)}
+
+/* ── ANALYTICS ── */
+.analytics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.analytics-item{background:var(--card);border:.5px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center}
+.a-num{font-size:20px;font-weight:800;color:var(--t1);line-height:1}
+.a-num.accent{color:var(--red)}
+.a-num.gold{color:#b8924a}
+.a-label{font-size:10px;color:var(--t3);font-weight:600;margin-top:3px;text-transform:uppercase;letter-spacing:.04em}
+.a-delta{font-size:10px;color:#16a34a;font-weight:700;margin-top:2px}
+
+/* ── HOW IT WORKS ── */
+.how-card{background:var(--card);border:.5px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+.how-step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.how-step:last-child{margin-bottom:0}
+.how-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;color:#fff}
+.num-dark{background:var(--t1)}
+.num-red{background:linear-gradient(135deg,var(--red),var(--orange))}
+.how-text{font-size:12px;color:var(--t2);line-height:1.55;flex:1;padding-top:4px}
+.how-text strong{color:var(--t1);font-weight:700}
+.how-connector{width:1px;height:12px;background:var(--border);margin:2px 0 2px 12px}
+
+/* ── AI CAPTION ── */
+.ai-card{background:var(--card);border:.5px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+.ai-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.ai-label{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--t1)}
+.ai-icon{width:22px;height:22px;border-radius:5px;background:linear-gradient(135deg,#fef3f2,#fff3e8);border:.5px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--red-mid)}
+.ai-regen{font-size:11px;font-weight:700;color:var(--red);cursor:pointer;background:none;border:none}
+.caption-box{background:var(--silver-bg);border:.5px solid var(--border);border-left:3px solid var(--red);border-radius:0 7px 7px 0;padding:10px 12px;font-size:12px;color:var(--t2);line-height:1.65;margin-bottom:8px;font-style:italic}
+.caption-box::before{border-radius:0}
+
+/* ── TECH FOOTER ── */
+.tech-footer{background:#fafaf9;border:.5px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;align-items:flex-start;gap:8px;font-size:11px;color:var(--t3);line-height:1.5}
+.tech-tag{display:inline-block;background:var(--silver-bg);border:.5px solid var(--border);border-radius:4px;padding:1px 5px;font-family:monospace;font-size:10px;color:var(--t2)}
+
+/* ── LANDING PREVIEW PANEL ── */
+.preview-panel{background:var(--silver-bg);border:.5px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px}
+.preview-label{font-size:10px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;text-align:center;margin-bottom:10px}
+.phone-frame{background:var(--t1);border-radius:16px;padding:16px;max-width:220px;margin:0 auto}
+.pf-header-band{height:3px;border-radius:3px 3px 0 0;background:linear-gradient(90deg,#c0281e,#e8621a,#f5a623);margin:-16px -16px 12px}
+.pf-logo-row{display:flex;align-items:center;gap:6px;margin-bottom:12px}
+.pf-u{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#c0281e,#e8621a);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:900}
+.pf-name{font-size:10px;font-weight:800;color:#fff;letter-spacing:.03em}
+.pf-sub{font-size:8.5px;color:rgba(255,255,255,.45);letter-spacing:.06em;text-transform:uppercase}
+.pf-avatar-ring{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,#c0281e,#e8621a);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:900;border:2px solid rgba(245,166,35,.4)}
+.pf-name-big{font-size:13px;font-weight:800;color:#fff;text-align:center;margin-bottom:3px}
+.pf-badge{display:inline-block;background:rgba(245,166,35,.15);border:.5px solid rgba(245,166,35,.3);border-radius:20px;padding:2px 8px;font-size:8.5px;font-weight:800;color:var(--amber);letter-spacing:.05em;text-transform:uppercase;text-align:center;display:block;margin:0 auto 10px}
+.pf-quote{font-size:10px;color:rgba(255,255,255,.55);text-align:center;font-style:italic;line-height:1.5;margin-bottom:10px;padding:0 4px}
+.pf-line-btn{background:#06C755;border:none;border-radius:8px;padding:8px;color:#fff;font-size:11px;font-weight:800;width:100%;cursor:pointer;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:5px}
+.pf-feature-row{background:rgba(255,255,255,.07);border-radius:6px;padding:6px 8px;margin-bottom:4px;font-size:10px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:6px}
+.pf-feat-icon{width:16px;height:16px;border-radius:4px;background:rgba(192,40,30,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pf-cta{border:none;border-radius:8px;padding:10px;color:#fff;font-size:12px;font-weight:800;width:100%;cursor:pointer;margin-top:8px;background:linear-gradient(135deg,#c0281e,#e8621a)}
+.pf-url{font-size:8.5px;color:rgba(255,255,255,.3);text-align:center;margin-top:8px;font-family:monospace}
+.pf-url span{color:rgba(245,166,35,.7)}
+</style>
+
+<h2 class="sr-only">Unicorn Global Link — Referral Affiliate System</h2>
+
+<div class="wrap">
+  <div class="header-band"></div>
+
+  <div class="topbar">
+    <div class="brand-row">
+      <div class="brand-u">U</div>
+      <div>
+        <div class="brand-name">UNICORN GLOBAL LINK</div>
+        <div class="brand-sub">Referral Affiliate System</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        Active
+      </div>
+      <button style="background:none;border:.5px solid var(--border);border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:5px">
+        <i class="ti ti-settings" style="font-size:13px" aria-hidden="true"></i> Settings
+      </button>
+    </div>
+  </div>
+
+  <div class="hero-card">
+    <div class="hero-top">
+      <div class="hero-accent"></div>
+      <div class="hero-content">
+        <div class="hero-label">Affiliate System</div>
+        <div class="hero-title">Referral<br><span>Link System</span></div>
+        <div class="hero-desc">ส่งลิงค์ให้ใคร รหัสผู้แนะนำผูกอัตโนมัติ<br>ผู้รับเห็นเพียง URL ที่สะอาดและเป็นมืออาชีพ</div>
+        <div class="hero-badges">
+          <div class="hero-badge">
+            <i class="ti ti-lock hero-badge-icon" aria-hidden="true"></i>
+            รหัสเข้ารหัส
+          </div>
+          <div class="hero-badge">
+            <i class="ti ti-clock hero-badge-icon" aria-hidden="true"></i>
+            Cookie 30 วัน
+          </div>
+          <div class="hero-badge">
+            <i class="ti ti-chart-bar hero-badge-icon" aria-hidden="true"></i>
+            Analytics
+          </div>
+          <div class="hero-badge">
+            <i class="ti ti-brain hero-badge-icon" aria-hidden="true"></i>
+            AI Caption
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="sec-title">
+      <div class="sec-accent"></div>
+      <span>ลิงค์แนะนำของคุณ</span>
+      <div class="sec-line"></div>
+    </div>
+
+    <div class="url-card">
+      <div class="url-card-header">
+        <div class="url-card-title">
+          <div class="url-icon">
+            <i class="ti ti-link" aria-hidden="true"></i>
+          </div>
+          URL สาธารณะ
+        </div>
+        <span style="font-size:10.5px;color:var(--t3);font-weight:600">Verified Partner</span>
+      </div>
+      <div class="url-card-body">
+        <div class="url-display">
+          <span style="color:var(--t3)">unicornsmartai.cloud/</span><span class="url-slug">unicorncoachden</span>
+          <button class="url-copy-btn" onclick="this.innerHTML='<i class=\'ti ti-check\'></i> Copied'">
+            <i class="ti ti-copy" style="font-size:13px" aria-hidden="true"></i> คัดลอก
+          </button>
+        </div>
+
+        <div class="security-note" style="margin-bottom:10px">
+          <i class="ti ti-shield-lock sec-note-icon-accent" aria-hidden="true"></i>
+          <span>รหัสนักธุรกิจ <span class="tech-tag">TH546415</span> ถูกเข้ารหัสด้วย <span class="tech-tag">HMAC-SHA256</span> ฝังใน HttpOnly Cookie — ไม่ปรากฏบน URL และไม่สามารถแก้ไขจาก browser ได้</span>
+        </div>
+
+        <div class="share-grid">
+          <button class="share-btn btn-primary">
+            <i class="ti ti-share" style="font-size:14px" aria-hidden="true"></i>
+            แชร์
+          </button>
+          <button class="share-btn btn-secondary">
+            <i class="ti ti-message-circle" style="font-size:14px" aria-hidden="true"></i>
+            LINE
+          </button>
+          <button class="share-btn btn-outline" onclick="this.innerHTML='<i class=\'ti ti-check\'></i> Copied'">
+            <i class="ti ti-copy" style="font-size:14px" aria-hidden="true"></i>
+            คัดลอก
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-title">
+      <div class="sec-accent"></div>
+      <span>สถิติลิงค์</span>
+      <div class="sec-line"></div>
+    </div>
+
+    <div class="analytics-row">
+      <div class="analytics-item">
+        <div class="a-num">127</div>
+        <div class="a-label">คลิกทั้งหมด</div>
+        <div class="a-delta">
+          <i class="ti ti-trending-up" style="font-size:11px;vertical-align:-1px" aria-hidden="true"></i>
+          +18 สัปดาห์นี้
+        </div>
+      </div>
+      <div class="analytics-item">
+        <div class="a-num accent">12</div>
+        <div class="a-label">สมัครแล้ว</div>
+        <div class="a-delta">
+          <i class="ti ti-trending-up" style="font-size:11px;vertical-align:-1px" aria-hidden="true"></i>
+          +3 สัปดาห์นี้
+        </div>
+      </div>
+      <div class="analytics-item">
+        <div class="a-num gold">9.4%</div>
+        <div class="a-label">Conversion</div>
+        <div class="a-delta" style="color:#b8924a">อุตสาหกรรม 3–5%</div>
+      </div>
+    </div>
+
+    <div class="sec-title">
+      <div class="sec-accent"></div>
+      <span>ระบบทำงานอย่างไร</span>
+      <div class="sec-line"></div>
+    </div>
+
+    <div class="how-card">
+      <div class="how-step">
+        <div class="how-num num-dark">1</div>
+        <div class="how-text">คุณส่งลิงค์ <strong>unicornsmartai.cloud/unicorncoachden</strong> ให้คนใหม่</div>
+      </div>
+      <div class="how-connector"></div>
+      <div class="how-step">
+        <div class="how-num num-dark">2</div>
+        <div class="how-text">ระบบอ่าน slug ค้นหาโปรไฟล์ของคุณ และฝัง referral token ใน <strong>HttpOnly Cookie</strong> อายุ 30 วัน</div>
+      </div>
+      <div class="how-connector"></div>
+      <div class="how-step">
+        <div class="how-num num-red">3</div>
+        <div class="how-text">เมื่อผู้รับ <strong>สมัครสมาชิก</strong> ระบบดึง token และผูก <strong>รหัสแนะนำ TH546415</strong> โดยอัตโนมัติ</div>
+      </div>
+      <div class="how-connector"></div>
+      <div class="how-step">
+        <div class="how-num num-red">4</div>
+        <div class="how-text">คุณได้รับ <strong>Business Points</strong> และ <strong>Referral Bonus</strong> ทันที</div>
+      </div>
+    </div>
+
+    <div class="sec-title">
+      <div class="sec-accent"></div>
+      <span>AI สร้าง Caption</span>
+      <div class="sec-line"></div>
+    </div>
+
+    <div class="ai-card">
+      <div class="ai-card-header">
+        <div class="ai-label">
+          <div class="ai-icon">
+            <i class="ti ti-sparkles" aria-hidden="true"></i>
+          </div>
+          ข้อความแนะนำพร้อมส่ง
+        </div>
+        <button class="ai-regen">
+          <i class="ti ti-refresh" style="font-size:12px;vertical-align:-1px" aria-hidden="true"></i>
+          สร้างใหม่
+        </button>
+      </div>
+      <div class="caption-box">
+        "สนใจสร้างรายได้เสริมอย่างเป็นระบบไหมครับ? ผมใช้ระบบ Unicorn Smart AI ช่วยวางแผนธุรกิจ มี AI Coach ส่วนตัว และ Wealth DNA วิเคราะห์ศักยภาพของคุณ สามารถติดต่อได้ที่ unicornsmartai.cloud/unicorncoachden"
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+        <button class="share-btn btn-outline" onclick="this.innerHTML='<i class=\'ti ti-check\'></i> Copied'" style="font-size:11.5px">
+          <i class="ti ti-copy" style="font-size:13px" aria-hidden="true"></i>
+          คัดลอก Caption
+        </button>
+        <button class="share-btn btn-secondary" style="font-size:11.5px">
+          <i class="ti ti-message-circle" style="font-size:13px" aria-hidden="true"></i>
+          ส่งทาง LINE
+        </button>
+      </div>
+    </div>
+
+    <div class="sec-title">
+      <div class="sec-accent"></div>
+      <span>Sale Page Preview</span>
+      <div class="sec-line"></div>
+    </div>
+
+    <div class="preview-panel">
+      <div class="preview-label">
+        <i class="ti ti-eye" style="font-size:12px;vertical-align:-1px;margin-right:4px" aria-hidden="true"></i>
+        หน้าที่ผู้รับลิงค์จะเห็น
+      </div>
+      <div class="phone-frame">
+        <div class="pf-header-band"></div>
+        <div class="pf-logo-row">
+          <div class="pf-u">U</div>
+          <div>
+            <div class="pf-name">UNICORN GLOBAL LINK</div>
+            <div class="pf-sub">Smart AI Platform</div>
+          </div>
+        </div>
+        <div class="pf-avatar-ring">KD</div>
+        <div class="pf-name-big">อนุสรณ์ หนองนา (ครูเด่น)</div>
+        <div class="pf-badge">UBC 3 · MASTER</div>
+        <div class="pf-quote">"ที่ปรึกษาธุรกิจ 18 ปี ช่วยสร้างรายได้อย่างเป็นระบบ"</div>
+
+        <button class="pf-line-btn">
+          <i class="ti ti-message-circle" style="font-size:14px" aria-hidden="true"></i>
+          ติดต่อผ่าน LINE OA
+        </button>
+
+        <div class="pf-feature-row">
+          <div class="pf-feat-icon">
+            <i class="ti ti-brain" style="font-size:10px;color:var(--amber)" aria-hidden="true"></i>
+          </div>
+          AI Coach วางแผนธุรกิจส่วนตัว
+        </div>
+        <div class="pf-feature-row">
+          <div class="pf-feat-icon">
+            <i class="ti ti-dna" style="font-size:10px;color:var(--amber)" aria-hidden="true"></i>
+          </div>
+          Wealth DNA วิเคราะห์ศักยภาพ
+        </div>
+        <div class="pf-feature-row">
+          <div class="pf-feat-icon">
+            <i class="ti ti-target" style="font-size:10px;color:var(--amber)" aria-hidden="true"></i>
+          </div>
+          Mission System เติบโตเป็นระบบ
+        </div>
+
+        <button class="pf-cta">สมัครเป็นพาร์ทเนอร์</button>
+        <div class="pf-url">unicornsmartai.cloud/<span>unicorncoachden</span></div>
+      </div>
+    </div>
+
+    <div class="tech-footer">
+      <i class="ti ti-shield-check sec-note-icon-accent" style="margin-top:1px" aria-hidden="true"></i>
+      <div>
+        <strong style="color:var(--t2)">Security:</strong> รหัสนักธุรกิจถูกเข้ารหัสด้วย <span class="tech-tag">HMAC-SHA256</span> ฝังใน <span class="tech-tag">HttpOnly Cookie</span> — ไม่ปรากฏบน URL, ไม่สามารถแก้ไขจาก browser ได้ · RLS ของ Supabase ป้องกันการเข้าถึงข้อมูลโดยตรง
+      </div>
+    </div>
+
+  </div>
+</div>

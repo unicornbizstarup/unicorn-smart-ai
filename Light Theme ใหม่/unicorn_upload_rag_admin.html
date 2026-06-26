@@ -1,0 +1,619 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#c0281e;--orange:#e8621a;--amber:#f5a623;
+  --dark:#0d0d0d;--dark2:#141414;--dark3:#1c1c1c;--dark4:#222;
+  --cb:rgba(255,255,255,.07);--cb2:rgba(255,255,255,.12);
+  --t1:#fff;--t2:rgba(255,255,255,.72);--t3:rgba(255,255,255,.42);--t4:rgba(255,255,255,.22);
+  --gold-dim:rgba(245,166,35,.14);--gold-b:rgba(245,166,35,.28);
+  --red-dim:rgba(192,40,30,.14);--red-b:rgba(192,40,30,.28);
+  --green:#22c55e;--green-dim:rgba(34,197,94,.14);--green-b:rgba(34,197,94,.28);
+  --purple:#7c3aed;--purple-dim:rgba(124,58,237,.14);--purple-b:rgba(124,58,237,.28);
+  --blue:#3b82f6;--blue-dim:rgba(59,130,246,.14);--blue-b:rgba(59,130,246,.28);
+}
+.root{background:var(--dark);color:var(--t1);font-family:'Sarabun',system-ui,sans-serif;font-size:13px}
+
+/* tabs */
+.tabs{display:flex;background:var(--dark2);border-bottom:.5px solid var(--cb)}
+.tab{flex:1;padding:11px 8px;font-size:11.5px;font-weight:700;cursor:pointer;text-align:center;color:var(--t3);border-bottom:2px solid transparent;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
+.tab.on{color:var(--t1);border-bottom-color:var(--orange)}
+.page{display:none;flex-direction:column;height:580px;overflow-y:auto}
+.page.on{display:flex}
+
+/* ── PROFILE / PHOTO UPLOAD PAGE ── */
+.sec{margin:14px 14px 0;background:var(--dark3);border:.5px solid var(--cb);border-radius:11px;overflow:hidden}
+.sec-head{padding:10px 14px;border-bottom:.5px solid var(--cb);display:flex;align-items:center;justify-content:space-between}
+.sec-label{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800}
+.sec-icon{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.si-red{background:var(--red-dim);border:.5px solid var(--red-b);color:var(--orange)}
+.si-gold{background:var(--gold-dim);border:.5px solid var(--gold-b);color:var(--amber)}
+.si-green{background:var(--green-dim);border:.5px solid var(--green-b);color:var(--green)}
+.si-purple{background:var(--purple-dim);border:.5px solid var(--purple-b);color:#a78bfa}
+.si-blue{background:var(--blue-dim);border:.5px solid var(--blue-b);color:#60a5fa}
+.sec-body{padding:12px 14px}
+
+/* photo upload grid */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.photo-slot{aspect-ratio:3/4;border-radius:9px;border:.5px dashed var(--cb2);background:rgba(255,255,255,.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden}
+.photo-slot:hover{border-color:rgba(232,98,26,.5);background:rgba(232,98,26,.05)}
+.photo-slot.filled{border-style:solid;border-color:var(--cb2)}
+.photo-filled-img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.photo-overlay{position:absolute;inset:0;background:rgba(13,13,13,.55);opacity:0;transition:opacity .2s;display:flex;align-items:center;justify-content:center}
+.photo-slot:hover .photo-overlay{opacity:1}
+.photo-icon{font-size:22px;color:var(--t4)}
+.photo-hint{font-size:10px;color:var(--t4);text-align:center;padding:0 6px}
+.photo-slot-num{position:absolute;top:7px;left:7px;width:18px;height:18px;border-radius:50%;background:var(--dark);border:.5px solid var(--cb2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:var(--t3)}
+.photo-del{position:absolute;top:7px;right:7px;width:20px;height:20px;border-radius:50%;background:rgba(192,40,30,.8);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff}
+.photo-caption-row{display:flex;gap:6px;margin-top:8px}
+.photo-caption-input{flex:1;background:rgba(255,255,255,.04);border:.5px solid var(--cb);border-radius:6px;padding:5px 8px;font-size:11px;color:var(--t2);outline:none}
+.photo-caption-input::placeholder{color:var(--t4)}
+
+/* upload progress */
+.upload-prog{height:3px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;margin-top:6px}
+.upload-prog-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--orange));border-radius:3px;transition:width .4s}
+
+/* form fields */
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.field{display:flex;flex-direction:column;gap:3px}
+.field.full{grid-column:1/-1}
+.field-label{font-size:10px;color:var(--t3);font-weight:600;letter-spacing:.03em}
+.field-input{background:rgba(255,255,255,.04);border:.5px solid var(--cb);border-radius:7px;padding:7px 10px;font-size:12px;color:var(--t1);outline:none;transition:border-color .15s}
+.field-input:focus{border-color:rgba(232,98,26,.5)}
+.field-input::placeholder{color:var(--t4)}
+.field-textarea{resize:none;min-height:60px;line-height:1.5}
+
+/* save btn */
+.save-btn{width:100%;background:linear-gradient(135deg,var(--red),var(--orange));border:none;border-radius:9px;padding:11px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px}
+
+/* ── RAG ADMIN PAGE ── */
+.rag-hero{background:linear-gradient(135deg,rgba(192,40,30,.2),rgba(232,98,26,.12));border:.5px solid rgba(192,40,30,.3);border-radius:11px;padding:14px;margin:14px 14px 0}
+.rag-hero-title{font-size:15px;font-weight:900;margin-bottom:3px}
+.rag-hero-title span{color:var(--amber)}
+.rag-hero-desc{font-size:11.5px;color:var(--t3);line-height:1.5}
+.rag-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:10px}
+.rag-stat{background:rgba(0,0,0,.25);border-radius:7px;padding:8px;text-align:center}
+.rag-stat-num{font-size:17px;font-weight:900;line-height:1}
+.rag-stat-num.r{color:var(--orange)}
+.rag-stat-num.g{color:var(--green)}
+.rag-stat-num.b{color:#60a5fa}
+.rag-stat-num.p{color:#a78bfa}
+.rag-stat-label{font-size:9.5px;color:var(--t3);font-weight:600;margin-top:2px;text-transform:uppercase;letter-spacing:.04em}
+
+/* knowledge categories */
+.kcat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kcat-card{background:var(--dark3);border:.5px solid var(--cb);border-radius:10px;padding:12px;cursor:pointer;transition:border-color .2s}
+.kcat-card:hover{border-color:var(--cb2)}
+.kcat-card.active{border-color:rgba(232,98,26,.45);background:rgba(232,98,26,.06)}
+.kcat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.kcat-icon-label{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800}
+.kcat-count{font-size:10px;color:var(--t3);font-weight:700}
+.kcat-count span{color:var(--t2)}
+.kcat-desc{font-size:11px;color:var(--t3);line-height:1.4}
+.kcat-items{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.kcat-chip{font-size:9.5px;background:rgba(255,255,255,.06);border:.5px solid var(--cb);border-radius:4px;padding:2px 6px;color:var(--t3)}
+
+/* document upload */
+.doc-upload-area{border:.5px dashed var(--cb2);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.02)}
+.doc-upload-area:hover{border-color:rgba(232,98,26,.4);background:rgba(232,98,26,.04)}
+.doc-upload-icon{font-size:24px;color:var(--t4);margin-bottom:6px}
+.doc-upload-title{font-size:12px;font-weight:700;color:var(--t2);margin-bottom:2px}
+.doc-upload-hint{font-size:10.5px;color:var(--t4)}
+.doc-types{display:flex;gap:5px;justify-content:center;margin-top:8px;flex-wrap:wrap}
+.doc-type-badge{font-size:9.5px;background:rgba(255,255,255,.06);border:.5px solid var(--cb);border-radius:4px;padding:2px 7px;color:var(--t3);font-weight:600}
+
+/* doc list */
+.doc-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.doc-item{background:rgba(255,255,255,.03);border:.5px solid var(--cb);border-radius:7px;padding:9px 11px;display:flex;align-items:center;gap:10px}
+.doc-file-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.di-pdf{background:rgba(239,68,68,.15);border:.5px solid rgba(239,68,68,.25);color:#f87171}
+.di-txt{background:rgba(59,130,246,.15);border:.5px solid rgba(59,130,246,.25);color:#60a5fa}
+.di-web{background:rgba(34,197,94,.15);border:.5px solid rgba(34,197,94,.25);color:#4ade80}
+.doc-info{flex:1;min-width:0}
+.doc-name{font-size:12px;font-weight:700;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.doc-meta{font-size:10px;color:var(--t3);margin-top:1px}
+.doc-status{font-size:9.5px;font-weight:700;border-radius:4px;padding:2px 7px}
+.ds-indexed{background:var(--green-dim);color:#4ade80;border:.5px solid var(--green-b)}
+.ds-processing{background:var(--gold-dim);color:var(--amber);border:.5px solid var(--gold-b)}
+.ds-pending{background:rgba(255,255,255,.06);color:var(--t3);border:.5px solid var(--cb)}
+.doc-del-btn{background:none;border:none;cursor:pointer;color:var(--t4);font-size:14px;padding:2px}
+.doc-del-btn:hover{color:#f87171}
+
+/* reward overview */
+.reward-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.reward-item{background:var(--dark3);border:.5px solid var(--cb);border-radius:8px;padding:10px 12px}
+.reward-badge{display:inline-block;font-size:9px;font-weight:800;border-radius:4px;padding:2px 7px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:5px}
+.rb-red{background:var(--red-dim);color:#f87171;border:.5px solid var(--red-b)}
+.rb-gold{background:var(--gold-dim);color:var(--amber);border:.5px solid var(--gold-b)}
+.rb-blue{background:var(--blue-dim);color:#60a5fa;border:.5px solid var(--blue-b)}
+.rb-green{background:var(--green-dim);color:#4ade80;border:.5px solid var(--green-b)}
+.rb-purple{background:var(--purple-dim);color:#a78bfa;border:.5px solid var(--purple-b)}
+.rb-orange{background:rgba(232,98,26,.14);color:var(--orange);border:.5px solid rgba(232,98,26,.28)}
+.rb-teal{background:rgba(20,184,166,.14);color:#2dd4bf;border:.5px solid rgba(20,184,166,.28)}
+.rb-amber{background:rgba(245,158,11,.14);color:#fbbf24;border:.5px solid rgba(245,158,11,.28)}
+.reward-title{font-size:12px;font-weight:800;color:var(--t1);line-height:1.3;margin-bottom:3px}
+.reward-rate{font-size:15px;font-weight:900;color:var(--orange);margin-bottom:4px}
+.reward-detail{font-size:10.5px;color:var(--t3);line-height:1.4}
+
+/* ai test panel */
+.ai-test-area{background:rgba(0,0,0,.3);border:.5px solid var(--cb);border-radius:8px;padding:10px;margin-bottom:8px}
+.ai-msg{padding:6px 9px;border-radius:6px;font-size:12px;line-height:1.5;margin-bottom:5px}
+.ai-msg-user{background:rgba(232,98,26,.12);border:.5px solid rgba(232,98,26,.2);color:var(--t2);margin-left:24px}
+.ai-msg-ai{background:rgba(255,255,255,.04);border:.5px solid var(--cb);color:var(--t2);margin-right:24px}
+.ai-msg-label{font-size:9.5px;font-weight:800;margin-bottom:3px}
+.lbl-user{color:var(--orange)}
+.lbl-ai{color:#60a5fa}
+.ai-input-row{display:flex;gap:6px}
+.ai-input{flex:1;background:rgba(255,255,255,.04);border:.5px solid var(--cb);border-radius:7px;padding:7px 10px;font-size:12px;color:var(--t1);outline:none}
+.ai-input::placeholder{color:var(--t4)}
+.ai-send-btn{background:linear-gradient(135deg,var(--red),var(--orange));border:none;border-radius:7px;padding:7px 12px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:4px}
+
+/* package table */
+.pkg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.pkg-card{background:var(--dark3);border:.5px solid var(--cb);border-radius:9px;padding:11px;text-align:center}
+.pkg-card.featured{border-color:rgba(245,166,35,.4);background:rgba(245,166,35,.05)}
+.pkg-name{font-size:13px;font-weight:900;letter-spacing:.03em;margin-bottom:3px}
+.pkg-pv{font-size:11px;font-weight:800;color:var(--orange);margin-bottom:5px}
+.pkg-desc{font-size:10.5px;color:var(--t3);line-height:1.4}
+
+/* misc */
+.mt8{margin-top:8px} .mt10{margin-top:10px} .mt12{margin-top:12px} .mb14{margin-bottom:14px}
+.divider{height:.5px;background:var(--cb);margin:10px 0}
+.notice{display:flex;align-items:flex-start;gap:7px;background:rgba(245,166,35,.08);border:.5px solid rgba(245,166,35,.2);border-radius:7px;padding:9px 11px;font-size:11px;color:var(--t2);line-height:1.5}
+.notice-icon{color:var(--amber);font-size:15px;flex-shrink:0;margin-top:1px}
+</style>
+
+<h2 class="sr-only">Unicorn Smart AI — Profile Photo Upload & Admin RAG Knowledge Base</h2>
+
+<div class="root">
+  <div class="tabs">
+    <div class="tab on" onclick="sw('p1',this)">
+      <i class="ti ti-camera" style="font-size:13px" aria-hidden="true"></i>
+      Photo Upload
+    </div>
+    <div class="tab" onclick="sw('p2',this)">
+      <i class="ti ti-database" style="font-size:13px" aria-hidden="true"></i>
+      RAG Knowledge
+    </div>
+    <div class="tab" onclick="sw('p3',this)">
+      <i class="ti ti-gift" style="font-size:13px" aria-hidden="true"></i>
+      Reward System
+    </div>
+    <div class="tab" onclick="sw('p4',this)">
+      <i class="ti ti-robot" style="font-size:13px" aria-hidden="true"></i>
+      AI Test
+    </div>
+  </div>
+
+  <!-- ════ PAGE 1: PHOTO UPLOAD ════ -->
+  <div class="page on" id="p1">
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-label">
+          <div class="sec-icon si-red"><i class="ti ti-camera" aria-hidden="true"></i></div>
+          รูปภาพโปรไฟล์ (สูงสุด 3 รูป)
+        </div>
+        <span style="font-size:10px;color:var(--t3)">แสดงบน Sale Page</span>
+      </div>
+      <div class="sec-body">
+        <div class="photo-grid">
+          <!-- Slot 1: filled mock -->
+          <div class="photo-slot filled" onclick="alert('เลือกรูปภาพ')">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1040,#2d1b69);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:rgba(245,166,35,.5)">KD</div>
+            <div class="photo-slot-num">1</div>
+            <div class="photo-overlay">
+              <i class="ti ti-edit" style="font-size:18px;color:#fff" aria-hidden="true"></i>
+            </div>
+            <button class="photo-del" onclick="event.stopPropagation()">
+              <i class="ti ti-x" style="font-size:10px" aria-hidden="true"></i>
+            </button>
+          </div>
+          <!-- Slot 2: empty -->
+          <div class="photo-slot" onclick="alert('เลือกรูปภาพ')">
+            <div class="photo-slot-num">2</div>
+            <i class="ti ti-camera-plus photo-icon" aria-hidden="true"></i>
+            <div class="photo-hint">อัพโหลดรูปภาพ<br>JPG/PNG ไม่เกิน 5MB</div>
+          </div>
+          <!-- Slot 3: empty -->
+          <div class="photo-slot" onclick="alert('เลือกรูปภาพ')">
+            <div class="photo-slot-num">3</div>
+            <i class="ti ti-camera-plus photo-icon" aria-hidden="true"></i>
+            <div class="photo-hint">อัพโหลดรูปภาพ<br>JPG/PNG ไม่เกิน 5MB</div>
+          </div>
+        </div>
+        <!-- Caption inputs -->
+        <div style="margin-top:8px;display:flex;flex-direction:column;gap:5px">
+          <div style="font-size:10px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">คำบรรยายใต้รูป (ไม่บังคับ)</div>
+          <input class="photo-caption-input" placeholder="รูปที่ 1 — เช่น วิทยากรประจำองค์กร"/>
+          <input class="photo-caption-input" placeholder="รูปที่ 2"/>
+          <input class="photo-caption-input" placeholder="รูปที่ 3"/>
+        </div>
+        <div class="notice mt10">
+          <i class="ti ti-info-circle notice-icon" aria-hidden="true"></i>
+          รูปภาพจะถูก upload ไปยัง Cloudflare R2 และแสดงบน Sale Page ของคุณโดยอัตโนมัติ แนะนำรูปภาพแนวตั้ง อัตราส่วน 3:4
+        </div>
+        <div class="upload-prog mt8"><div class="upload-prog-fill" style="width:33%"></div></div>
+        <div style="font-size:10px;color:var(--t3);margin-top:3px">อัพโหลดแล้ว 1/3 รูป</div>
+      </div>
+    </div>
+
+    <!-- Profile form quick edit -->
+    <div class="sec mt8">
+      <div class="sec-head">
+        <div class="sec-label">
+          <div class="sec-icon si-gold"><i class="ti ti-user" aria-hidden="true"></i></div>
+          ข้อมูลโปรไฟล์
+        </div>
+        <span style="font-size:10px;color:var(--amber);font-weight:700;cursor:pointer">แก้ไข</span>
+      </div>
+      <div class="sec-body">
+        <div class="field-grid">
+          <div class="field">
+            <div class="field-label">ชื่อแสดง</div>
+            <div class="field-input" style="display:flex;align-items:center;background:rgba(255,255,255,.04);border:.5px solid var(--cb);border-radius:7px;padding:7px 10px;font-size:12px;color:var(--t2)">ครูเด่น มาสเตอร์ฟา</div>
+          </div>
+          <div class="field">
+            <div class="field-label">ตำแหน่ง / Role</div>
+            <div class="field-input" style="display:flex;align-items:center;background:rgba(255,255,255,.04);border:.5px solid var(--cb);border-radius:7px;padding:7px 10px;font-size:12px;color:var(--t2)">Master Facilitator</div>
+          </div>
+          <div class="field full">
+            <div class="field-label">Quote — แสดงบน Sale Page</div>
+            <div class="field-input field-textarea" style="background:rgba(255,255,255,.04);border:.5px solid var(--cb);border-radius:7px;padding:7px 10px;font-size:12px;color:var(--t2)">ที่ปรึกษาธุรกิจ 18 ปี ช่วยสร้างรายได้อย่างเป็นระบบ</div>
+          </div>
+          <div class="field full">
+            <div class="field-label">LINE OA URL — ปุ่ม CTA บน Sale Page</div>
+            <input class="field-input" placeholder="https://line.me/ti/p/..."/>
+          </div>
+        </div>
+        <button class="save-btn">
+          <i class="ti ti-device-floppy" style="font-size:15px" aria-hidden="true"></i>
+          บันทึกและอัพเดต Sale Page
+        </button>
+      </div>
+    </div>
+    <div style="height:14px;flex-shrink:0"></div>
+  </div>
+
+  <!-- ════ PAGE 2: RAG KNOWLEDGE BASE ════ -->
+  <div class="page" id="p2">
+    <div style="padding:14px 14px 0">
+      <div class="rag-hero">
+        <div class="rag-hero-title">AI Knowledge Base <span>(RAG System)</span></div>
+        <div class="rag-hero-desc">เพิ่มเอกสาร ข้อมูลสินค้า แผนรายได้ และโปรโมชั่น — น้องยูนิจะใช้ข้อมูลเหล่านี้ตอบคำถามและวางแผนธุรกิจให้สมาชิก</div>
+        <div class="rag-stats">
+          <div class="rag-stat"><div class="rag-stat-num r">24</div><div class="rag-stat-label">เอกสาร</div></div>
+          <div class="rag-stat"><div class="rag-stat-num g">1,847</div><div class="rag-stat-label">Chunks</div></div>
+          <div class="rag-stat"><div class="rag-stat-num b">98%</div><div class="rag-stat-label">Indexed</div></div>
+          <div class="rag-stat"><div class="rag-stat-num p">v2.4</div><div class="rag-stat-label">Version</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Knowledge Categories -->
+    <div class="sec" style="margin-top:10px">
+      <div class="sec-head">
+        <div class="sec-label">
+          <div class="sec-icon si-purple"><i class="ti ti-category" aria-hidden="true"></i></div>
+          หมวดหมู่ Knowledge
+        </div>
+        <span style="font-size:10px;color:#a78bfa;font-weight:700;cursor:pointer">+ เพิ่มหมวด</span>
+      </div>
+      <div class="sec-body">
+        <div class="kcat-grid">
+          <div class="kcat-card active">
+            <div class="kcat-top">
+              <div class="kcat-icon-label">
+                <div class="sec-icon si-red" style="width:20px;height:20px;font-size:11px"><i class="ti ti-box" aria-hidden="true"></i></div>
+                สินค้าและราคา
+              </div>
+              <div class="kcat-count"><span>12</span> docs</div>
+            </div>
+            <div class="kcat-desc">ข้อมูลสินค้า ส่วนประกอบ จุดขาย ราคา PV</div>
+            <div class="kcat-items">
+              <span class="kcat-chip">GLUCONA</span>
+              <span class="kcat-chip">CHOLESSNA</span>
+              <span class="kcat-chip">MINA S</span>
+              <span class="kcat-chip">+9 รายการ</span>
+            </div>
+          </div>
+          <div class="kcat-card">
+            <div class="kcat-top">
+              <div class="kcat-icon-label">
+                <div class="sec-icon si-gold" style="width:20px;height:20px;font-size:11px"><i class="ti ti-currency-baht" aria-hidden="true"></i></div>
+                แผนรายได้
+              </div>
+              <div class="kcat-count"><span>5</span> docs</div>
+            </div>
+            <div class="kcat-desc">8 Reward System อัตราโบนัส เงื่อนไข</div>
+            <div class="kcat-items">
+              <span class="kcat-chip">Retail Bonus</span>
+              <span class="kcat-chip">Fast Start</span>
+              <span class="kcat-chip">+6 รายการ</span>
+            </div>
+          </div>
+          <div class="kcat-card">
+            <div class="kcat-top">
+              <div class="kcat-icon-label">
+                <div class="sec-icon si-green" style="width:20px;height:20px;font-size:11px"><i class="ti ti-speakerphone" aria-hidden="true"></i></div>
+                โปรโมชั่น
+              </div>
+              <div class="kcat-count"><span>4</span> docs</div>
+            </div>
+            <div class="kcat-desc">แคมเปญปัจจุบัน เงื่อนไข ช่วงเวลา</div>
+            <div class="kcat-items">
+              <span class="kcat-chip">ซื้อ 3 แถม 1</span>
+              <span class="kcat-chip">Special Pack</span>
+            </div>
+          </div>
+          <div class="kcat-card">
+            <div class="kcat-top">
+              <div class="kcat-icon-label">
+                <div class="sec-icon si-blue" style="width:20px;height:20px;font-size:11px"><i class="ti ti-chart-line" aria-hidden="true"></i></div>
+                กลยุทธ์การขาย
+              </div>
+              <div class="kcat-count"><span>3</span> docs</div>
+            </div>
+            <div class="kcat-desc">Script การขาย วิธีแนะนำสินค้า</div>
+            <div class="kcat-items">
+              <span class="kcat-chip">U-SELLING</span>
+              <span class="kcat-chip">STP Script</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload new doc -->
+    <div class="sec" style="margin-top:8px">
+      <div class="sec-head">
+        <div class="sec-label">
+          <div class="sec-icon si-gold"><i class="ti ti-upload" aria-hidden="true"></i></div>
+          เพิ่มเอกสารใหม่
+        </div>
+      </div>
+      <div class="sec-body">
+        <div class="doc-upload-area" onclick="alert('เลือกไฟล์')">
+          <div class="doc-upload-icon"><i class="ti ti-cloud-upload" aria-hidden="true"></i></div>
+          <div class="doc-upload-title">ลากไฟล์มาวาง หรือคลิกเพื่อเลือก</div>
+          <div class="doc-upload-hint">AI จะอ่านและจัดเก็บเป็น Embedding อัตโนมัติ</div>
+          <div class="doc-types">
+            <span class="doc-type-badge">PDF</span>
+            <span class="doc-type-badge">TXT</span>
+            <span class="doc-type-badge">DOCX</span>
+            <span class="doc-type-badge">URL</span>
+            <span class="doc-type-badge">YouTube</span>
+          </div>
+        </div>
+
+        <!-- Recent docs -->
+        <div class="doc-list">
+          <div style="font-size:10px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;margin-top:2px">เอกสารล่าสุด</div>
+          <div class="doc-item">
+            <div class="doc-file-icon di-pdf"><i class="ti ti-file-type-pdf" aria-hidden="true"></i></div>
+            <div class="doc-info">
+              <div class="doc-name">product-catalog-2026.pdf</div>
+              <div class="doc-meta">1.2 MB · สินค้าและราคา · 15 พ.ค. 2026</div>
+            </div>
+            <span class="doc-status ds-indexed">Indexed</span>
+            <button class="doc-del-btn"><i class="ti ti-trash" aria-hidden="true"></i></button>
+          </div>
+          <div class="doc-item">
+            <div class="doc-file-icon di-pdf"><i class="ti ti-file-type-pdf" aria-hidden="true"></i></div>
+            <div class="doc-info">
+              <div class="doc-name">reward-plan-8channels.pdf</div>
+              <div class="doc-meta">856 KB · แผนรายได้ · 10 พ.ค. 2026</div>
+            </div>
+            <span class="doc-status ds-indexed">Indexed</span>
+            <button class="doc-del-btn"><i class="ti ti-trash" aria-hidden="true"></i></button>
+          </div>
+          <div class="doc-item">
+            <div class="doc-file-icon di-web"><i class="ti ti-world" aria-hidden="true"></i></div>
+            <div class="doc-info">
+              <div class="doc-name">unicorngloballink.com/#opportunity</div>
+              <div class="doc-meta">URL Crawl · แผนรายได้ · วันนี้</div>
+            </div>
+            <span class="doc-status ds-processing">Processing</span>
+            <button class="doc-del-btn"><i class="ti ti-trash" aria-hidden="true"></i></button>
+          </div>
+          <div class="doc-item">
+            <div class="doc-file-icon di-txt"><i class="ti ti-file-text" aria-hidden="true"></i></div>
+            <div class="doc-info">
+              <div class="doc-name">promotion-may2026.txt</div>
+              <div class="doc-meta">24 KB · โปรโมชั่น · วันนี้</div>
+            </div>
+            <span class="doc-status ds-pending">Pending</span>
+            <button class="doc-del-btn"><i class="ti ti-trash" aria-hidden="true"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="height:14px;flex-shrink:0"></div>
+  </div>
+
+  <!-- ════ PAGE 3: REWARD SYSTEM ════ -->
+  <div class="page" id="p3">
+    <div style="padding:14px 14px 0">
+      <div style="text-align:center;margin-bottom:12px">
+        <div style="display:inline-flex;align-items:center;gap:5px;background:var(--gold-dim);border:.5px solid var(--gold-b);border-radius:20px;padding:4px 12px;font-size:9.5px;font-weight:800;color:var(--amber);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">
+          <div style="width:5px;height:5px;border-radius:50%;background:var(--amber)"></div>
+          Unicorn Reward System
+        </div>
+        <div style="font-size:18px;font-weight:900">แผนรายได้ <span style="color:var(--amber)">8 ช่องทาง</span></div>
+        <div style="font-size:11.5px;color:var(--t3);margin-top:4px">ข้อมูลนี้จะถูกใช้โดย AI Coach ในการวางแผนรายได้ให้สมาชิก</div>
+      </div>
+
+      <!-- Package tiers -->
+      <div style="margin-bottom:10px">
+        <div style="font-size:10px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px">แพ็กเกจเริ่มต้น</div>
+        <div class="pkg-grid">
+          <div class="pkg-card">
+            <div class="pkg-name" style="color:var(--silver-light,#c8c8c8)">SILVER</div>
+            <div class="pkg-pv">300 PV</div>
+            <div class="pkg-desc">จุดเริ่มต้นสำหรับผู้ที่ต้องการทดลองธุรกิจ</div>
+          </div>
+          <div class="pkg-card featured">
+            <div style="font-size:9px;font-weight:800;color:var(--amber);margin-bottom:3px">POPULAR</div>
+            <div class="pkg-name" style="color:var(--amber)">GOLD</div>
+            <div class="pkg-pv">1,000 PV</div>
+            <div class="pkg-desc">แพ็กเกจยอดนิยมสำหรับผู้ที่ต้องการสร้างตัว</div>
+          </div>
+          <div class="pkg-card">
+            <div class="pkg-name" style="color:var(--t2)">PLATINUM</div>
+            <div class="pkg-pv">2,000 PV</div>
+            <div class="pkg-desc">สิทธิพิเศษสูงสุดและรายได้เต็มรูปแบบ</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8 Reward cards -->
+      <div style="font-size:10px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px">8 ช่องทางรายได้</div>
+      <div class="reward-grid">
+        <div class="reward-item">
+          <div class="reward-badge rb-red">Retail Bonus</div>
+          <div class="reward-title">1. โบนัสขายปลีก</div>
+          <div class="reward-rate">30–50%</div>
+          <div class="reward-detail">ส่วนต่างราคาปลีก vs ราคานักธุรกิจ จ่ายทันที<br>ตย. MINA: กำไร 500 บาท/กล่อง</div>
+        </div>
+        <div class="reward-item">
+          <div class="reward-badge rb-orange">Fast Start Bonus</div>
+          <div class="reward-title">2. โบนัสค่าแนะนำ</div>
+          <div class="reward-rate">100–120%</div>
+          <div class="reward-detail">Silver G1=100% · Gold G1=100%, G2=10% · Platinum G1-G3=10%</div>
+        </div>
+        <div class="reward-item">
+          <div class="reward-badge rb-blue">Balance Team</div>
+          <div class="reward-title">3. โบนัสบาลานซ์ทีม</div>
+          <div class="reward-rate">50%</div>
+          <div class="reward-detail">Super Star Elite: สูงสุด 60,000 บาท/วัน (1.8M/เดือน)</div>
+        </div>
+        <div class="reward-item">
+          <div class="reward-badge rb-purple">Matching Bonus</div>
+          <div class="reward-title">4. โบนัสแมชชิ่ง</div>
+          <div class="reward-rate">10–50%</div>
+          <div class="reward-detail">รับจากบาลานซ์ทีมลูกทีม ลึกสูงสุด 5 ชั้น</div>
+        </div>
+        <div class="reward-item">
+          <div class="reward-badge rb-green">Uni-Level Bonus</div>
+          <div class="reward-title">5. โบนัสผู้บริโภค</div>
+          <div class="reward-rate">10–30 ชั้น</div>
+          <div class="reward-detail">U1: 10 บาท/รหัส · U2: 20 บาท · U3: 30 บาท/รหัส</div>
+        </div>
+        <div class="reward-item">
+          <div class="reward-badge rb-amber">Dropship Bonus</div>
+          <div class="reward-title">6. โบนัสดรอปชิพ</div>
+          <div class="reward-rate">10%</div>
+          <div class="reward-detail">Silver: 30 บ/รหัส · Gold: 100 บ · Platinum: 200 บาท/รหัส</div>
+        </div>
+        <div class="reward-item">
+          <div class="reward-badge rb-teal">Global Bonus</div>
+          <div class="reward-title">7. โบนัสยอดขายทั่วโลก</div>
+          <div class="reward-rate">6%</div>
+          <div class="reward-detail">Diamond 1% · President 3% · Crown Zone 6%</div>
+        </div>
+        <div class="reward-item">
+          <div class="reward-badge rb-red">Travel Reward</div>
+          <div class="reward-title">8. รางวัลท่องเที่ยว</div>
+          <div class="reward-rate">ต่างประเทศ</div>
+          <div class="reward-detail">ท่องเที่ยวสัมผัสประสบการณ์ 5 ดาวระดับสากล</div>
+        </div>
+      </div>
+    </div>
+    <div style="height:14px;flex-shrink:0"></div>
+  </div>
+
+  <!-- ════ PAGE 4: AI TEST ════ -->
+  <div class="page" id="p4">
+    <div style="padding:14px">
+      <div class="sec-label" style="margin-bottom:10px">
+        <div class="sec-icon si-blue"><i class="ti ti-robot" aria-hidden="true"></i></div>
+        ทดสอบ AI Coach — น้องยูนิ
+      </div>
+      <div style="font-size:11.5px;color:var(--t3);margin-bottom:12px;line-height:1.5">AI จะตอบโดยใช้ข้อมูลจาก Knowledge Base ที่เพิ่มไว้ ทดสอบว่า AI รู้ข้อมูลครบหรือไม่</div>
+
+      <div class="ai-test-area">
+        <div class="ai-msg ai-msg-user">
+          <div class="ai-msg-label lbl-user">คุณ</div>
+          ถ้าเริ่ม Gold Package แล้วขายได้ 10 กล่อง MINA S ต่อวัน จะได้กำไรเท่าไหร่?
+        </div>
+        <div class="ai-msg ai-msg-ai">
+          <div class="ai-msg-label lbl-ai">น้องยูนิ (AI Coach)</div>
+          จากข้อมูล MINA S ที่มีอยู่ใน Knowledge Base:<br><br>
+          • ราคาปลีก 1,190 บาท | ราคานักธุรกิจ Gold = 890 บาท<br>
+          • กำไรต่อกล่อง = 300 บาท<br>
+          • ขาย 10 กล่อง/วัน = <strong style="color:var(--amber)">3,000 บาท/วัน = 90,000 บาท/เดือน</strong><br><br>
+          บวก Fast Start Bonus จากการแนะนำสมาชิกใหม่ Gold Package อีก 100% ของ Package แรก = 1,000 บาท/คน ✓
+        </div>
+        <div class="ai-msg ai-msg-user">
+          <div class="ai-msg-label lbl-user">คุณ</div>
+          โปรโมชั่นเดือนนี้มีอะไรบ้าง?
+        </div>
+        <div class="ai-msg ai-msg-ai">
+          <div class="ai-msg-label lbl-ai">น้องยูนิ (AI Coach)</div>
+          <span style="color:var(--amber);font-size:10px;font-weight:700">Processing...</span> กำลังค้นหาข้อมูลจาก Knowledge Base (โปรโมชั่น-may2026.txt กำลัง Index อยู่)
+        </div>
+      </div>
+
+      <div class="ai-input-row">
+        <input class="ai-input" id="ai-q" placeholder="ถามน้องยูนิเพื่อทดสอบ Knowledge Base..."/>
+        <button class="ai-send-btn" onclick="sendPrompt('เขียนโค้ด API endpoint ที่เชื่อม Gemini กับ RAG Knowledge Base สำหรับ Unicorn Smart AI')">
+          <i class="ti ti-send" style="font-size:13px" aria-hidden="true"></i>
+          ส่ง
+        </button>
+      </div>
+
+      <!-- RAG pipeline visual -->
+      <div style="margin-top:14px;background:var(--dark3);border:.5px solid var(--cb);border-radius:10px;padding:12px">
+        <div style="font-size:11px;font-weight:800;color:var(--t2);margin-bottom:10px">RAG Pipeline</div>
+        <div style="display:flex;align-items:center;gap:0;overflow-x:auto">
+          <div style="text-align:center;min-width:80px">
+            <div style="width:32px;height:32px;border-radius:8px;background:var(--blue-dim);border:.5px solid var(--blue-b);display:flex;align-items:center;justify-content:center;margin:0 auto 4px;font-size:14px;color:#60a5fa">
+              <i class="ti ti-message" aria-hidden="true"></i>
+            </div>
+            <div style="font-size:9.5px;color:var(--t3);font-weight:700">User Query</div>
+          </div>
+          <div style="flex:1;height:.5px;background:var(--cb);min-width:12px"></div>
+          <div style="text-align:center;min-width:80px">
+            <div style="width:32px;height:32px;border-radius:8px;background:var(--purple-dim);border:.5px solid var(--purple-b);display:flex;align-items:center;justify-content:center;margin:0 auto 4px;font-size:14px;color:#a78bfa">
+              <i class="ti ti-vector" aria-hidden="true"></i>
+            </div>
+            <div style="font-size:9.5px;color:var(--t3);font-weight:700">Embedding</div>
+          </div>
+          <div style="flex:1;height:.5px;background:var(--cb);min-width:12px"></div>
+          <div style="text-align:center;min-width:80px">
+            <div style="width:32px;height:32px;border-radius:8px;background:var(--gold-dim);border:.5px solid var(--gold-b);display:flex;align-items:center;justify-content:center;margin:0 auto 4px;font-size:14px;color:var(--amber)">
+              <i class="ti ti-database-search" aria-hidden="true"></i>
+            </div>
+            <div style="font-size:9.5px;color:var(--t3);font-weight:700">Vector Search</div>
+          </div>
+          <div style="flex:1;height:.5px;background:var(--cb);min-width:12px"></div>
+          <div style="text-align:center;min-width:80px">
+            <div style="width:32px;height:32px;border-radius:8px;background:var(--red-dim);border:.5px solid var(--red-b);display:flex;align-items:center;justify-content:center;margin:0 auto 4px;font-size:14px;color:var(--orange)">
+              <i class="ti ti-brain" aria-hidden="true"></i>
+            </div>
+            <div style="font-size:9.5px;color:var(--t3);font-weight:700">Gemini LLM</div>
+          </div>
+          <div style="flex:1;height:.5px;background:var(--cb);min-width:12px"></div>
+          <div style="text-align:center;min-width:80px">
+            <div style="width:32px;height:32px;border-radius:8px;background:var(--green-dim);border:.5px solid var(--green-b);display:flex;align-items:center;justify-content:center;margin:0 auto 4px;font-size:14px;color:var(--green)">
+              <i class="ti ti-message-chatbot" aria-hidden="true"></i>
+            </div>
+            <div style="font-size:9.5px;color:var(--t3);font-weight:700">Response</div>
+          </div>
+        </div>
+        <div style="margin-top:8px;font-size:10.5px;color:var(--t3);display:flex;align-items:center;gap:5px">
+          <i class="ti ti-database" style="font-size:12px;color:#a78bfa" aria-hidden="true"></i>
+          Vector DB: Supabase pgvector (1,536 dimensions · Gemini text-embedding-004)
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function sw(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  el.classList.add('on');
+}
+</script>

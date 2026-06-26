@@ -1,0 +1,460 @@
+
+<style>
+:root{
+  --gold:#c9a96e;--gold-dark:#a07c38;--gold-light:#fef6ea;--gold-mid:#f5e2c0;
+  --body:#f4f2ee;--card:#fff;--border:#e8e2d9;--border-mid:#d6cfc4;
+  --t1:#1a1209;--t2:#5a4e3a;--t3:#9a8a72;
+  --navy:#0f1f3d;--navy-mid:#1e3a6a;
+  --green:#16a34a;--green-bg:#dcfce7;--green-text:#166534;
+  --blue:#1d4ed8;--blue-bg:#dbeafe;--blue-text:#1e3a8a;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Sarabun',system-ui,sans-serif}
+
+/* Tab system */
+.tabs{display:flex;gap:4px;padding:10px 14px;background:#fff;border-bottom:.5px solid var(--border);flex-shrink:0}
+.tab{flex:1;padding:8px 10px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:.5px solid var(--border);color:var(--t2);background:#fff;transition:all .15s;text-align:center}
+.tab.active{background:var(--gold);color:#fff;border-color:var(--gold)}
+.page{display:none;flex-direction:column;flex:1;overflow-y:auto}
+.page.show{display:flex}
+
+/* ─────── NAME CARD PAGE ─────── */
+
+/* Edit panel (left) */
+.nc-wrap{display:flex;gap:0;height:100%}
+.nc-left{flex:1;overflow-y:auto;background:var(--body);padding:14px}
+.nc-right{width:200px;background:#f0eee9;border-left:.5px solid var(--border);overflow-y:auto;padding:14px;flex-shrink:0}
+
+/* Profile Hero */
+.nc-hero{background:linear-gradient(135deg,#0f1f3d 0%,#1e3a6a 100%);border-radius:14px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
+.nc-hero::after{content:'';position:absolute;bottom:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(201,169,110,.12)}
+.nc-hero-row{display:flex;align-items:center;gap:12px}
+.nc-avatar-wrap{position:relative;flex-shrink:0}
+.nc-avatar{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#c9a96e,#8a5a00);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;border:2px solid rgba(201,169,110,.5)}
+.nc-avatar-badge{position:absolute;bottom:-4px;right:-4px;background:var(--gold);color:#fff;font-size:8px;font-weight:800;border-radius:6px;padding:2px 5px;white-space:nowrap;border:2px solid #fff}
+.nc-hero-info{flex:1;min-width:0}
+.nc-ubc-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(201,169,110,.2);border:.5px solid rgba(201,169,110,.4);border-radius:20px;padding:2px 8px;font-size:9px;font-weight:800;color:var(--gold);letter-spacing:.06em;margin-bottom:6px}
+.nc-name{font-size:17px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:2px}
+.nc-role{font-size:11px;color:rgba(255,255,255,.65)}
+.nc-share-btn{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.15);border:.5px solid rgba(255,255,255,.3);border-radius:8px;padding:5px 10px;font-size:10px;color:#fff;cursor:pointer;display:flex;align-items:center;gap:4px}
+
+/* DNA Card */
+.dna-card{background:var(--card);border:.5px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px}
+.dna-row{display:flex;align-items:center;gap:10px}
+.dna-icon-box{width:44px;height:44px;border-radius:10px;background:#e0f2fe;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.dna-label{font-size:9px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:4px}
+.dna-name{font-size:16px;font-weight:800;color:var(--t1);line-height:1.1}
+.dna-quote{font-size:11px;color:var(--t3);font-style:italic;margin-top:2px}
+.dna-tags{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+.dna-tag{font-size:10px;background:#f4f2ee;color:var(--t2);border-radius:6px;padding:2px 8px;font-weight:600}
+.dna-right{margin-left:auto;background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border-radius:10px;padding:10px 12px;font-size:11.5px;color:var(--t2);line-height:1.5;max-width:160px}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.stat-box{background:var(--card);border:.5px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px}
+.stat-icon{font-size:16px}
+.stat-label{font-size:9px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.stat-value{font-size:14px;font-weight:800;color:var(--t1)}
+.stat-value.verified{color:var(--green);font-size:13px}
+
+/* Form section */
+.form-section{background:var(--card);border:.5px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px}
+.form-sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.form-sec-title{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--t1)}
+.form-sec-icon{width:22px;height:22px;border-radius:6px;background:var(--gold-light);display:flex;align-items:center;justify-content:center;font-size:11px}
+.edit-btn{font-size:11px;color:var(--gold);font-weight:700;cursor:pointer;background:none;border:none}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.form-group{display:flex;flex-direction:column;gap:3px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:10px;color:var(--t3);font-weight:600}
+.form-label span{font-size:9px;color:var(--t3);margin-left:4px}
+.form-input{background:#f8f6f2;border:.5px solid var(--border);border-radius:7px;padding:7px 10px;font-size:12px;color:var(--t1);outline:none}
+.form-input::placeholder{color:var(--t3)}
+.social-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:#f8f6f2;border:.5px solid var(--border);border-radius:8px;margin-bottom:6px}
+.social-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.social-input{flex:1;background:none;border:none;font-size:11.5px;color:var(--t2);outline:none}
+.social-input::placeholder{color:var(--t3)}
+
+/* Right panel: phone mockup */
+.phone-mockup{background:linear-gradient(180deg,#1a1040 0%,#2d1b69 100%);border-radius:20px;padding:16px;color:#fff;position:relative;overflow:hidden}
+.phone-mockup::before{content:'';position:absolute;top:-20px;left:-20px;width:80px;height:80px;border-radius:50%;background:rgba(120,80,200,.3)}
+.pm-label{font-size:8px;font-weight:800;letter-spacing:.1em;color:rgba(255,255,255,.5);text-transform:uppercase;display:flex;align-items:center;gap:4px;margin-bottom:10px}
+.pm-avatar{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#c9a96e,#8a5a00);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;margin:0 auto 6px;border:2px solid rgba(201,169,110,.5)}
+.pm-name{font-size:12px;font-weight:800;color:#fff;text-align:center;margin-bottom:10px}
+.pm-line-btn{background:#06C755;border:none;border-radius:8px;padding:8px;color:#fff;font-size:11px;font-weight:800;width:100%;cursor:pointer;margin-bottom:10px}
+.pm-url{font-size:9px;color:rgba(255,255,255,.5);text-align:center;margin-top:8px;word-break:break-all}
+
+/* AI Highlight section in card */
+.ai-section{background:linear-gradient(135deg,#fef6ea,#fde8c0);border:.5px solid var(--gold-mid);border-radius:10px;padding:10px;margin-top:8px}
+.ai-section-title{font-size:10px;font-weight:800;color:var(--gold-dark);display:flex;align-items:center;gap:4px;margin-bottom:6px}
+.ai-chip{display:inline-flex;align-items:center;gap:3px;background:#fff;border:.5px solid var(--gold-mid);border-radius:20px;padding:3px 8px;font-size:10px;font-weight:600;color:var(--t2);margin:2px}
+
+/* LinkedIn-like About */
+.linkedin-card{background:var(--card);border:.5px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px}
+.lk-section-title{font-size:11px;font-weight:800;color:var(--t1);display:flex;align-items:center;gap:5px;margin-bottom:8px}
+.exp-item{display:flex;gap:8px;padding:6px 0;border-bottom:.5px solid var(--border)}
+.exp-item:last-child{border-bottom:none}
+.exp-logo{width:32px;height:32px;border-radius:8px;background:var(--gold-light);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.exp-title{font-size:12px;font-weight:700;color:var(--t1)}
+.exp-company{font-size:11px;color:var(--t2)}
+.exp-period{font-size:10px;color:var(--t3)}
+.skill-badges{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.skill-badge{background:#f4f2ee;color:var(--t2);font-size:10px;font-weight:600;border-radius:6px;padding:2px 8px}
+
+/* ─────── REFERRAL PAGE ─────── */
+.ref-wrap{padding:14px;overflow-y:auto}
+.ref-hero{background:linear-gradient(135deg,#0f1f3d,#1e3a6a);border-radius:14px;padding:16px;margin-bottom:12px;color:#fff}
+.ref-hero h2{font-size:18px;font-weight:800;margin-bottom:4px}
+.ref-hero p{font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.5}
+.ref-badge-row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.ref-badge{background:rgba(255,255,255,.12);border:.5px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:600;color:#fff;display:flex;align-items:center;gap:4px}
+
+.ref-url-card{background:var(--card);border:.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.ref-url-label{font-size:11px;font-weight:700;color:var(--t1);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.ref-url-box{background:#f8f6f2;border:.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--t2);word-break:break-all;margin-bottom:8px;font-family:monospace}
+.ref-url-box .slug-visible{color:var(--gold-dark);font-weight:700}
+.ref-url-box .hidden-part{color:var(--t3)}
+.ref-btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ref-btn{border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+.ref-btn-copy{background:#f4f2ee;color:var(--t1);border:.5px solid var(--border)}
+.ref-btn-share{background:var(--gold);color:#fff}
+.ref-btn-line{background:#06C755;color:#fff}
+.ref-btn-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+
+/* How it works */
+.how-card{background:var(--card);border:.5px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px}
+.how-title{font-size:12px;font-weight:800;color:var(--t1);margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.how-step{display:flex;gap:10px;margin-bottom:8px;align-items:flex-start}
+.how-step:last-child{margin-bottom:0}
+.how-num{width:24px;height:24px;border-radius:50%;background:var(--t1);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.how-num.gold{background:var(--gold)}
+.how-text{font-size:12px;color:var(--t2);line-height:1.5;flex:1}
+.how-text strong{color:var(--t1)}
+
+/* Analytics mini */
+.analytics-card{background:var(--card);border:.5px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px}
+.analytics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.analytics-item{text-align:center;padding:8px;background:#f8f6f2;border-radius:8px}
+.analytics-num{font-size:18px;font-weight:800;color:var(--t1)}
+.analytics-label{font-size:9px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+
+/* Tech note */
+.tech-note{background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:.5px solid #bae6fd;border-radius:10px;padding:10px;margin-bottom:10px;font-size:11px;color:#0c4a6e;line-height:1.5}
+.tech-note strong{color:#0284c7}
+
+/* Referral landing page mockup */
+.ref-landing-mockup{background:linear-gradient(180deg,#1a1040 0%,#2d1b69 60%,#1a1040 100%);border-radius:16px;padding:16px;color:#fff;margin-bottom:10px}
+.rlm-header{text-align:center;margin-bottom:12px}
+.rlm-avatar{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#c9a96e,#8a5a00);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;margin:0 auto 6px;border:2px solid rgba(201,169,110,.5)}
+.rlm-name{font-size:13px;font-weight:800;color:#fff;margin-bottom:2px}
+.rlm-ubc{display:inline-block;background:rgba(201,169,110,.2);border:.5px solid rgba(201,169,110,.4);border-radius:20px;padding:2px 8px;font-size:9px;font-weight:800;color:var(--gold);letter-spacing:.06em}
+.rlm-contact-btn{background:#06C755;border:none;border-radius:10px;padding:10px;color:#fff;font-size:12px;font-weight:800;width:100%;cursor:pointer;margin:10px 0}
+.rlm-feature{display:flex;gap:6px;margin-bottom:6px;align-items:center;background:rgba(255,255,255,.08);border-radius:8px;padding:7px 10px}
+.rlm-feature-icon{font-size:14px;flex-shrink:0}
+.rlm-feature-text{font-size:11px;color:rgba(255,255,255,.85);line-height:1.3}
+.rlm-cta{background:linear-gradient(135deg,var(--gold),#8a5a00);border:none;border-radius:10px;padding:12px;color:#fff;font-size:13px;font-weight:800;width:100%;cursor:pointer;margin-top:10px}
+</style>
+
+<div style="display:flex;flex-direction:column;height:640px;background:var(--body);border-radius:12px;overflow:hidden;border:.5px solid var(--border)">
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('nc',this)">🪪 Name Card (LinkedIn Style)</div>
+    <div class="tab" onclick="showTab('ref',this)">🔗 Referral Affiliate System</div>
+  </div>
+
+  <!-- ══════ NAME CARD PAGE ══════ -->
+  <div class="page show" id="nc">
+    <div class="nc-wrap">
+      <!-- LEFT: Edit Panel -->
+      <div class="nc-left">
+
+        <!-- Hero -->
+        <div class="nc-hero">
+          <div class="nc-hero-row">
+            <div class="nc-avatar-wrap">
+              <div class="nc-avatar">KD</div>
+              <div class="nc-avatar-badge">UBC 3</div>
+            </div>
+            <div class="nc-hero-info">
+              <div class="nc-ubc-badge">⭐ UBC 3 · MASTER</div>
+              <div class="nc-name">อนุสรณ์ หนองนา (ครูเด่น)</div>
+              <div class="nc-role">ที่ปรึกษาธุรกิจ &amp; นักพัฒนาศักยภาพ</div>
+            </div>
+          </div>
+          <button class="nc-share-btn">🔗 URL แนะนำเพื่อน</button>
+        </div>
+
+        <!-- DNA + Context -->
+        <div class="dna-card">
+          <div class="dna-row">
+            <div class="dna-icon-box">💧</div>
+            <div style="flex:1">
+              <div class="dna-label">⬡ WEALTH DNA</div>
+              <div class="dna-name">ธาตุน้ำ (WATER)</div>
+              <div class="dna-quote">"ลื่นไหล เฉียบสาย ผูกฝัน"</div>
+              <div class="dna-tags">
+                <span class="dna-tag">สื่อสารเก่ง</span>
+                <span class="dna-tag">สร้างความสัมพันธ์</span>
+                <span class="dna-tag">วิเคราะห์ลึก</span>
+              </div>
+            </div>
+            <div class="dna-right" style="font-size:10.5px">
+              📍 จุดแข็งธุรกิจที่แนะนำ<br>
+              เน้นการสร้างความสัมพันธ์<br>ที่แน่นแฟ้น ดูแลลูกค้า<br>ด้วยความเข้าใจ
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-box">
+            <span class="stat-icon">⭐</span>
+            <div>
+              <div class="stat-label">Business Points</div>
+              <div class="stat-value">4,820</div>
+            </div>
+          </div>
+          <div class="stat-box">
+            <span class="stat-icon">✅</span>
+            <div>
+              <div class="stat-label">U-Partner Status</div>
+              <div class="stat-value verified">✓ Verified</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LinkedIn-style Experience -->
+        <div class="linkedin-card">
+          <div class="lk-section-title">💼 ประสบการณ์ &amp; ความเชี่ยวชาญ</div>
+          <div class="exp-item">
+            <div class="exp-logo">🦄</div>
+            <div>
+              <div class="exp-title">ที่ปรึกษาธุรกิจ Unicorn Global Link</div>
+              <div class="exp-company">Unicorn Academy · ปัจจุบัน</div>
+              <div class="exp-period">2565 – ปัจจุบัน · 2 ปี</div>
+            </div>
+          </div>
+          <div class="exp-item">
+            <div class="exp-logo">🎓</div>
+            <div>
+              <div class="exp-title">ผู้อำนวยการสถาบัน</div>
+              <div class="exp-company">CAP Vision Institute</div>
+              <div class="exp-period">2549 – ปัจจุบัน · 18 ปี</div>
+            </div>
+          </div>
+          <div style="margin-top:8px">
+            <div style="font-size:10px;font-weight:700;color:var(--t3);margin-bottom:5px">SKILLS</div>
+            <div class="skill-badges">
+              <span class="skill-badge">Facilitation</span>
+              <span class="skill-badge">AI Coaching</span>
+              <span class="skill-badge">Network Marketing</span>
+              <span class="skill-badge">Personal Branding</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Highlight -->
+        <div class="form-section">
+          <div class="form-sec-header">
+            <div class="form-sec-title">
+              <div class="form-sec-icon">🤖</div>
+              AI สร้าง Personal Branding
+            </div>
+            <button class="edit-btn">✨ สร้างใหม่</button>
+          </div>
+          <div style="font-size:12px;color:var(--t2);line-height:1.6;background:#f8f6f2;border-radius:8px;padding:10px;margin-bottom:8px;border-left:3px solid var(--gold)">
+            "ครูเด่นเป็นที่ปรึกษาธุรกิจที่มีประสบการณ์กว่า 18 ปี ผู้เชี่ยวชาญด้านการพัฒนาศักยภาพมนุษย์และการตลาดเครือข่าย ผ่านเวทีบรรยายมากกว่า 1,000 แห่ง"
+          </div>
+          <div class="ai-section">
+            <div class="ai-section-title">🏷️ AI แนะนำแท็กของคุณ</div>
+            <div>
+              <span class="ai-chip">🎯 นักพัฒนาคน</span>
+              <span class="ai-chip">💼 ที่ปรึกษาธุรกิจ</span>
+              <span class="ai-chip">🤖 AI Coach</span>
+              <span class="ai-chip">🌱 Transformative Learning</span>
+              <span class="ai-chip">🦄 Unicorn Partner</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Edit Form -->
+        <div class="form-section">
+          <div class="form-sec-header">
+            <div class="form-sec-title">
+              <div class="form-sec-icon">👤</div>
+              ตั้งค่าโปรไฟล์
+            </div>
+            <button class="edit-btn">แก้ไขข้อมูล</button>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <div class="form-label">ชื่อแสดง</div>
+              <div class="form-input">อนุสรณ์ หนองนา (ครูเด่น)</div>
+            </div>
+            <div class="form-group">
+              <div class="form-label">ความเชี่ยวชาญ</div>
+              <div class="form-input" style="color:var(--t3)">เช่น Digital Marketing</div>
+            </div>
+            <div class="form-group full">
+              <div class="form-label">คติ / Quote <span>→ แสดงบน Referral</span></div>
+              <div class="form-input" style="color:var(--t3)">เช่น เป้าหมายที่ชัดเจน คือจุดเริ่มต้น...</div>
+            </div>
+            <div class="form-group full">
+              <div class="form-label">แนะนำตัว (BIO) <span>→ แสดงบน Referral</span></div>
+              <div class="form-input" style="color:var(--t3);min-height:50px">เล่าเรื่องราวเกี่ยวกับตัวคุณสั้นๆ...</div>
+            </div>
+          </div>
+          <div style="margin-top:10px">
+            <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">ช่องทางการติดต่อ</div>
+            <div class="social-item"><div class="social-icon" style="background:#dcfce7">📱</div><input class="social-input" placeholder="LINE OA URL (https://line.me/...)"/></div>
+            <div class="social-item"><div class="social-icon" style="background:#dbeafe">📘</div><input class="social-input" placeholder="Facebook URL"/></div>
+            <div class="social-item"><div class="social-icon" style="background:#fee2e2">🎬</div><input class="social-input" placeholder="YouTube Link"/></div>
+            <div class="social-item"><div class="social-icon" style="background:#fce7f3">📸</div><input class="social-input" placeholder="Instagram URL"/></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Phone Preview -->
+      <div class="nc-right">
+        <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;text-align:center">👁️ Preview ลูกค้าเห็น</div>
+
+        <div class="ref-landing-mockup">
+          <div class="rlm-header">
+            <div class="rlm-avatar">KD</div>
+            <div class="rlm-name">อนุสรณ์ หนองนา (ครูเด่น)</div>
+            <div class="rlm-ubc">⭐ UBC 3 · MASTER</div>
+          </div>
+
+          <div style="font-size:11px;color:rgba(255,255,255,.75);text-align:center;margin-bottom:10px;line-height:1.4;font-style:italic">
+            "ที่ปรึกษาธุรกิจ 18 ปี ช่วยให้คุณสร้างรายได้อย่างเป็นระบบ"
+          </div>
+
+          <button class="rlm-contact-btn">📱 ติดต่อผ่าน LINE OA</button>
+
+          <div class="rlm-feature">
+            <div class="rlm-feature-icon">🤖</div>
+            <div class="rlm-feature-text"><strong>AI Coach</strong> ช่วยวางแผนธุรกิจส่วนตัว</div>
+          </div>
+          <div class="rlm-feature">
+            <div class="rlm-feature-icon">🧬</div>
+            <div class="rlm-feature-text"><strong>Wealth DNA</strong> วิเคราะห์ศักยภาพของคุณ</div>
+          </div>
+          <div class="rlm-feature">
+            <div class="rlm-feature-icon">🎯</div>
+            <div class="rlm-feature-text"><strong>Mission System</strong> เติบโตอย่างเป็นระบบ</div>
+          </div>
+
+          <button class="rlm-cta">🦄 สมัครเป็นพาร์ทเนอร์</button>
+        </div>
+
+        <div class="pm-url">unicornsmartai.cloud/<span style="color:var(--gold);font-weight:700">unicorncoachden</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ REFERRAL PAGE ══════ -->
+  <div class="page" id="ref">
+    <div class="ref-wrap">
+
+      <!-- Hero -->
+      <div class="ref-hero">
+        <div style="font-size:9px;font-weight:800;letter-spacing:.1em;color:rgba(255,255,255,.5);text-transform:uppercase;margin-bottom:6px">AFFILIATE SYSTEM</div>
+        <h2>🔗 ระบบลิงค์แนะนำ</h2>
+        <p>ส่งลิงค์ให้ใคร → รหัสผู้แนะนำผูกอัตโนมัติ<br>ผู้รับเห็นแค่ URL สวยงาม ไม่เห็นรหัสนักธุรกิจ</p>
+        <div class="ref-badge-row">
+          <div class="ref-badge">🔒 รหัสซ่อน</div>
+          <div class="ref-badge">🍪 Cookie 30 วัน</div>
+          <div class="ref-badge">📊 Track ได้</div>
+          <div class="ref-badge">🤖 AI ช่วยสร้าง</div>
+        </div>
+      </div>
+
+      <!-- URL Box -->
+      <div class="ref-url-card">
+        <div class="ref-url-label">🌐 ลิงค์แนะนำของคุณ</div>
+        <div class="ref-url-box">
+          unicornsmartai.cloud/<span class="slug-visible">unicorncoachden</span>
+        </div>
+        <div style="font-size:10px;color:var(--t3);margin-bottom:10px;background:#f8f6f2;border-radius:6px;padding:6px 8px">
+          🔒 รหัสนักธุรกิจ <strong style="color:var(--t2)">TH546415</strong> ซ่อนอยู่ใน encrypted token — ผู้รับไม่เห็น
+        </div>
+        <div class="ref-btn-row3">
+          <button class="ref-btn ref-btn-copy" onclick="this.textContent='✓ Copied!'">📋 คัดลอก</button>
+          <button class="ref-btn ref-btn-line">LINE แชร์</button>
+          <button class="ref-btn ref-btn-share" style="background:var(--navy)">📤 แชร์</button>
+        </div>
+      </div>
+
+      <!-- How it works -->
+      <div class="how-card">
+        <div class="how-title">⚙️ ระบบทำงานอย่างไร?</div>
+        <div class="how-step">
+          <div class="how-num">1</div>
+          <div class="how-text">คุณส่งลิงค์ <strong>unicornsmartai.cloud/unicorncoachden</strong> ให้คนใหม่</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">2</div>
+          <div class="how-text">ระบบอ่าน slug → ค้นหา <strong>profile ของคุณ</strong> → ฝัง referral token ใน Cookie อายุ 30 วัน</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num gold">3</div>
+          <div class="how-text">เมื่อผู้รับ <strong>สมัครสมาชิก</strong> → ระบบดึง token → ผูก <strong>รหัสแนะนำ TH546415</strong> อัตโนมัติ</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num gold">4</div>
+          <div class="how-text">คุณได้รับ <strong>Business Points</strong> และ <strong>Referral Bonus</strong> ทันที</div>
+        </div>
+      </div>
+
+      <!-- Analytics -->
+      <div class="analytics-card">
+        <div style="font-size:12px;font-weight:800;color:var(--t1);display:flex;align-items:center;gap:5px;margin-bottom:4px">📊 สถิติลิงค์ของคุณ</div>
+        <div class="analytics-grid">
+          <div class="analytics-item">
+            <div class="analytics-num">127</div>
+            <div class="analytics-label">คลิกทั้งหมด</div>
+          </div>
+          <div class="analytics-item">
+            <div class="analytics-num" style="color:var(--green)">12</div>
+            <div class="analytics-label">สมัครแล้ว</div>
+          </div>
+          <div class="analytics-item">
+            <div class="analytics-num" style="color:var(--gold-dark)">9.4%</div>
+            <div class="analytics-label">Conversion</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI QR / Share tools -->
+      <div class="form-section">
+        <div class="form-sec-header">
+          <div class="form-sec-title"><div class="form-sec-icon">🤖</div>AI ช่วยสร้าง Caption</div>
+          <button class="edit-btn">✨ สร้างใหม่</button>
+        </div>
+        <div style="background:#f8f6f2;border-radius:8px;padding:10px;font-size:12px;color:var(--t2);line-height:1.6;border-left:3px solid var(--gold);margin-bottom:8px">
+          "🦄 สนใจสร้างรายได้เสริมอย่างเป็นระบบไหมครับ? ผมใช้ระบบ Unicorn Smart AI ช่วยวางแผนธุรกิจ มี AI Coach ส่วนตัว และ Wealth DNA วิเคราะห์ศักยภาพของคุณ → unicornsmartai.cloud/unicorncoachden"
+        </div>
+        <div class="ref-btn-row">
+          <button class="ref-btn ref-btn-copy" style="font-size:11px" onclick="this.textContent='✓ Copied!'">📋 คัดลอก Caption</button>
+          <button class="ref-btn ref-btn-line" style="font-size:11px">📤 ส่งทาง LINE</button>
+        </div>
+      </div>
+
+      <!-- Tech Note -->
+      <div class="tech-note">
+        🔐 <strong>Security:</strong> รหัสนักธุรกิจถูกเข้ารหัสด้วย <strong>HMAC-SHA256</strong> ฝังใน HttpOnly Cookie — ไม่ปรากฏบน URL, ไม่สามารถแก้ไขจาก browser ได้ · ระบบ RLS ของ Supabase ป้องกันการเข้าถึงข้อมูลโดยตรง
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showTab(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('show');
+  el.classList.add('active');
+}
+</script>
