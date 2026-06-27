@@ -123,6 +123,97 @@ export async function action({ request }: ActionFunctionArgs) {
       }
       return { success: true };
     }
+
+    if (type === "file") {
+      const { title, content, fileType } = data;
+      const { data: doc, error } = await supabase
+        .from("knowledge_docs")
+        .insert({ 
+          title, 
+          category, 
+          source_type: fileType.includes("pdf") ? "pdf" : "txt",
+          status: "pending"
+        })
+        .select().single();
+
+      if (error || !doc) {
+        return new Response(JSON.stringify({ error: error?.message || "Failed to create document record" }), { status: 400 });
+      }
+
+      try {
+        let textToIngest = "";
+
+        if (fileType.includes("pdf")) {
+          const geminiApiKey = process.env.GEMINI_API_KEY;
+          if (!geminiApiKey) {
+            throw new Error("GEMINI_API_KEY is not defined in environment variables");
+          }
+
+          const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{
+                  parts: [
+                    {
+                      inlineData: {
+                        data: content,
+                        mimeType: "application/pdf"
+                      }
+                    },
+                    {
+                      text: "Extract all text from this PDF document verbatim. Do not summarize, format, or add commentary. Return only the extracted text contents."
+                    }
+                  ]
+                }]
+              })
+            }
+          );
+
+          if (!response.ok) {
+            const errBody = await response.text();
+            throw new Error(`Gemini PDF extraction failed: ${response.status} - ${errBody}`);
+          }
+
+          const resData = await response.json() as any;
+          textToIngest = resData.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+          if (!textToIngest || textToIngest.trim().length === 0) {
+            throw new Error("No text content could be extracted from the PDF by Gemini");
+          }
+        } else {
+          if (content.startsWith("data:") || content.includes("base64,")) {
+            let rawContent = content;
+            if (content.includes("base64,")) {
+              rawContent = content.split("base64,")[1];
+            }
+            try {
+              const binary = atob(rawContent);
+              const bytes = new Uint8Array(binary.length);
+              for (let i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+              }
+              textToIngest = new TextDecoder().decode(bytes);
+            } catch {
+              textToIngest = content;
+            }
+          } else {
+            textToIngest = content;
+          }
+        }
+
+        await ingestDocument(doc.id, textToIngest, { title, category });
+      } catch (err: any) {
+        await supabase.from("knowledge_docs")
+          .update({ status: "error", error_msg: err.message, updated_at: new Date().toISOString() })
+          .eq("id", doc.id);
+
+        return new Response(JSON.stringify({ error: `การประมวลผลไฟล์ล้มเหลว: ${err.message}` }), { status: 400 });
+      }
+      return { success: true };
+    }
   }
 
   if (method === "PUT") {
@@ -167,7 +258,7 @@ export default function AdminKnowledgePage() {
   const navigate = useNavigate();
 
   const [docs, setDocs] = useState<KnowledgeDoc[]>(initialDocs);
-  const [tab, setTab] = useState<"url" | "text">("url");
+  const [tab, setTab] = useState<"url" | "text" | "file">("url");
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState<string>("all");
 
@@ -179,6 +270,10 @@ export default function AdminKnowledgePage() {
   const [title, setTitle] = useState("");
   const [textContent, setTextContent] = useState("");
   const [textCategory, setTextCategory] = useState<KnowledgeCategory>("general");
+
+  // Form File
+  const [file, setFile] = useState<File | null>(null);
+  const [fileCategory, setFileCategory] = useState<KnowledgeCategory>("general");
 
   // Status flags
   const [submitting, setSubmitting] = useState(false);
@@ -251,6 +346,67 @@ export default function AdminKnowledgePage() {
       setTitle("");
       setTextContent("");
       
+      setTimeout(() => {
+        navigate("/admin/knowledge", { replace: true });
+        window.location.reload();
+      }, 1500);
+    } catch (err: any) {
+      setErrorMsg(err.message || "เกิดข้อผิดพลาด");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleFileSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!file) return;
+    setSubmitting(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    try {
+      const fileContentPromise = new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = reader.result as string;
+          if (file.type === "application/pdf") {
+            const base64Data = result.split("base64,")[1];
+            resolve(base64Data);
+          } else {
+            resolve(result);
+          }
+        };
+        reader.onerror = (err) => reject(err);
+
+        if (file.type === "application/pdf") {
+          reader.readAsDataURL(file);
+        } else {
+          reader.readAsText(file);
+        }
+      });
+
+      const content = await fileContentPromise;
+
+      const res = await fetch("/admin/knowledge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "file",
+          title: file.name,
+          content,
+          category: fileCategory,
+          fileType: file.type || (file.name.endsWith(".pdf") ? "application/pdf" : "text/plain"),
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "เกิดข้อผิดพลาดในการประมวลผลไฟล์");
+      }
+
+      setSuccessMsg("นำเข้าไฟล์สำเร็จ! ข้อมูลถูกส่งไปสกัดและบันทึกเวกเตอร์แล้ว");
+      setFile(null);
+
       setTimeout(() => {
         navigate("/admin/knowledge", { replace: true });
         window.location.reload();
@@ -336,28 +492,39 @@ export default function AdminKnowledgePage() {
             </h3>
 
             {/* Tab Selector */}
-            <div className="flex bg-bg-input p-1 rounded-xl">
+            <div className="flex bg-bg-input p-1 rounded-xl gap-1">
               <button
                 type="button"
                 onClick={() => setTab("url")}
-                className={`flex-1 text-xs font-bold py-2 rounded-lg transition-all ${
+                className={`flex-1 text-[11px] font-bold py-2 rounded-lg transition-all ${
                   tab === "url" 
                     ? "bg-white text-brand-gold shadow-sm" 
                     : "text-text-secondary hover:text-text-primary"
                 }`}
               >
-                🔗 ดึงจากหน้าเว็บ (URL)
+                🔗 เว็บไซต์
+              </button>
+              <button
+                type="button"
+                onClick={() => setTab("file")}
+                className={`flex-1 text-[11px] font-bold py-2 rounded-lg transition-all ${
+                  tab === "file" 
+                    ? "bg-white text-brand-gold shadow-sm" 
+                    : "text-text-secondary hover:text-text-primary"
+                }`}
+              >
+                📁 อัปโหลดไฟล์
               </button>
               <button
                 type="button"
                 onClick={() => setTab("text")}
-                className={`flex-1 text-xs font-bold py-2 rounded-lg transition-all ${
+                className={`flex-1 text-[11px] font-bold py-2 rounded-lg transition-all ${
                   tab === "text" 
                     ? "bg-white text-brand-gold shadow-sm" 
                     : "text-text-secondary hover:text-text-primary"
                 }`}
               >
-                📝 เขียนบทความเอง
+                📝 เขียนข้อความ
               </button>
             </div>
 
@@ -414,6 +581,57 @@ export default function AdminKnowledgePage() {
                   className="w-full btn-gold justify-center py-3 shadow-sm mt-2 text-xs font-bold"
                 >
                   {submitting ? "กำลังสแกนลิงก์..." : "⚡ สกัดข้อมูลเว็บ & เรียนรู้"}
+                </button>
+              </form>
+            )}
+
+            {/* File Form */}
+            {tab === "file" && (
+              <form onSubmit={handleFileSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-[10px] font-black text-text-muted uppercase tracking-wider mb-1.5 select-none">
+                    หมวดหมู่ของความรู้
+                  </label>
+                  <select
+                    value={fileCategory}
+                    onChange={(e) => setFileCategory(e.target.value as KnowledgeCategory)}
+                    className="w-full px-4 py-2.5 bg-bg-input border border-border-strong rounded-xl focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none font-bold text-xs sm:text-sm text-text-primary"
+                  >
+                    {Object.entries(CATEGORY_LABELS).map(([key, val]) => (
+                      <option key={key} value={key}>{val}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-black text-text-muted uppercase tracking-wider mb-1.5 select-none">
+                    ไฟล์เอกสาร (PDF หรือ TXT)
+                  </label>
+                  <div className="border-2 border-dashed border-border-strong hover:border-brand-gold rounded-2xl p-6 text-center cursor-pointer transition-colors relative group">
+                    <input
+                      type="file"
+                      accept=".pdf,.txt"
+                      onChange={(e) => setFile(e.target.files?.[0] || null)}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <div className="mx-auto text-text-muted group-hover:text-brand-gold mb-2 transition-colors text-2xl">
+                      📁
+                    </div>
+                    <p className="text-xs font-black text-text-primary">
+                      {file ? file.name : "เลือกไฟล์ PDF/TXT หรือลากมาวางที่นี่"}
+                    </p>
+                    <p className="text-[10px] text-text-muted mt-1.5 font-bold">
+                      {file ? `${(file.size / (1024 * 1024)).toFixed(2)} MB` : "จำกัดขนาดไฟล์ไม่เกิน 15MB"}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={submitting || !file}
+                  className="w-full btn-gold justify-center py-3 shadow-sm mt-2 text-xs font-bold"
+                >
+                  {submitting ? "กำลังสกัดและฝัง Vector..." : "⚡ สกัดข้อมูลไฟล์ & เรียนรู้"}
                 </button>
               </form>
             )}
@@ -533,6 +751,10 @@ export default function AdminKnowledgePage() {
                               {doc.source_type === "url" ? (
                                 <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-100 rounded px-1.5 py-0.5 font-bold">
                                   🔗 เว็บไซต์
+                                </span>
+                              ) : doc.source_type === "pdf" ? (
+                                <span className="text-[10px] bg-red-50 text-red-700 border border-red-100 rounded px-1.5 py-0.5 font-bold">
+                                  📁 ไฟล์ PDF
                                 </span>
                               ) : (
                                 <span className="text-[10px] bg-blue-50 text-blue-700 border border-blue-100 rounded px-1.5 py-0.5 font-bold">
