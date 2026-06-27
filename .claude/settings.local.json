@@ -28,7 +28,14 @@
       "Bash(node -e ':*)",
       "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\('/dev/stdin','utf-8'\\)\\); console.log\\('version:', d.version, '\\\\nmain:', d.main, '\\\\nexports keys:', Object.keys\\(d.exports||{}\\).slice\\(0,5\\)\\)\")",
       "Bash(node -e \"const pkg = require\\('E:/00.1_DenD3v_AI/Unicorn_01_Unicorn_Smart_ai/unicorn-academy-8stack/node_modules/@cloudflare/vite-plugin/package.json'\\); console.log\\('v:', pkg.version\\);\")",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(wrangler pages:*)",
+      "Bash(wrangler whoami:*)",
+      "Read(//c/Users/dencapvision/.wrangler/config/**)",
+      "Read(//c/Users/dencapvision/**)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(r['id'], r['name'], r['status']\\) for r in d.get\\('result',[]\\)]\")",
+      "Bash(nslookup -type=NS unicornsmartai.cloud)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('total:', len\\(d.get\\('result',[]\\)\\)\\); [print\\(r['id'], r['name'], r['status']\\) for r in d.get\\('result',[]\\)]\")"
     ]
   }
 }

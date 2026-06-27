@@ -44,7 +44,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
   await requireUser(request);
   const method = request.method;
   const supabase = createServiceSupabase();
@@ -144,7 +144,8 @@ export async function action({ request }: ActionFunctionArgs) {
         let textToIngest = "";
 
         if (fileType.includes("pdf")) {
-          const geminiApiKey = process.env.GEMINI_API_KEY;
+          const cfEnv = (context as any)?.cloudflare?.env || {};
+          const geminiApiKey = cfEnv.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
           if (!geminiApiKey) {
             throw new Error("GEMINI_API_KEY is not defined in environment variables");
           }

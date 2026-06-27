@@ -12,6 +12,39 @@ function getWorkersUrl(): string {
 
 // ── Generate embedding via CF Workers → Gemini ──
 export async function embedText(text: string): Promise<number[]> {
+  // Try direct embedding using GEMINI_API_KEY from env if available
+  // @ts-ignore
+  const cfEnv = (typeof globalThis !== "undefined" ? (globalThis as any).CF_ENV : null) || {};
+  const geminiApiKey = cfEnv.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+
+  if (geminiApiKey && !geminiApiKey.includes("placeholder")) {
+    try {
+      const directRes = await fetch(
+        `https://generativelanguage.googleapis.com/v1/models/text-embedding-004:embedContent?key=${geminiApiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "models/text-embedding-004",
+            content: { parts: [{ text: text.slice(0, 8192) }] },
+          }),
+        }
+      );
+
+      if (directRes.ok) {
+        const data = await directRes.json() as { embedding?: { values: number[] } };
+        if (data.embedding?.values) {
+          return data.embedding.values;
+        }
+      } else {
+        console.error("Direct embedding failed status:", directRes.status);
+      }
+    } catch (err) {
+      console.error("Direct embedding error:", err);
+    }
+  }
+
+  // Fallback to CF Workers Proxy
   const workersUrl = getWorkersUrl();
   const res = await fetch(`${workersUrl}/embed`, {
     method:  "POST",
