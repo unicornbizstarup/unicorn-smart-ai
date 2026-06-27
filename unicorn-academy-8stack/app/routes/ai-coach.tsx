@@ -73,6 +73,211 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return { profile };
 }
 
+// Helper to remove XML tags for copying plain text
+const cleanXmlTags = (text: string) => {
+  return text.replace(/<[^>]+>/g, "").trim();
+};
+
+const MessageContentRenderer = ({
+  content,
+  idx,
+  copiedTextId,
+  onCopy,
+}: {
+  content: string;
+  idx: number;
+  copiedTextId: string | null;
+  onCopy: (text: string, id: string) => void;
+}) => {
+  const hasTags = /<Header>|<Body>|<Script>|<Prompt>|<Mission>/.test(content);
+
+  const renderCleanText = (txt: string) => {
+    if (!txt) return null;
+    const lines = txt.split("\n");
+    return (
+      <div className="space-y-1">
+        {lines.map((line, lIdx) => {
+          let cleanLine = line.trim();
+          if (!cleanLine) return <div key={lIdx} className="h-2" />;
+          
+          const isBullet = cleanLine.startsWith("* ") || cleanLine.startsWith("- ");
+          if (isBullet) {
+            cleanLine = cleanLine.substring(2);
+          }
+
+          const parts: React.ReactNode[] = [];
+          const boldRegex = /\*\*([^*]+)\*\*/g;
+          let match;
+          let lastIndex = 0;
+          let partIdx = 0;
+
+          while ((match = boldRegex.exec(cleanLine)) !== null) {
+            if (match.index > lastIndex) {
+              parts.push(cleanLine.substring(lastIndex, match.index));
+            }
+            parts.push(
+              <strong key={partIdx++} className="font-bold text-brand-gold">
+                {match[1]}
+              </strong>
+            );
+            lastIndex = boldRegex.lastIndex;
+          }
+
+          if (lastIndex < cleanLine.length) {
+            parts.push(cleanLine.substring(lastIndex));
+          }
+
+          const lineContent = parts.length > 0 ? parts : cleanLine;
+
+          if (isBullet) {
+            return (
+              <div key={lIdx} className="flex items-start gap-2 pl-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-gold mt-1.5 shrink-0" />
+                <span className="text-text-primary text-xs md:text-sm font-semibold">{lineContent}</span>
+              </div>
+            );
+          }
+
+          return (
+            <p key={lIdx} className="text-text-primary text-xs md:text-sm min-h-[1em] font-semibold">
+              {lineContent}
+            </p>
+          );
+        })}
+      </div>
+    );
+  };
+
+  if (!hasTags) {
+    return renderCleanText(content);
+  }
+
+  const headerMatch = content.match(/<Header>([\s\S]*?)<\/Header>/);
+  const bodyMatch = content.match(/<Body>([\s\S]*?)<\/Body>/);
+  const missionMatch = content.match(/<Mission>([\s\S]*?)<\/Mission>/);
+
+  const scriptRegex = /<Script(?:\s+title="([^"]*)")?>([\s\S]*?)<\/Script>/g;
+  const scripts = [];
+  let scriptMatch;
+  while ((scriptMatch = scriptRegex.exec(content)) !== null) {
+    scripts.push({
+      title: scriptMatch[1] || "ตัวอย่างสคริปต์บทสนทนา",
+      content: scriptMatch[2].trim(),
+    });
+  }
+
+  const promptRegex = /<Prompt(?:\s+title="([^"]*)")?>([\s\S]*?)<\/Prompt>/g;
+  const prompts = [];
+  let promptMatch;
+  while ((promptMatch = promptRegex.exec(content)) !== null) {
+    prompts.push({
+      title: promptMatch[1] || "AI Prompt อัจฉริยะ",
+      content: promptMatch[2].trim(),
+    });
+  }
+
+  const header = headerMatch ? headerMatch[1].trim() : "";
+  const body = bodyMatch ? bodyMatch[1].trim() : "";
+  const mission = missionMatch ? missionMatch[1].trim() : "";
+
+  const firstTagIndex = content.search(/<Header>|<Body>|<Script>|<Prompt>|<Mission>/);
+  const introText = firstTagIndex !== -1 ? content.substring(0, firstTagIndex).trim() : "";
+
+  return (
+    <div className="flex flex-col gap-3 w-full">
+      {introText && (
+        <div className="text-text-primary leading-relaxed">
+          {renderCleanText(introText)}
+        </div>
+      )}
+
+      <div className="bg-bg-page border border-brand-gold/25 rounded-2xl overflow-hidden shadow-sm flex flex-col w-full animate-fade-in">
+        {header && (
+          <div className="px-4 py-2.5 bg-brand-gold/10 border-b border-brand-gold/15 flex items-center justify-between">
+            <span className="font-bold text-xs md:text-sm text-brand-dark flex items-center gap-1.5">
+              {header}
+            </span>
+            <span className="text-[8px] font-extrabold text-brand-gold bg-white px-2 py-0.5 rounded-full border border-brand-gold/15 uppercase tracking-widest shrink-0 select-none">
+              Flex Message
+            </span>
+          </div>
+        )}
+
+        <div className="p-4 flex flex-col gap-3.5 bg-white">
+          {body && (
+            <div className="text-xs md:text-sm text-text-secondary leading-relaxed border-l-2 border-brand-gold/30 pl-3">
+              {renderCleanText(body)}
+            </div>
+          )}
+
+          {scripts.map((script, sIdx) => {
+            const scriptId = `script-${idx}-${sIdx}`;
+            const isCopied = copiedTextId === scriptId;
+            return (
+              <div
+                key={sIdx}
+                className="bg-brand-gold-light/20 border border-brand-gold-muted/15 rounded-xl p-3.5 flex flex-col gap-2 relative group hover:border-brand-gold-muted/30 transition-all duration-200"
+              >
+                <div className="flex items-center justify-between border-b border-brand-gold-muted/10 pb-1.5">
+                  <span className="font-bold text-[10px] md:text-[11px] text-brand-gold flex items-center gap-1 select-none">
+                    💬 {script.title}
+                  </span>
+                  <button
+                    onClick={() => onCopy(script.content, scriptId)}
+                    className="text-[9px] md:text-[10px] font-bold flex items-center gap-1 px-2 py-0.5 rounded-md transition-all cursor-pointer bg-white hover:bg-brand-gold-light/40 text-text-secondary hover:text-brand-gold border border-border-default hover:border-brand-gold-muted/30"
+                  >
+                    {isCopied ? "คัดลอกแล้ว ✓" : "คัดลอกบทพูด 📋"}
+                  </button>
+                </div>
+                <p className="text-xs md:text-sm text-brand-dark italic whitespace-pre-wrap font-semibold leading-relaxed">
+                  "{script.content}"
+                </p>
+              </div>
+            );
+          })}
+
+          {prompts.map((prompt, pIdx) => {
+            const promptId = `prompt-${idx}-${pIdx}`;
+            const isCopied = copiedTextId === promptId;
+            return (
+              <div
+                key={pIdx}
+                className="bg-brand-dark text-white rounded-xl p-3.5 flex flex-col gap-2 relative group"
+              >
+                <div className="flex items-center justify-between border-b border-white/10 pb-1.5">
+                  <span className="font-bold text-[10px] md:text-[11px] text-brand-gold-muted flex items-center gap-1 select-none">
+                    ⚡ {prompt.title}
+                  </span>
+                  <button
+                    onClick={() => onCopy(prompt.content, promptId)}
+                    className="text-[9px] md:text-[10px] font-bold flex items-center gap-1 px-2 py-0.5 rounded-md transition-all cursor-pointer bg-white/10 hover:bg-white/20 text-white/95 border border-white/10"
+                  >
+                    {isCopied ? "คัดลอกแล้ว ✓" : "คัดลอก Prompt 📋"}
+                  </button>
+                </div>
+                <pre className="text-[11px] md:text-xs font-mono whitespace-pre-wrap text-brand-gold-light/95 leading-relaxed overflow-x-auto">
+                  {prompt.content}
+                </pre>
+              </div>
+            );
+          })}
+
+          {mission && (
+            <div className="bg-emerald-50/40 border border-emerald-200/40 rounded-xl p-3.5 flex flex-col gap-2">
+              <span className="font-bold text-[10px] md:text-[11px] text-emerald-800 flex items-center gap-1 select-none">
+                🏆 ภารกิจปฏิบัติการ (Action Plan)
+              </span>
+              <div className="text-emerald-950">
+                {renderCleanText(mission)}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function AICoachPage() {
   const { profile } = useLoaderData<typeof loader>();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -80,12 +285,20 @@ export default function AICoachPage() {
   const [messages, setMessages] = useState<Array<{ role: "user" | "model"; content: string }>>([
     {
       role: "model",
-      content: "สวัสดีค่ะพาร์ทเนอร์! 🦄 น้องยูนิ ยินดีต้อนรับสู่ห้องฝึกฝนอัจฉริยะนะคะ\n\nวันนี้น้องยูนิพร้อมเป็นคู่หูและคู่ซ้อมตอบข้อโต้แย้ง ฝึก STP หรือร่างแบรนดิ้งให้คุณพี่แล้วค่ะ ลองเลือกหัวข้อด้านบน หรือพิมพ์คุยกับน้องยูนิได้เลยนะคะ 😊✨",
+      content: "สวัสดีค่ะพาร์ทเนอร์ ยินดีต้อนรับสู่ห้องฝึกฝนอัจฉริยะของ Unicorn Academy นะคะ วันนี้น้องยูนิพร้อมเป็นคู่หูร่วมคิดและคู่ซ้อมตอบข้อโต้แย้ง ฝึก STP หรือร่างข้อมูลแบรนดิ้งส่วนตัวให้คุณพี่แล้วค่ะ ลองเลือกหัวข้อตัวอย่างด้านบน หรือพิมพ์คุยกับน้องยูนิได้เลยนะคะ",
     }
   ]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [focusArea, setFocusArea] = useState<FocusArea>("SYSTEM456");
+  const [copiedTextId, setCopiedTextId] = useState<string | null>(null);
+
+  const handleCopyText = (text: string, id: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedTextId(id);
+      setTimeout(() => setCopiedTextId(null), 2000);
+    });
+  };
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -214,7 +427,7 @@ export default function AICoachPage() {
                 key={idx}
                 className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
               >
-                <div className={`flex gap-3 max-w-[85%] ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
+                <div className={`flex gap-3 w-full ${m.role === "user" ? "justify-end max-w-[85%] flex-row-reverse" : "justify-start max-w-full md:max-w-[85%] flex-row flex-1"}`}>
                   
                   {/* Icon Avatar */}
                   <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm border ${
@@ -226,12 +439,21 @@ export default function AICoachPage() {
                   </div>
 
                   {/* Bubble */}
-                  <div className={`rounded-2xl p-4 text-xs md:text-sm leading-relaxed font-medium shadow-sm border ${
+                  <div className={`rounded-2xl p-4 text-xs md:text-sm leading-relaxed font-medium shadow-sm border w-full ${
                     m.role === "user"
                       ? "bg-brand-gold text-white border-brand-gold rounded-tr-none"
-                      : "bg-white text-text-primary border-border-default rounded-tl-none"
+                      : "bg-white text-text-primary border-border-default rounded-tl-none flex-1"
                   }`}>
-                    <p className="whitespace-pre-wrap">{m.content}</p>
+                    {m.role === "user" ? (
+                      <p className="whitespace-pre-wrap">{m.content}</p>
+                    ) : (
+                      <MessageContentRenderer
+                        content={m.content}
+                        idx={idx}
+                        copiedTextId={copiedTextId}
+                        onCopy={handleCopyText}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
