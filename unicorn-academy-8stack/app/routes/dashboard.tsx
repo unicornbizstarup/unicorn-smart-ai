@@ -3,6 +3,24 @@ import { useLoaderData, Link } from "react-router";
 import type { LoaderFunctionArgs } from "react-router";
 import type { Profile, UserMission } from "@/types";
 import MemberLayout from "@/components/layout/MemberLayout";
+import {
+  Zap,
+  Users,
+  Crown,
+  CheckCircle2,
+  Link as LinkIcon,
+  Contact,
+  BarChart3,
+  Trophy,
+  Gem,
+  Rocket,
+  Package,
+  BookOpen,
+  Calendar,
+  Lightbulb,
+  Target,
+  Wrench
+} from "lucide-react";
 
 export function meta() {
   return [
@@ -64,7 +82,9 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 gap-4">
           <div className="card-premium p-4 flex flex-col justify-between group h-28">
             <div className="flex items-center justify-between mb-2">
-              <div className="w-8 h-8 rounded-lg bg-brand-gold-light/40 flex items-center justify-center text-lg shadow-sm group-hover:scale-110 transition-transform">⚡</div>
+              <div className="w-8 h-8 rounded-lg bg-brand-gold-light/40 flex items-center justify-center text-brand-gold shadow-sm group-hover:scale-110 transition-transform">
+                <Zap size={16} />
+              </div>
               <span className="text-[9px] font-black text-text-muted uppercase tracking-wider">UBC Score</span>
             </div>
             <div>
@@ -75,7 +95,9 @@ export default function DashboardPage() {
 
           <div className="card-premium p-4 flex flex-col justify-between group h-28">
             <div className="flex items-center justify-between mb-2">
-              <div className="w-8 h-8 rounded-lg bg-brand-gold-light/40 flex items-center justify-center text-lg shadow-sm group-hover:scale-110 transition-transform">👥</div>
+              <div className="w-8 h-8 rounded-lg bg-brand-gold-light/40 flex items-center justify-center text-brand-gold shadow-sm group-hover:scale-110 transition-transform">
+                <Users size={16} />
+              </div>
               <span className="text-[9px] font-black text-text-muted uppercase tracking-wider">Referrals</span>
             </div>
             <div>
@@ -86,7 +108,9 @@ export default function DashboardPage() {
 
           <div className="card-premium p-4 flex flex-col justify-between group h-28">
             <div className="flex items-center justify-between mb-2">
-              <div className="w-8 h-8 rounded-lg bg-brand-gold-light/40 flex items-center justify-center text-lg shadow-sm group-hover:scale-110 transition-transform">✨</div>
+              <div className="w-8 h-8 rounded-lg bg-brand-gold-light/40 flex items-center justify-center text-brand-gold shadow-sm group-hover:scale-110 transition-transform">
+                <Crown size={16} />
+              </div>
               <span className="text-[9px] font-black text-text-muted uppercase tracking-wider">AI Sessions</span>
             </div>
             <div>
@@ -97,7 +121,9 @@ export default function DashboardPage() {
 
           <div className="card-premium p-4 flex flex-col justify-between group h-28">
             <div className="flex items-center justify-between mb-2">
-              <div className="w-8 h-8 rounded-lg bg-brand-gold-light/40 flex items-center justify-center text-lg shadow-sm group-hover:scale-110 transition-transform">✅</div>
+              <div className="w-8 h-8 rounded-lg bg-brand-gold-light/40 flex items-center justify-center text-brand-gold shadow-sm group-hover:scale-110 transition-transform">
+                <CheckCircle2 size={16} />
+              </div>
               <span className="text-[9px] font-black text-text-muted uppercase tracking-wider">Missions</span>
             </div>
             <div>
@@ -125,9 +151,14 @@ export default function DashboardPage() {
                 missions.map((um) => (
                   <div key={um.id} className="flex items-center justify-between p-3.5 rounded-2xl bg-bg-input border border-border-default hover:border-brand-gold-muted/30 transition-all group">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg shadow-sm bg-white border border-border-default">
-                        {um.mission?.category === "MINDSET" ? "🧠" :
-                         um.mission?.category === "SKILLSET" ? "🎯" : "🛠️"}
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm bg-white border border-border-default shrink-0">
+                        {um.mission?.category === "MINDSET" ? (
+                          <Lightbulb size={20} className="text-brand-gold" />
+                        ) : um.mission?.category === "SKILLSET" ? (
+                          <Target size={20} className="text-brand-gold" />
+                        ) : (
+                          <Wrench size={20} className="text-brand-gold" />
+                        )}
                       </div>
                       <div>
                         <div className="text-xs font-semibold text-text-primary line-clamp-1">{um.mission?.title}</div>
@@ -159,22 +190,30 @@ export default function DashboardPage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <Link to="/startup" className="p-4 rounded-2xl bg-bg-input border border-border-default hover:border-brand-gold-muted/50 hover:bg-white hover:shadow-sm transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-xl shadow-sm mb-3 group-hover:scale-110 transition-transform">🚀</div>
+                <div className="w-10 h-10 rounded-xl bg-white border border-border-default flex items-center justify-center text-brand-gold shadow-sm mb-3 group-hover:scale-110 transition-transform">
+                  <Rocket size={20} />
+                </div>
                 <div className="text-xs font-semibold text-text-primary uppercase tracking-tighter">5 เริ่มต้น</div>
                 <div className="text-[9px] text-text-muted font-bold uppercase tracking-widest mt-0.5">Start Up</div>
               </Link>
               <Link to="/products" className="p-4 rounded-2xl bg-bg-input border border-border-default hover:border-brand-gold-muted/50 hover:bg-white hover:shadow-sm transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-xl shadow-sm mb-3 group-hover:scale-110 transition-transform">📦</div>
+                <div className="w-10 h-10 rounded-xl bg-white border border-border-default flex items-center justify-center text-brand-gold shadow-sm mb-3 group-hover:scale-110 transition-transform">
+                  <Package size={20} />
+                </div>
                 <div className="text-xs font-semibold text-text-primary uppercase tracking-tighter">คลังสินค้า</div>
                 <div className="text-[9px] text-text-muted font-bold uppercase tracking-widest mt-0.5">Products</div>
               </Link>
               <Link to="/knowledge" className="p-4 rounded-2xl bg-bg-input border border-border-default hover:border-brand-gold-muted/50 hover:bg-white hover:shadow-sm transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-xl shadow-sm mb-3 group-hover:scale-110 transition-transform">📚</div>
+                <div className="w-10 h-10 rounded-xl bg-white border border-border-default flex items-center justify-center text-brand-gold shadow-sm mb-3 group-hover:scale-110 transition-transform">
+                  <BookOpen size={20} />
+                </div>
                 <div className="text-xs font-semibold text-text-primary uppercase tracking-tighter">คลังความรู้</div>
                 <div className="text-[9px] text-text-muted font-bold uppercase tracking-widest mt-0.5">Knowledge</div>
               </Link>
               <Link to="/functions" className="p-4 rounded-2xl bg-bg-input border border-border-default hover:border-brand-gold-muted/50 hover:bg-white hover:shadow-sm transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-xl shadow-sm mb-3 group-hover:scale-110 transition-transform">📅</div>
+                <div className="w-10 h-10 rounded-xl bg-white border border-border-default flex items-center justify-center text-brand-gold shadow-sm mb-3 group-hover:scale-110 transition-transform">
+                  <Calendar size={20} />
+                </div>
                 <div className="text-xs font-semibold text-text-primary tracking-tighter">ฟังก์ชั่นระบบ</div>
                 <div className="text-[9px] text-text-muted font-bold uppercase tracking-widest mt-0.5">Events</div>
               </Link>
@@ -189,15 +228,17 @@ export default function DashboardPage() {
             </div>
             <div className="grid grid-cols-3 gap-2.5">
               {[
-                { label: "ถามน้องยูนิ", icon: "✨", href: "/ai-coach" },
-                { label: "Referral", icon: "🔗", href: "/profile" },
-                { label: "Name Card", icon: "🪪", href: "/profile" },
-                { label: "Report", icon: "📊", href: "#" },
-                { label: "Mission", icon: "🎯", href: "/missions" },
-                { label: "DNA Quiz", icon: "🧬", href: "/dna" },
+                { label: "ถามน้องยูนิ", icon: <Crown size={20} className="text-brand-gold" />, href: "/ai-coach" },
+                { label: "Referral", icon: <LinkIcon size={20} className="text-brand-gold" />, href: "/profile" },
+                { label: "Name Card", icon: <Contact size={20} className="text-brand-gold" />, href: "/profile" },
+                { label: "Report", icon: <BarChart3 size={20} className="text-brand-gold" />, href: "#" },
+                { label: "Mission", icon: <Trophy size={20} className="text-brand-gold" />, href: "/missions" },
+                { label: "DNA Quiz", icon: <Gem size={20} className="text-brand-gold" />, href: "/dna" },
               ].map((action) => (
                 <Link key={action.label} to={action.href} className="flex flex-col items-center justify-center p-3 rounded-xl bg-bg-input border border-border-default hover:border-brand-gold-muted/40 hover:bg-white hover:shadow-sm transition-all group text-center">
-                  <div className="text-xl mb-1.5 group-hover:scale-110 transition-transform">{action.icon}</div>
+                  <div className="w-10 h-10 rounded-xl bg-white border border-border-default flex items-center justify-center text-brand-gold shadow-sm mb-1.5 group-hover:scale-110 transition-transform">
+                    {action.icon}
+                  </div>
                   <span className="text-[10px] font-bold text-text-secondary uppercase tracking-tighter group-hover:text-brand-gold transition-colors">{action.label}</span>
                 </Link>
               ))}
