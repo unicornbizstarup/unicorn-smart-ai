@@ -16,7 +16,7 @@ import {
   CheckCircle2,
   Lightbulb,
   ShoppingBag,
-  Bot,
+  Gem,
 } from "lucide-react";
 import { createServerSupabase, requireUser } from "@/lib/supabase-server";
 import { createClient } from "@/lib/supabase";
@@ -305,7 +305,7 @@ export default function WealthDNAPage() {
             <div className="text-center space-y-6 relative z-10">
               <div className="relative inline-block">
                 <div className="w-24 h-24 border-4 border-brand-gold-light border-t-brand-gold rounded-full animate-spin" />
-                <Bot className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-brand-gold animate-bounce" size={28} />
+                <Gem className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-brand-gold animate-bounce" size={28} />
               </div>
               <div className="space-y-1">
                 <h2 className="text-lg font-bold text-brand-gold">กำลังประมวลผลระบบดวงชะตานักธุรกิจ...</h2>

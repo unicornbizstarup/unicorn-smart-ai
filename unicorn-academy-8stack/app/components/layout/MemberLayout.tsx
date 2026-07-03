@@ -1,7 +1,7 @@
 import { type ReactNode } from "react";
 import type { Profile } from "@/types";
 import { Link, useLocation } from "react-router";
-import { LayoutDashboard, Layers, Sparkles, Trophy, ChevronLeft } from "lucide-react";
+import { LayoutDashboard, Layers, Crown, Trophy, ChevronLeft } from "lucide-react";
 
 interface Props {
   children: ReactNode;
@@ -142,7 +142,7 @@ export default function MemberLayout({ children, profile, title, subtitle, actio
             <span className="text-[10px] tracking-wide">หลักสูตร</span>
           </Link>
 
-          {/* 3. AI Coach tab - Nong Uni (Using Sparkles icon to avoid GPT bot look) */}
+          {/* 3. AI Coach tab - Nong Uni (Using Crown icon to avoid GPT bot/Gemini sparkles look) */}
           <Link
             to="/ai-coach"
             className={`flex flex-col items-center justify-center -translate-y-4 w-14 h-14 bg-gradient-to-tr from-brand-gold to-brand-gold-muted rounded-full shadow-lg text-white active:scale-95 transition-all ${
@@ -152,7 +152,7 @@ export default function MemberLayout({ children, profile, title, subtitle, actio
             }`}
             aria-label="แชทกับน้องยูนิ"
           >
-            <Sparkles className="w-6 h-6 animate-pulse" />
+            <Crown className="w-6 h-6 animate-pulse" />
           </Link>
 
           {/* 4. Profile tab */}

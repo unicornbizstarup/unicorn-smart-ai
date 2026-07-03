@@ -1,6 +1,6 @@
 import React, { useState, Suspense } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
-import { Lock, Eye, EyeOff, ArrowLeft, UserPlus, User as UserIcon, Sparkles, Loader2, CheckCircle2 } from "lucide-react";
+import { Lock, Eye, EyeOff, ArrowLeft, UserPlus, User as UserIcon, Gem, Loader2, CheckCircle2 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 
 export function meta() {
@@ -132,7 +132,7 @@ function RegisterForm() {
           {/* Header */}
           <div className="text-center mb-6">
             <div className="w-14 h-14 bg-brand-gold rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md text-white">
-              <Sparkles size={24} />
+              <Gem size={24} />
             </div>
             <h1 className="text-2xl font-bold font-display text-text-primary tracking-tight">เข้าร่วม Unicorn Academy 🦄</h1>
             <p className="text-xs text-text-muted mt-1.5 font-medium">ลงทะเบียนสมาชิกใหม่เพื่อเริ่มต้นเส้นทางนักธุรกิจ AI</p>

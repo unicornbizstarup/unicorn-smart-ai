@@ -3,7 +3,7 @@ import { useLoaderData, Link } from "react-router";
 import type { LoaderFunctionArgs } from "react-router";
 import {
   Send,
-  Bot,
+  Crown,
   User,
   RefreshCw,
   Rocket,
@@ -433,9 +433,9 @@ export default function AICoachPage() {
                   <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm border ${
                     m.role === "user"
                       ? "bg-brand-gold border-brand-gold text-white"
-                      : "bg-white border-border-default text-brand-gold"
+                      : "bg-brand-gold-light/35 border-brand-gold-muted/30 text-brand-gold"
                   }`}>
-                    {m.role === "user" ? <User size={16} /> : <Bot size={16} />}
+                    {m.role === "user" ? <User size={16} /> : <Crown size={16} />}
                   </div>
 
                   {/* Bubble */}
@@ -462,8 +462,8 @@ export default function AICoachPage() {
             {/* Loading / Typing indicator */}
             {isLoading && (
               <div className="flex justify-start items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-white border border-border-default flex items-center justify-center text-brand-gold shadow-sm">
-                  <Bot size={16} />
+                <div className="w-9 h-9 rounded-xl bg-brand-gold-light/35 border border-brand-gold-muted/30 flex items-center justify-center text-brand-gold shadow-sm">
+                  <Crown size={16} className="animate-pulse" />
                 </div>
                 <div className="bg-white border border-border-default px-4 py-3 rounded-2xl rounded-tl-none flex items-center gap-1.5 shadow-sm">
                   <div className="w-1.5 h-1.5 bg-brand-gold rounded-full animate-bounce" />

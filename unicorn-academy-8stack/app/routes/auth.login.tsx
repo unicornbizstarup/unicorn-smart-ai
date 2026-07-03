@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { Lock, Eye, EyeOff, ArrowLeft, LogIn, Sparkles, Loader2 } from "lucide-react";
+import { Lock, Eye, EyeOff, ArrowLeft, LogIn, Gem, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 
 export function meta() {
@@ -176,7 +176,7 @@ export default function LoginPage() {
               disabled={isLoading}
               className="w-full py-3 bg-brand-gold-light hover:bg-brand-gold-light/80 text-brand-gold border border-brand-gold-muted font-bold rounded-xl transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-2xs tracking-wide mt-3"
             >
-              <Sparkles size={14} className="text-brand-gold animate-pulse" />
+              <Gem size={14} className="text-brand-gold animate-pulse" />
               <span>🚀 ปลดล็อกเข้าทดสอบภายใน (Internal Dev Bypass)</span>
             </button>
           </form>
@@ -196,7 +196,7 @@ export default function LoginPage() {
                 to="/auth/register"
                 className="text-brand-gold font-bold hover:text-brand-gold-hover transition-colors inline-flex items-center gap-1 hover:underline"
               >
-                <Sparkles size={12} className="animate-pulse" />
+                <Gem size={12} className="animate-pulse" />
                 ลงทะเบียนฟรี
               </Link>
             </p>

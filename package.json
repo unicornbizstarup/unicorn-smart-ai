@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "build:web": "cd unicorn-academy-8stack && pnpm build",
+    "deploy:web": "cd unicorn-academy-8stack && pnpm deploy:web",
     "upweb": "npm run build && git add . && git commit -m \"update: automated web update 🦄✨\" && git push origin main"
   },
   "dependencies": {
