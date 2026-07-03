@@ -2,10 +2,10 @@ import { jsx, jsxs, Fragment } from "react/jsx-runtime";
 import { ServerRouter, UNSAFE_withComponentProps, useLoaderData, Outlet, UNSAFE_withErrorBoundaryProps, isRouteErrorResponse, Meta, Links, ScrollRestoration, Scripts, Link, useNavigate, useSearchParams, redirect, useLocation, data, useFetcher } from "react-router";
 import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
+import { createContext, useContext, useState, useEffect, Suspense, useRef, useMemo } from "react";
 import { createServerClient, serializeCookieHeader, parseCookieHeader, createBrowserClient } from "@supabase/ssr";
 import { createClient as createClient$1 } from "@supabase/supabase-js";
-import { useState, Suspense, useRef, useEffect, useMemo } from "react";
-import { ArrowLeft, Lock, EyeOff, Eye, Loader2, LogIn, Gem, User, CheckCircle2, UserPlus, ChevronLeft, LayoutDashboard, Layers, Crown, Trophy, Zap, Users, Lightbulb, Target, Wrench, Rocket, Package, BookOpen, Calendar, Link as Link$1, Contact, BarChart3, Camera, AlertCircle, HelpCircle, MessageCircle, Tv, Save, Shield, GraduationCap, RefreshCw, Send, Airplay, Waves, Sparkles, ArrowRight, Clock, ShoppingBag, ChevronRight, Share2, Award, Play, Search, MapPin } from "lucide-react";
+import { ArrowLeft, Lock, EyeOff, Eye, Loader2, LogIn, Gem, ArrowRight, ChevronLeft, LayoutDashboard, Layers, Crown, Trophy, Zap, Users, CheckCircle2, Lightbulb, Target, Wrench, Rocket, Package, BookOpen, Calendar, Link as Link$1, Contact, BarChart3, User, Camera, AlertCircle, HelpCircle, MessageCircle, Tv, Save, Shield, GraduationCap, RefreshCw, Send, Airplay, Waves, Sparkles, Clock, ShoppingBag, ChevronRight, Share2, Award, Play, Search, MapPin } from "lucide-react";
 import { Resend } from "resend";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -44,6 +44,544 @@ const entryServer = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
   __proto__: null,
   default: handleRequest
 }, Symbol.toStringTag, { value: "Module" }));
+const translations = {
+  th: {
+    "nav.home": "หน้าหลัก",
+    "nav.about": "เกี่ยวกับเรา",
+    "nav.products": "สินค้า",
+    "nav.contact": "ติดต่อเรา",
+    "nav.privacy": "นโยบายความเป็นส่วนตัว",
+    "hero.title": "Unicorn",
+    "nav.system456": "ระบบ 456",
+    "nav.functions": "ฟังก์ชั่น",
+    "nav.calendar": "5 START-UP",
+    "nav.ai_coach": "โค้ชอัจฉริยะ AI",
+    "nav.ubc_program": "โปรแกรม UBC",
+    "nav.library": "คลังความรู้",
+    "nav.wealth_dna": "Wealth DNA",
+    "nav.ai_coach_nong_uni": "โค้ชเอไอ (น้องยูนิ)",
+    "hero.subtitle": "Biz Start Up Platform เพื่อนักธุรกิจยุคใหม่",
+    "hero.cta": "เริ่มต้นธุรกิจของคุณวันนี้",
+    "hero.login": "เข้าสู่ระบบ",
+    "sections.strategy": "กลยุทธ์ธุรกิจ",
+    "sections.products": "กลุ่มผลิตภัณฑ์นวัตกรรม",
+    "sections.contact": "ช่องทางการติดต่อ",
+    "strategy.eco.title": "Eco-system",
+    "strategy.eco.desc": "ระบบนิเวศทางธุรกิจที่ครบวงจรที่สุด",
+    "strategy.product.title": "Product Strength",
+    "strategy.product.desc": "นวัตกรรมสินค้าที่ตอบโจทย์ไลฟ์สไตล์",
+    "strategy.ai.title": "AI & Digital Tools",
+    "strategy.ai.desc": "เครื่องมืออัจฉริยะช่วยขยายธุรกิจ",
+    "strategy.reward.title": "High Reward",
+    "strategy.reward.desc": "ผลตอบแทนที่คุ้มค่าและยั่งยืน",
+    "about.hero.title": "ธุรกิจเครือข่ายยุคใหม่ที่พลิกจากรูปแบบเดิมๆ",
+    "about.hero.subtitle": "เราคือ Biz Start Up Platform เครื่องมือสนับสนุนให้นักธุรกิจและผู้คนทั่วไปสามารถเป็นเจ้าของกิจการและประสบความสำเร็จได้อย่างยั่งยืน",
+    "about.founder.role": "ประธานและผู้ก่อตั้ง",
+    "about.founder.name": "ดร. ภัทร์พิชาภา ธนะลีละผลิน",
+    "about.vision.title": "วิสัยทัศน์ที่กว้างไกล",
+    "about.vision.desc": "บริหารโดยผู้ที่มีประสบการณ์ความสำเร็จในธุรกิจเครือข่ายระดับแนวหน้ามากกว่า 20 ปี มุ่งเน้นการเป็นแพลตฟอร์มที่มีระบบ เครื่องมือที่ทรงพลัง สินค้านวัตกรรม และองค์ความรู้ เพื่อให้ทุกคนได้เป็นเจ้าของเครือข่ายผู้บริโภคขนาดใหญ่ทั่วโลก",
+    "about.slogan": "U LINK U SHARE U SUCCESS",
+    "about.motto": "ความสำเร็จของคุณ คือภารกิจของเรา",
+    "about.legal.title": "ความมั่นคงและความถูกต้องที่ชัดเจน",
+    "about.legal.capital": "ทุนจดทะเบียน 19,000,000 บาท (ชำระเต็มจำนวน)",
+    "about.legal.desc": "จดทะเบียนบริษัทถูกต้องตามกฎหมายประเทศไทย และได้รับการรับรองจาก สคบ. ให้สามารถดำเนินธุรกิจการตลาดแบบตรง ขายตรง และการขายผ่านระบบอินเทอร์เน็ตได้อย่างถูกต้องทุกประการ",
+    "about.stats.cert": "ได้รับการรับรอง สคบ.",
+    "about.stats.growth": "ขยายตลาด AEC+",
+    "about.stats.office": "สำนักงาน 20+ ปี",
+    "about.stats.standard": "มาตรฐาน Global",
+    "contact.title": "ติดต่อสอบถาม",
+    "contact.subtitle": "เราพร้อมให้คำปรึกษาและสนับสนุนทุกย่างก้าวในเส้นทางธุรกิจของคุณ กับทีมงานมืออาชีพจาก Unicorn Global Link",
+    "contact.company.th": "บริษัท ยูนิคอร์น โกลบอล ลิ้งค์ จํากัด",
+    "contact.company.en": "UNICORN GLOBAL LINK COMPANY LIMITED",
+    "contact.address.label": "ที่ตั้งสำนักงานเลขา",
+    "contact.address.value": "241 ถ.รัชดาภิเษก แขวงรัชดาภิเษก เขตดินแดง, Bangkok, Thailand, 10400",
+    "contact.phone.label": "Call Center",
+    "contact.email.label": "Official Email",
+    "contact.hours.title": "เวลาทำการ (Business Hours)",
+    "contact.hours.desc": "จันทร์ - อาทิตย์ : 10:00 - 20:00 น. (ทีมงาน Support ออนไลน์สแตนด์บายตลอด 24 ชม.)",
+    "contact.social.line_off": "Line OA: UNICORN Official",
+    "contact.social.line_con": "Line OA: UNICORN CONNECT",
+    "contact.social.fb": "Facebook",
+    "contact.social.ig": "Instagram",
+    "contact.social.yt": "YouTube",
+    "contact.social.desc.line_off": "สอบถามข้อมูลทั่วไปและบริการ",
+    "contact.social.desc.line_con": "ระบบสมาชิกและบริการพาร์ทเนอร์",
+    "contact.social.desc.fb": "ติดตามข่าวสารและกิจกรรมล่าสุด",
+    "contact.social.desc.ig": "ภาพลักษณ์และไลฟ์สไตล์ยูนิคอร์น",
+    "contact.social.desc.yt": "วิดีโอความรู้และแรงบันดัดใจ",
+    "privacy.title": "นโยบายความเป็นส่วนตัว (Privacy Policy)",
+    "privacy.subtitle": "เราให้ความสำคัญสูงสุดกับความปลอดภัยของข้อมูลส่วนบุคคลของคุณ และปฏิบัติตามกฎหมายคุ้มครองข้อมูลส่วนบุคคล (PDPA) อย่างเคร่งครัด",
+    "privacy.commitment.title": "คำมั่นสัญญาของเรา",
+    "privacy.commitment.desc": "เรารักษาข้อมูลของคุณเป็นความลับสูงสุด ไม่มีการนำไปใช้ในกรณีอื่นใดที่ไม่ได้รับอนุญาต และไม่มีการเปิดเผยต่อบุคคลภายนอกโดยเด็ดขาด",
+    "privacy.data.title": "ข้อมูลที่เราจัดเก็บ",
+    "privacy.data.desc": "เราจัดเก็บข้อมูลที่จำเป็นต่อการให้บริการและการใช้แพลตฟอร์มอย่างราบรื่น ได้แก่:",
+    "privacy.data.list1": "ข้อมูลระบุตัวตน (เช่น ชื่อ-นามสกุล, อีเมล, หมายเลขโทรศัพท์)",
+    "privacy.data.list2": "ข้อมูลการใช้งานระบบ (Log data, อุปกรณ์ที่เข้าใช้งาน)",
+    "privacy.data.list3": "ข้อมูลที่จำเป็นสำหรับการประเมินผลในกิจกรรมต่างๆ ภายในแพลตฟอร์ม",
+    "privacy.purpose.title": "วัตถุประสงค์การใช้ข้อมูล",
+    "privacy.purpose.service.title": "เพื่อการบริการ",
+    "privacy.purpose.service.desc": "ใช้เพื่อยืนยันตัวตน สนับสนุนการเรียนรู้ และกิจกรรมทางธุรกิจของผู้ใช้",
+    "privacy.purpose.dev.title": "เพื่อการพัฒนา",
+    "privacy.purpose.dev.desc": "ใช้เพื่อปรับปรุงคุณภาพแพลตฟอร์มและ AI ให้ตอบโจทย์ความต้องการของผู้ใช้อยู่เสมอ",
+    "privacy.security.title": "มาตรการรักษาความปลอดภัย",
+    "privacy.security.desc": "เราใช้เทคโนโลยีการเข้ารหัสข้อมูลที่ทันสมัยและระบบบริหารจัดการความปลอดภัยที่ได้รับมาตรฐาน เพื่อป้องกันการเข้าชมข้อมูลโดยไม่ได้รับอนุญาต การสูญหาย หรือการใช้ข้อมูลในทางที่ผิด",
+    "privacy.security.compliance": "ดำเนินการตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA) ทุกประการ",
+    "privacy.rights.title": "สิทธิของคุณ",
+    "privacy.rights.desc": "ภายใต้กฎหมาย PDPA คุณมีสิทธิในการขอเข้าถึง ขอรับข้อมูลต้นฉบับ ขอให้แก้ไข คัดค้านการประมวลผล หรือขอให้ลบข้อมูลส่วนบุคคลของคุณได้ โดยสามารถแจ้งผ่านช่องทางการติดต่อที่เป็นทางการของเรา",
+    "privacy.no_share": "จะไม่มีการแบ่งปันข้อมูลกับบุคคลที่สาม",
+    "privacy.updated": "ปรับปรุงล่าสุดเมื่อ: 27 กุมภาพันธ์ 2569",
+    "privacy.prepared": "จัดทำโดย ฝ่ายกฎหมายและฝ่ายเทคโนโลยี UNICORN GLOBAL LINK",
+    "referral.join_team": "เข้าร่วมเป็นส่วนหนึ่งของทีม",
+    "referral.contact_line": "ติดต่อฉันผ่าน LINE OA",
+    "referral.welcome": "ยินดีต้อนรับสู่โปรไฟล์ของฉัน",
+    "referral.master": "Master",
+    "referral.line_id": "LINE ID",
+    "referral.welcome_video": "รับชมวิดีโอแนะนำตัวและแนวคิดการทำธุรกิจ",
+    "referral.verified_partner": "Verified Unicorn Partner",
+    "profile.edit": "แก้ไขข้อมูล",
+    "profile.save": "บันทึก",
+    "profile.saving": "กำลังบันทึก...",
+    "profile.display_name": "ชื่อที่แสดง",
+    "profile.specialization": "ความเชี่ยวชาญ",
+    "profile.quote": "คำคม / จุดเด่น (Quote)",
+    "profile.bio": "คำแนะนำตัว (Bio)",
+    "profile.line_oa": "LINE OA URL",
+    "profile.youtube": "YouTube Link",
+    "profile.contact_social": "ช่องทางการติดต่อและโซเชียลมีเดีย",
+    "profile.preview_title": "หน้าพรีวิวลิงก์แนะนำ (Referral Page)",
+    "wealth.intro.tag": "✨ ค้นพบรหัสลับความมั่งคั่งของคุณ",
+    "wealth.intro.title": "Unicorn Wealth DNA",
+    "wealth.intro.desc": 'ถอดรหัสพื้นดวง เปิดประตูสู่ความมั่งคั่ง วิเคราะห์ธาตุเจ้าเรือนเพื่อค้นพบ "สไตล์การรวย" ที่ใช่คุณ',
+    "wealth.intro.start": "เริ่มต้นวิเคราะห์ DNA",
+    "wealth.intro.footer": "ฟรี! ไม่มีค่าใช้จ่าย • ใช้เวลาไม่ถึง 1 นาที",
+    "wealth.form.title": "ข้อมูลพื้นดวง",
+    "wealth.form.subtitle": "กรุณากรอกข้อมูลเพื่อใช้ในการคำนวณธาตุเจ้าเรือน",
+    "wealth.form.birth_date": "วัน/เดือน/ปี เกิด",
+    "wealth.form.birth_time": "เวลาเกิด (ถ้าทราบ)",
+    "wealth.form.analyze": "วิเคราะห์รหัสความมั่งคั่ง",
+    "wealth.loading.title": "กำลังวิเคราะห์ดวงดาวและความมั่งคั่ง...",
+    "wealth.loading.subtitle": "Nong Uni AI Coach is calculating your Wealth DNA",
+    "wealth.result.strengths": "จุดแข็งของคุณ",
+    "wealth.result.strategy": "กลยุทธ์ธุรกิจที่แนะนำ",
+    "wealth.result.content_ideas": "ไอเดียทำคอนเทนต์",
+    "wealth.result.products": "สินค้าแนะนำรวยตามธาตุ",
+    "wealth.result.all_products": "ดูรายละเอียดสินค้าทั้งหมด",
+    "wealth.result.save": "บันทึกผลไปที่โปรไฟล์",
+    "wealth.result.save_success": "บันทึกข้อมูลสำเร็จแล้ว!",
+    "wealth.result.share": "แชร์ผลลัพธ์",
+    "wealth.FIRE.name": "ธาตุไฟ (FIRE)",
+    "wealth.FIRE.archetype": "The Charismatic Leader",
+    "wealth.FIRE.concept": "รวดเร็ว ร้อนแรง ทรงพลัง",
+    "wealth.FIRE.description": "คุณคือผู้นำที่กล้าหาญ มีความกระตือรือร้นสูง และมีพลังในการสร้างแรงบันดาลใจให้ผู้อื่น",
+    "wealth.WATER.name": "ธาตุน้ำ (WATER)",
+    "wealth.WATER.archetype": "The Empathetic Connector",
+    "wealth.WATER.concept": "ลื่นไหล เย็นสบาย ผูกพัน",
+    "wealth.WATER.description": "คุณคือยอดนักสร้างสายสัมพันธ์ มีความเห็นอกเห็นใจสูง และสามารถปรับตัวเข้ากับทุกคนได้อย่างยอดเยี่ยม",
+    "wealth.EARTH.name": "ธาตุดิน (EARTH)",
+    "wealth.EARTH.archetype": "The Reliable Foundation",
+    "wealth.EARTH.concept": "มั่นคง หนักแน่น จริงใจ",
+    "wealth.EARTH.description": "คุณคือผู้สร้างรากฐานที่แข็งแกร่ง มีระบบระเบียบสูง และเป็นที่พึ่งพาที่ได้รับความไว้วางใจที่สุด",
+    "wealth.AIR.name": "ธาตุลม (AIR)",
+    "wealth.AIR.archetype": "The Creative Oracle",
+    "wealth.AIR.concept": "อิสระ รวดเร็ว ทันสมัย",
+    "wealth.AIR.description": "คุณคือนักคิดสร้างสรรค์ มีไอเดียบรรเจิด และก้าวทันเทคโนโลยีเสมอ",
+    "wealth.FIRE.strengths": "มีความเป็นผู้นำสูง,กล้าตัดสินใจ,มีพลังงานเหลือเฟือ,สื่อสารได้น่าตื่นเต้น",
+    "wealth.FIRE.content_ideas": "วิดีโอสร้างแรงบันดาลใจแบบ Impact,คอนเทนต์โชว์ผลลัพธ์ความสำเร็จทันใจ,Live สดที่เน้นพลังงานและการตัดสินใจ",
+    "wealth.WATER.strengths": "ผู้ฟังที่ดีเยี่ยม,สร้างความเชื่อมั่นได้สูง,มีความอดทนสูง,ปรับตัวเก่ง",
+    "wealth.WATER.content_ideas": "Storytelling เล่าเรื่องจากความประทับใจจริง,คอนเทนต์ดูแลสุขภาพและการดูแลคนรอบตัว,วิดีโอรีวิวสินค้าที่เน้นความนุ่มนวลและผลลัพธ์เชิงอารมณ์",
+    "wealth.EARTH.strengths": "มีความรับผิดชอบสูง,ทำงานเป็นระบบ,ละเอียดรอบคอบ,มีความสม่ำเสมอ",
+    "wealth.EARTH.content_ideas": "คอนเทนต์เจาะลึกส่วนประกอบสินค้า (Facts),การเปรียบเทียบแผนรายได้แบบเป็นตัวเลขชัดเจน,คู่มือการทำธุรกิจแบบ Step-by-Step",
+    "wealth.AIR.strengths": "มีความคิดสร้างสรรค์สูง,เรียนรู้ไว,ชอบการติดต่อสื่อสาร,เก่งเรื่องออนไลน์",
+    "wealth.AIR.content_ideas": "วิดีโอสั้น TikTok ที่ทันสมัยและสนุกสนาน,การใช้ AI ช่วยทำงานให้ดู Smart,คอนเทนต์แนวไลฟ์สไตล์ (Digital Nomad)",
+    "wealth.FIRE.strategy": "เน้นการสร้างทีมและขยายเครือข่ายด้วยความรวดเร็ว ใช้พลังของการบอกต่อและสร้างแรงบันดาลใจ",
+    "wealth.WATER.strategy": "เน้นการสร้างความสัมพันธ์ที่แน่นแฟ้น ดูแลทีมงานด้วยความเข้าใจ และสร้างความเชื่อมั่นระยะยาว",
+    "wealth.EARTH.strategy": "เน้นการวางระบบที่มั่นคง สอนงานอย่างเป็นขั้นตอน และสร้างความน่าเชื่อถือผ่านผลลัพธ์ที่จับต้องได้",
+    "wealth.AIR.strategy": "เน้นการใช้เครื่องมือดิจิทัลและเทคโนโลยี เข้าถึงผู้คนผ่านโซเชียลมีเดีย และสร้างจุดเด่นด้วยความแปลกใหม่",
+    "common.back": "กลับหน้าหลัก",
+    "common.select_lang": "เลือกภาษา",
+    "common.more_info": "ดูรายละเอียดเพิ่มเติม",
+    "common.footer_desc": "บริษัท ยูนิคอร์น โกลบอล ลิ้งค์ จํากัด - ทางเลือกใหม่ของนักธุรกิจยุคดิจิทัล",
+    "common.contact_now": "ติดต่อเราเลยตอนนี้",
+    "nav.dashboard": "หน้าควบคุม",
+    "nav.register": "สมัครสมาชิก",
+    "hero.headline_1": "ยกระดับธุรกิจ",
+    "hero.headline_2": "สู่อนาคตที่เหนือกว่า",
+    "hero.desc": "สมาร์ทแพลตฟอร์มเพื่อ Unicorn Biz Coach ที่ออกแบบมาเพื่อคุณโดยเฉพาะ ผสานเทคโนโลยีปัญญาประดิษฐ์ AI และระบบการเรียนรู้แบบสมัยใหม่ เพื่อเร่งความสำเร็จให้ธุรกิจของคุณ",
+    "hero.start": "เริ่มต้นใช้งานระบบ",
+    "hero.go_dashboard": "เข้าสู่แดชบอร์ด",
+    "menu.main": "เมนูหลัก",
+    "menu.profile": "โปรไฟล์",
+    "nav.missions": "ภารกิจ",
+    "nav.profile": "นามบัตรดิจิทัล",
+    "nav.referral": "ลิงก์ผู้แนะนำ"
+  },
+  en: {
+    "nav.home": "Home",
+    "nav.about": "About Us",
+    "nav.products": "Products",
+    "nav.contact": "Contact",
+    "nav.privacy": "Privacy Policy",
+    "hero.title": "Unicorn",
+    "nav.system456": "System 456",
+    "nav.functions": "Functions",
+    "nav.calendar": "5 START-UP",
+    "nav.ai_coach": "AI Coach",
+    "nav.ubc_program": "UBC Program",
+    "nav.library": "Knowledge Base",
+    "nav.wealth_dna": "Wealth DNA",
+    "nav.ai_coach_nong_uni": "AI Coach (Nong Uni)",
+    "hero.subtitle": "Biz Start Up Platform for Next-Gen Entrepreneurs",
+    "hero.cta": "Start Your Business Today",
+    "hero.login": "Sign In",
+    "sections.strategy": "Business Strategy",
+    "sections.products": "Innovative Products",
+    "sections.contact": "Get in Touch",
+    "strategy.eco.title": "Eco-system",
+    "strategy.eco.desc": "The most comprehensive business ecosystem",
+    "strategy.product.title": "Product Strength",
+    "strategy.product.desc": "Innovative products for modern lifestyles",
+    "strategy.ai.title": "AI & Digital Tools",
+    "strategy.ai.desc": "Smart tools for business expansion",
+    "strategy.reward.title": "High Reward",
+    "strategy.reward.desc": "Valuable and sustainable returns",
+    "about.hero.title": "Next-Gen Networking: Redefining the Industry",
+    "about.hero.subtitle": 'We are a "Biz Start Up Platform" supporting entrepreneurs and individuals to own their business and succeed sustainably.',
+    "about.founder.role": "President & Founder",
+    "about.founder.name": "Dr. Phatpichapa Thanalelaphalin",
+    "about.vision.title": "Visionary Leadership",
+    "about.vision.desc": "Led by experts with over 20 years of success in the network business, focusing on powerful tools, innovative products, and knowledge to empower global consumer networks.",
+    "about.slogan": "U LINK U SHARE U SUCCESS",
+    "about.motto": "Your Success is Our Mission",
+    "about.legal.title": "Stability & Transparency",
+    "about.legal.capital": "Registered Capital: 19,000,000 THB (Fully Paid)",
+    "about.legal.desc": "Legally registered in Thailand and certified by the OCPB (Office of the Consumer Protection Board) for direct sales and online marketing operations.",
+    "about.stats.cert": "OCPB Certified",
+    "about.stats.growth": "AEC+ Expansion",
+    "about.stats.office": "20+ Yrs Office",
+    "about.stats.standard": "Global Standard",
+    "contact.title": "Contact Us",
+    "contact.subtitle": "We are ready to provide advice and support at every step of your business journey with a professional team from Unicorn Global Link.",
+    "contact.company.th": "Unicorn Global Link Co., Ltd.",
+    "contact.company.en": "UNICORN GLOBAL LINK COMPANY LIMITED",
+    "contact.address.label": "Secretariat Office Location",
+    "contact.address.value": "241 Ratchadaphisek Rd, Din Daeng, Bangkok, Thailand, 10400",
+    "contact.phone.label": "Call Center",
+    "contact.email.label": "Official Email",
+    "contact.hours.title": "Business Hours",
+    "contact.hours.desc": "Mon - Sun : 10:00 AM - 8:00 PM (Online support available 24/7)",
+    "contact.social.line_off": "Line OA: UNICORN Official",
+    "contact.social.line_con": "Line OA: UNICORN CONNECT",
+    "contact.social.fb": "Facebook",
+    "contact.social.ig": "Instagram",
+    "contact.social.yt": "YouTube",
+    "contact.social.desc.line_off": "General information and services",
+    "contact.social.desc.line_con": "Member and partner services",
+    "contact.social.desc.fb": "Follow latest news and activities",
+    "contact.social.desc.ig": "Unicorn image and lifestyle",
+    "contact.social.desc.yt": "Knowledge videos and inspiration",
+    "privacy.title": "Privacy Policy",
+    "privacy.subtitle": "We prioritize the security of your personal data and strictly comply with Personal Data Protection laws (PDPA).",
+    "privacy.commitment.title": "Our Commitment",
+    "privacy.commitment.desc": "We keep your information strictly confidential. No unauthorized use and absolutely no disclosure to third parties.",
+    "privacy.data.title": "Data We Collect",
+    "privacy.data.desc": "We collect data necessary for providing smooth platform services, including:",
+    "privacy.data.list1": "Identity Information (e.g., Full Name, Email, Phone Number)",
+    "privacy.data.list2": "System Usage Data (Log data, device information)",
+    "privacy.data.list3": "Data required for evaluations and activities within the platform",
+    "privacy.purpose.title": "Purpose Of Data Use",
+    "privacy.purpose.service.title": "For Service",
+    "privacy.purpose.service.desc": "Used for identity verification, learning support, and user business activities.",
+    "privacy.purpose.dev.title": "For Development",
+    "privacy.purpose.dev.desc": "Used to improve platform quality and AI to meet user needs constantly.",
+    "privacy.security.title": "Security Measures",
+    "privacy.security.desc": "We use modern encryption technology and standard security management systems to prevent unauthorized access, loss, or misuse of data.",
+    "privacy.security.compliance": "Fully compliant with the Personal Data Protection Act B.E. 2562 (PDPA).",
+    "privacy.rights.title": "Your Rights",
+    "privacy.rights.desc": "Under PDPA, you have the right to access, receive, correct, object to processing, or request deletion of your personal data through our official channels.",
+    "privacy.no_share": "No data will be shared with third parties",
+    "privacy.updated": "Last Updated: February 27, 2026",
+    "privacy.prepared": "Prepared by Legal and Technology Department, UNICORN GLOBAL LINK",
+    "referral.join_team": "Join our Team",
+    "referral.contact_line": "Contact me via LINE OA",
+    "referral.welcome": "Welcome to my Profile",
+    "referral.master": "Master",
+    "referral.line_id": "LINE ID",
+    "referral.welcome_video": "Watch my introduction and business concept video",
+    "referral.verified_partner": "Verified Unicorn Partner",
+    "profile.edit": "Edit Profile",
+    "profile.save": "Save",
+    "profile.saving": "Saving...",
+    "profile.display_name": "Display Name",
+    "profile.specialization": "Specialization",
+    "profile.quote": "Quote / Highlight",
+    "profile.bio": "Biography",
+    "profile.line_oa": "LINE OA URL",
+    "profile.youtube": "YouTube Link",
+    "profile.contact_social": "Contact Channels & Social Media",
+    "profile.preview_title": "Referral Page Preview",
+    "wealth.intro.tag": "✨ Discover your Secret Wealth Code",
+    "wealth.intro.title": "Unicorn Wealth DNA",
+    "wealth.intro.desc": 'Decode your birth chart to unlock wealth. Analyze your core element to find your "Rich Style" that fits you best.',
+    "wealth.intro.start": "Start DNA Analysis",
+    "wealth.intro.footer": "Free! No charge • Takes less than 1 minute",
+    "wealth.form.title": "Birth Chart Info",
+    "wealth.form.subtitle": "Please fill in your information to calculate your core element.",
+    "wealth.form.birth_date": "Date/Month/Year of Birth",
+    "wealth.form.birth_time": "Birth Time (If known)",
+    "wealth.form.analyze": "Analyze Wealth Code",
+    "wealth.loading.title": "Analyzing stars and wealth...",
+    "wealth.loading.subtitle": "Nong Uni AI Coach is calculating your Wealth DNA",
+    "wealth.result.strengths": "Your Strengths",
+    "wealth.result.strategy": "Recommended Business Strategy",
+    "wealth.result.content_ideas": "Content Ideas",
+    "wealth.result.products": "Recommended Products by Element",
+    "wealth.result.all_products": "View All Products",
+    "wealth.result.save": "Save Result to Profile",
+    "wealth.result.save_success": "Information saved successfully!",
+    "wealth.result.share": "Share Result",
+    "wealth.FIRE.name": "FIRE Element",
+    "wealth.FIRE.archetype": "The Charismatic Leader",
+    "wealth.FIRE.concept": "Fast, Passionate, Powerful",
+    "wealth.FIRE.description": "You are a brave leader with high enthusiasm and the power to inspire others.",
+    "wealth.WATER.name": "WATER Element",
+    "wealth.WATER.archetype": "The Empathetic Connector",
+    "wealth.WATER.concept": "Fluid, Calm, Connected",
+    "wealth.WATER.description": "You are an excellent relationship builder with high empathy and can adapt to everyone perfectly.",
+    "wealth.EARTH.name": "EARTH Element",
+    "wealth.EARTH.archetype": "The Reliable Foundation",
+    "wealth.EARTH.concept": "Stable, Solid, Sincere",
+    "wealth.EARTH.description": "You are a strong foundation builder with high organizational skills and the most trusted person to rely on.",
+    "wealth.AIR.name": "AIR Element",
+    "wealth.AIR.archetype": "The Creative Oracle",
+    "wealth.AIR.concept": "Free, Fast, Modern",
+    "wealth.AIR.description": "You are a creative thinker with brilliant ideas and always stay updated with technology.",
+    "wealth.FIRE.strengths": "High Leadership,Brave Decision Making,Abundant Energy,Exciting Communication",
+    "wealth.FIRE.content_ideas": "Impactful Inspirational Videos,Content showing instant success,Energetic and decisive Live sessions",
+    "wealth.WATER.strengths": "Excellent Listener,Builds High Trust,High Patience,Good Adaptability",
+    "wealth.WATER.content_ideas": "Emotional Storytelling,Health and wellness content,Gentle product reviews with emotional results",
+    "wealth.EARTH.strengths": "High Responsibility,Systematic Worker,Detail Oriented,Consistency",
+    "wealth.EARTH.content_ideas": "In-depth Product Facts,Clear numerical income plan comparison,Step-by-Step business guide",
+    "wealth.AIR.strengths": "High Creativity,Fast Learner,Communication Focused,Online Marketing Expert",
+    "wealth.AIR.content_ideas": "Modern and fun TikTok videos,Smart work with AI,Digital Nomad lifestyle content",
+    "wealth.FIRE.strategy": "Focus on building teams and expanding networks quickly, using the power of word-of-mouth and inspiration.",
+    "wealth.WATER.strategy": "Focus on building strong relationships, caring for teams with understanding, and establishing long-term trust.",
+    "wealth.EARTH.strategy": "Focus on establishing solid systems, step-by-step training, and building credibility through tangible results.",
+    "wealth.AIR.strategy": "Focus on using digital tools and technology, reaching people via social media, and standing out with innovation.",
+    "common.back": "Back to Home",
+    "common.select_lang": "Select Language",
+    "common.more_info": "View Details",
+    "common.footer_desc": "Unicorn Global Link Co., Ltd. - The new choice for digital entrepreneurs",
+    "common.contact_now": "Contact Us Now",
+    "nav.dashboard": "Dashboard",
+    "nav.register": "Sign Up",
+    "hero.headline_1": "Elevate Your Business",
+    "hero.headline_2": "To a Better Future",
+    "hero.desc": "A smart platform designed especially for Unicorn Biz Coaches, combining AI technology and modern learning systems to accelerate your business success.",
+    "hero.start": "Get Started",
+    "hero.go_dashboard": "Go to Dashboard",
+    "menu.main": "MAIN",
+    "menu.profile": "PROFILE",
+    "nav.missions": "Missions",
+    "nav.profile": "Name Card",
+    "nav.referral": "Referral Link"
+  },
+  mm: {
+    "nav.home": "ပင်မစာမျက်နှာ",
+    "nav.about": "ကျွန်ုပ်တို့အကြောင်း",
+    "nav.products": "ထုတ်ကုန်များ",
+    "nav.contact": "ဆက်သွယ်ရန်",
+    "nav.privacy": "ကိုယ်ရေးကိုယ်တာမူဝါဒ",
+    "hero.title": "Unicorn",
+    "nav.system456": "စနစ် ၄၅၆",
+    "nav.functions": "လုပ်ဆောင်ချက်များ",
+    "nav.calendar": "5 START-UP",
+    "nav.ai_coach": "AI နည်းပြ",
+    "nav.ubc_program": "UBC အစီအစဉ်",
+    "nav.library": "ပညာဘဏ်တိုက်",
+    "nav.wealth_dna": "Wealth DNA",
+    "nav.ai_coach_nong_uni": "AI နည်းပြ (Nong Uni)",
+    "hero.subtitle": "မျိုးဆက်သစ်စီးပွားရေးလုပ်ငန်းရှင်များအတွက် Biz Start Up Platform",
+    "hero.cta": "ယနေ့ပင် သင်၏စီးပွားရေးကို สတင်လိုက်ပါ",
+    "hero.login": "အကောင့်ဝင်ရန်",
+    "sections.strategy": "စီးပွားရေးဗျူဟာ",
+    "sections.products": "ဆန်းသစ်သောထုတ်ကုန်များ",
+    "sections.contact": "ဆက်သွယ်မှုများ",
+    "strategy.eco.title": "ဂေဟစနစ်",
+    "strategy.eco.desc": "အပြည့်စုံဆုံး စီးပွားရေးဂေဟစနစ်",
+    "strategy.product.title": "ထုတ်ကုန်စွမ်းအား",
+    "strategy.product.desc": "ခေတ်မီလူနေမှုပုံစံအတွက် ဆန်းသစ်သောထုတ်ကုန်များ",
+    "strategy.ai.title": "AI နှင့် ဒစ်ဂျစ်တယ်ကိရိယာများ",
+    "strategy.ai.desc": "စီးပွားရေးချဲ့ထွင်ရန် စမတ်ကျသောကိရိယာများ",
+    "strategy.reward.title": "မြင့်မားသောဆုလာဘ်",
+    "strategy.reward.desc": "တန်ဖိုးရှိပြီး ရေရှည်တည်တံ့သော အကျိုးအမြတ်များ",
+    "about.hero.title": "မျိုးဆက်သစ်ကွန်ရက်လုပ်ငန်း - လုပ်ငန်းပုံစံအသစ်",
+    "about.hero.subtitle": 'ကျွန်ုပ်တို့သည် "Biz Start Up Platform" ဖြစ်ပြီး စီးပွားရေးလုပ်ငန်းရှင်များနှင့် လူပုဂ္ဂိုလ်များ ကိုယ်ပိုင်စီးပွားရေးပိုင်ဆိုင်ပြီး ရေရှည်အောင်မြင်စေရန် ပံ့ပိုးပေးပါသည်။',
+    "about.founder.role": "ဥက္ကဋ္ဌနှင့် တည်ထောင်သူ",
+    "about.founder.name": "ဒေါက်တာ ဖတ်ဖီချာဖာ သနလီလဖလင်",
+    "about.vision.title": "အမြော်အမြင်ရှိသော ခေါင်းဆောင်မှု",
+    "about.vision.desc": "ကွန်ရက်စီးပွားရေးတွင် နှစ်ပေါင်း ၂၀ ကျော် အောင်မြင်မှုအတွေ့အကြုံရှိသော ပညာရှင်များက ဦးဆောင်ပြီး အစွမ်းထက်သောကိရိယာများ၊ ဆန်းသစ်သောထုတ်ကုန်များနှင့် ကမ္ဘာလုံးဆိုင်ရာသုံးစွဲသူများကွန်ရက်ကို အားကောင်းစေမည့် ဗဟုသုတများကို အဓိကထားပါသည်။",
+    "about.slogan": "U LINK U SHARE U SUCCESS",
+    "about.motto": "သင်၏အောင်မြင်မှုသည် ကျွန်ုပ်တို့၏တာဝန်ဖြစ်သည်",
+    "about.legal.title": "တည်ငြိမ်မှုနှင့် ရှင်းလင်းသောမှန်ကန်မှု",
+    "about.legal.capital": "မှတ်ပုံတင်အရင်းအနှီး - ၁၉,၀၀၀,၀၀၀ ဘတ် (အပြည့်အဝပေးသွင်းပြီး)",
+    "about.legal.desc": "ထိုင်းနိုင်ငံဥပဒေနှင့်အညီ မှတ်ပုံတင်ထားပြီး OCPB ၏ ထောက်ခံချက်ရရှိထားသောကြောင့် တိုက်ရိုက်ရောင်းချမှုနှင့် အွန်လိုင်းစျေးကွက်ရှာဖွေရေးလုပ်ငန်းများကို တရားဝင်လုပ်ဆောင်နိုင်ပါသည်။",
+    "about.stats.cert": "OCPB ထောက်ခံချက်ရပြီး",
+    "about.stats.growth": "AEC+ စျေးကွက်ချဲ့ထွင်မှု",
+    "about.stats.office": "၂၀+ နှစ်သက်တမ်း ရုံးခန်း",
+    "about.stats.standard": "Global စံချိန်စံညွှန်း",
+    "contact.title": "ဆက်သွယ်မေးမြန်းရန်",
+    "contact.subtitle": "Unicorn Global Link မှ ကျွမ်းကျင်သောအဖွဲ့နှင့်အတူ သင်၏စီးပွားရေးခရီးစဉ်၏ ခြေလှမ်းတိုင်းတွင် အကြံဉာဏ်နှင့် ပံ့ပိုးကူညီမှုများ ပေးအပ်ရန် အဆင်သင့်ရှိပါသည်။",
+    "contact.company.th": "Unicorn Global Link Co., Ltd.",
+    "contact.company.en": "UNICORN GLOBAL LINK COMPANY LIMITED",
+    "contact.address.label": "အတွင်းရေးမှူးရုံး တည်နေရာ",
+    "contact.address.value": "၂၄၁ ရာချာဒါဖီဆတ်လမ်း၊ ဒင်ဒန်း၊ ဘန်ကောက်၊ ထိုင်းနိုင်ငံ၊ ၁၀၄၀၀",
+    "contact.phone.label": "Call Center",
+    "contact.email.label": "Official Email",
+    "contact.hours.title": "ရုံးဖွင့်ချိန် (Business Hours)",
+    "contact.hours.desc": "တနင်္လာ - တနင်္ဂနွေ : ၁၀:၀၀ - ၂၀:၀၀ နာရီ (အွန်လိုင်းမှ ၂၄ နာရီလုံး ကူညီဆောင်ရွက်ပေးလျက်ရှိပါသည်)",
+    "contact.social.line_off": "Line OA: UNICORN Official",
+    "contact.social.line_con": "Line OA: UNICORN CONNECT",
+    "contact.social.fb": "Facebook",
+    "contact.social.ig": "Instagram",
+    "contact.social.yt": "YouTube",
+    "contact.social.desc.line_off": "အထွေထွေအချက်အလက်များနှင့် ဝန်ဆောင်မှုများ",
+    "contact.social.desc.line_con": "အဖွဲ့ဝင်နှင့် ပူးပေါင်းဆောင်ရွက်သူ ဝန်ဆောင်မှုများ",
+    "contact.social.desc.fb": "နောက်ဆုံးရသတင်းများနှင့် လှုပ်ရှားမှုများကို စောင့်ကြည့်ပါ",
+    "contact.social.desc.ig": "Unicorn ပုံရိပ်နှင့် လူနေမှုပုံစံ",
+    "contact.social.desc.yt": "ဗဟုသုတဗီဒီယိုများနှင့် စိတ်ခွန်အားဖြည့်မှုများ",
+    "privacy.title": "ကိုယ်ရေးကိုယ်တာမူဝါဒ",
+    "privacy.subtitle": "သင်၏ ကိုယ်ရေးကိုယ်တာဒေတာလုံခြုံရေးကို ကျွန်ုပ်တို့ ဦးစားပေးပြီး ကိုယ်ရေးကိုယ်တာအချက်အလက်ကာကွယ်ရေးဥပဒေ (PDPA) ကို တိကျစွာ လိုက်နာပါသည်။",
+    "privacy.commitment.title": "ကျွန်ုပ်တို့၏ ကတိအဝတ်",
+    "privacy.commitment.desc": "သင်၏အချက်အလက်များကို လုံးဝလျှို့ဝှက်စွာ သိမ်းဆည်းထားသည်။ ခွင့်ပြုချက်မရှိဘဲ အသုံးပြုခြင်းနှင့် ပြင်ပသို့ ထုတ်ဖော်ခြင်း လုံးဝပြုလုပ်မည်မဟုတ်ပါ။",
+    "privacy.data.title": "ကျွန်ုပ်တို့ စုဆောင်းထားသော ဒေတာ",
+    "privacy.data.desc": "ချောမွေ့သော ဝန်ဆောင်မှုများပေးရန်အတွက် လိုအပ်သောအချက်အလက်များကို စုဆောင်းပါသည် -",
+    "privacy.data.list1": "ကိုယ်ရေးအချက်အလက် (ဥပမာ - အမည်၊ အီးမေးလ်၊ ဖုန်းနံပါတ်)",
+    "privacy.data.list2": "စနစ်အသုံးပြုမှုဒေတာ (Log data၊ စက်ပစ္စည်းအချက်အလက်)",
+    "privacy.data.list3": "ပလပ်ဖောင်းအတွင်းရှိ အကဲဖြတ်မှုများနှင့် လှုပ်ရှားမှုများအတွက် လိုအပ်သောဒေတာများ",
+    "privacy.purpose.title": "ဒေတာအသုံးပြုရခြင်း၏ ရည်ရွယ်ချက်",
+    "privacy.purpose.service.title": "ဝန်ဆောင်မှုအတွက်",
+    "privacy.purpose.service.desc": "မည်သူမည်ဝါဖြစ်ကြောင်း အတည်ပြုရန်နှင့် စီးပွားရေးလုပ်ငန်းများကို ကူညီရန် အသုံးပြုပါသည်။",
+    "privacy.purpose.dev.title": "ဖွံ့ဖြိုးတိုးတက်မှုအတွက်",
+    "privacy.purpose.dev.desc": "ပလပ်ဖောင်းအရည်အသွေးနှင့် AI ကို ပိုမိုကောင်းမွန်လာစေရန် အသုံးပြုပါသည်။",
+    "privacy.security.title": "လုံခြုံရေးစီမံချက်များ",
+    "privacy.security.desc": "အချက်အလက်များကို ခွင့်ပြုချက်မရှိဘဲ ဝင်ရောက်ကြည့်ရှုခြင်းမှ ကာကွယ်ရန် ခေတ်မီစာဝှက်နည်းပညာများနှင့် စံချိန်စံညွှန်းမီ လုံခြုံရေးစနစ်များကို အသုံးပြုပါသည်။",
+    "privacy.security.compliance": "ကိုယ်ရေးကိုယ်တာအချက်အလက်ကာကွယ်ရေးဥပဒေ (PDPA) နှင့် အပြည့်အဝ ကိုက်ညီပါသည်။",
+    "privacy.rights.title": "သင်၏ ရပိုင်ခွင့်များ",
+    "privacy.rights.desc": "PDPA အရ သင်၏ကိုယ်ရေးအချက်အလက်များကို ကြည့်ရှုရန်၊ ပြင်ဆင်ရန် သို့မဟုတ် ဖျက်သိမ်းရန် တောင်းဆိုပိုင်ခွင့်ရှိပါသည်။",
+    "privacy.no_share": "ပြင်ပအဖွဲ့အစည်းများသို့ ဒေတာမျှဝေခြင်း မရှိပါ",
+    "privacy.updated": "နောက်ဆုံးပြင်ဆင်ချိန် - ၂၀၂၆ ခုနှစ်၊ ဖေဖော်ဝါရီလ ၂၇ ရက်",
+    "privacy.prepared": "ဥပဒေနှင့် နည်းပညာဌာန၊ UNICORN GLOBAL LINK မှ ပြင်ဆင်တင်ပြသည်",
+    "referral.join_team": "အဖွဲ့တွင် ပူးပေါင်းပါ",
+    "referral.contact_line": "LINE OA မှ ဆက်သွယ်ပါ",
+    "referral.welcome": "ကျွန်တော့်၏ Profile မှ ကြိုဆိုပါသည်",
+    "referral.master": "ဆရာ",
+    "referral.line_id": "LINE ID",
+    "referral.welcome_video": "ကျွန်ုပ်၏ မိတ်ဆက်ခြင်းနှင့် လုပ်ငန်းဆိုင်ရာ ဗီဒီယိုကို ကြည့်ရှုပါ",
+    "referral.verified_partner": "Verified Unicorn Partner",
+    "profile.edit": "အချက်อချက်ပြင်ရန်",
+    "profile.save": "သိမ်းဆည်းရန်",
+    "profile.saving": "သိမ်းဆည်းနေသည်...",
+    "profile.display_name": "အမည်",
+    "profile.specialization": "ကျွမ်းကျင်မှု",
+    "profile.quote": "ဆောင်ပုဒ် / ထူးခြားချက်",
+    "profile.bio": "အတ္ထုပ္ပတ္တိ",
+    "profile.line_oa": "LINE OA URL",
+    "profile.youtube": "YouTube Link",
+    "profile.contact_social": "ဆက်သွယ်ရန် နည်းလမ်းများနှင့် လူမှုကွန်ရက်",
+    "profile.preview_title": "Referral Page Preview",
+    "wealth.intro.tag": "✨ သင်၏ ကြွယ်ဝချမ်းသာမှု လျှို့ဝှက်ကုဒ်ကို ရှာဖွေပါ",
+    "wealth.intro.title": "Unicorn Wealth DNA",
+    "wealth.intro.desc": 'သင်နှင့်ကိုက်ညီသော "ချမ်းသာမည့်ပုံစံ" ကို ရှာဖွေရန် သင်၏ မွေးသက္ကရာဇ်ကို အခြေခံ၍ တွက်ချက်ပါ။',
+    "wealth.intro.start": "DNA ခွဲခြမ်းစိတ်ဖြာမှုကို စတင်ပါ",
+    "wealth.intro.footer": "အခမဲ့! မည်သည့်အခကြေးငွေမျှ မရှိပါ • ၁ မိနစ်ထက်မနည်း ကြာပါမည်",
+    "wealth.form.title": "မွေးဖွားမှုဆိုင်ရာ အချက်အလက်",
+    "wealth.form.subtitle": "သင်၏ အဓိကဓာတ်ကို တွက်ချက်ရန် အချက်အလက်များကို ဖြည့်စွက်ပါ။",
+    "wealth.form.birth_date": "မွေးသက္ကရာဇ် (နေ့/လ/ခုနှစ်)",
+    "wealth.form.birth_time": "မွေးဖွားချိန် (သိရှိပါက)",
+    "wealth.form.analyze": "ချမ်းသာမှုကုဒ်ကို ခွဲခြမ်းစိတ်ဖြာပါ",
+    "wealth.loading.title": "ကြယ်တာရာများနှင့် ချမ်းသာမှုကို ခွဲခြမ်းစိတ်ဖြာနေသည်...",
+    "wealth.loading.subtitle": "Nong Uni AI Coach သည် သင်၏ Wealth DNA ကို တွက်ချက်ပေးနေပါသည်",
+    "wealth.result.strengths": "သင်၏ အားသာချက်များ",
+    "wealth.result.strategy": "အကြံပြုထားသော စီးပွားရေးဗျူဟာ",
+    "wealth.result.content_ideas": "Content စိတ်ကူးများ",
+    "wealth.result.products": "ဓာတ်အလိုက် အကြံပြုထားသော ထုတ်ကုန်များ",
+    "wealth.result.all_products": "ထုတ်ကုန်အားလုံးကို ကြည့်ရှုရန်",
+    "wealth.result.save": "ရလဒ်ကို Profile တွင် သိမ်းဆည်းရန်",
+    "wealth.result.save_success": "အချက်အလက်များကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ!",
+    "wealth.result.share": "ရလဒ်ကို မျှဝေပါ",
+    "wealth.FIRE.name": "မီးဓာတ် (FIRE)",
+    "wealth.FIRE.archetype": "ဆွဲဆောင်မှုရှိသော ခေါင်းဆောင်",
+    "wealth.FIRE.concept": "လျင်မြန်ခြင်း၊ နိုးကြားခြင်း၊ အစွမ်းထက်ခြင်း",
+    "wealth.FIRE.description": "သင်သည် စိတ်အားထက်သန်မှု မြင့်မားပြီး အခြားသူများကို စိတ်အားတက်ကြွစေနိုင်သော ရဲရင့်သည့် ခေါင်းဆောင်တစ်ဦး ဖြစ်သည်။",
+    "wealth.WATER.name": "ရေဓာတ် (WATER)",
+    "wealth.WATER.archetype": "စာနာနားလည်တတ်သော ဆက်သွယ်သူ",
+    "wealth.WATER.concept": "စီးဆင်းခြင်း၊ အေးချမ်းခြင်း၊ ဆက်သွယ်ခြင်း",
+    "wealth.WATER.description": "သင်သည် စစာနာနားလည်မှု မြင့်မားပြီး လူတိုင်းနှင့် လိုက်လျောညီထွေစွာ နေထိုင်နိုင်သော ဆက်ဆံရေး တည်ဆောက်သူတစ်ဦး ဖြစ်သည်။",
+    "wealth.EARTH.name": "မြေဓာတ် (EARTH)",
+    "wealth.EARTH.archetype": "ယုံကြည်စိတ်ချရသော အခြေခံအုတ်မြစ်",
+    "wealth.EARTH.concept": "တည်ငြိမ်ခြင်း၊ ခိုင်မာခြင်း၊ ရိုးသားခြင်း",
+    "wealth.EARTH.description": "သင်သည် စနစ်တကျ လုပ်ဆောင်တတ်ပြီး ယုံကြည်စိတ်ချရဆုံးသော အခြေခံအုတ်မြစ် တည်ဆောက်သူတစ်ဦး ဖြစ်သည်။",
+    "wealth.AIR.name": "လေဓာတ် (AIR)",
+    "wealth.AIR.archetype": "ဖန်တီးမှုရှိသော အတွေးအခေါ်ပညာရှင်",
+    "wealth.AIR.concept": "လွတ်လပ်ခြင်း၊ လျင်မြန်ခြင်း၊ ခေတ်မီခြင်း",
+    "wealth.AIR.description": "သင်သည် စိတ်ကူးသစ်များဖြင့် ဖန်တီးတတ်ပြီး နည်းပညာများနှင့် အမြဲတစေ ရင်ဘောင်တန်းနေသူတစ်ဦး ဖြစ်သည်။",
+    "wealth.FIRE.strengths": "ခေါင်းဆောင်မှုကောင်းခြင်း,ရဲရင့်စွာဆုံးဖြတ်နိုင်ခြင်း,အင်အားအပြည့်ရှိခြင်း,စိတ်လှုပ်ရှားဖွယ်ဆက်သွယ်ပြောဆိုနိုင်ခြင်း",
+    "wealth.FIRE.content_ideas": "စိတ်ဓာတ်ခွန်အားဖြစ်စေသောဗီဒီယိုများ,အောင်မြင်မှုရလဒ်များကိုပြသသောContentများ,အားအင်အပြည့်နှင့်ဆုံးဖြတ်ချက်ခိုင်မာသောLiveလွှင့်ခြင်းများ",
+    "wealth.WATER.strengths": "အကောင်းဆုံးနားထောင်သူဖြစ်ခြင်း,ယုံကြည်မှုတည်ဆောက်နိုင်ခြင်း,သည်းခံနိုင်စွမ်းမြင့်မားခြင်း,လိုက်လျောညီထွေနေထိုင်တတ်ခြင်း",
+    "wealth.WATER.content_ideas": "စိတ်လှုပ်ရှားဖွယ်ပုံပြင်ပြောပြခြင်း,ကျန်းမာရေးနှင့်လူမှုရေးစောင့်ရှောက်မှုContentများ,ခံစားချက်ကိုဖော်ပြသောထုတ်ကုန်သုံးသပ်ချက်များ",
+    "wealth.EARTH.strengths": "တာဝန်ယူမှုရှိခြင်း,စနစ်တကျလုပ်ဆောင်တတ်ခြင်း,အသေးစိတ်ဂရုစိုက်ခြင်း,အမြဲတစေမှန်ကန်ခြင်း",
+    "wealth.EARTH.content_ideas": "ထုတ်ကုန်အချက်အလက်များကိုအသေးစိတ်ဖော်ပြခြင်း,ဝင်ငွေစီမံကိန်းကိုကိန်းဂဏန်းဖြင့်နှိုင်းယှဉ်ပြခြင်း,အဆင့်ဆင့်စီးပွားရေးလုပ်ဆောင်ပုံလမ်းညွှန်",
+    "wealth.AIR.strengths": "ဖန်တီးမှုစွမ်းအားမြင့်မားခြင်း,လျင်မြန်စွာသင်ယူနိုင်ခြင်း,ဆက်သွယ်ရေးကောင်းမွန်ခြင်း,အွန်လိုင်းစျေးကွက်ကျွမ်းကျင်ခြင်း",
+    "wealth.AIR.content_ideas": "ခေတ်မီပြီးပျော်ရွှင်ဖွယ်TikTokဗီဒီယိုများ,AIဖြင့်စမတ်ကျစွာလုပ်ဆောင်ခြင်း,Digital Nomad လူနေမှုပုံစံContentများ",
+    "wealth.FIRE.strategy": "အဖွဲ့များတည်ဆောက်ခြင်းနှင့် ကွန်ရက်များကို လျင်မြန်စွာချဲ့ထွင်ခြင်း၊ နှုတ်ပြောစွမ်းအားနှင့် စိတ်ခွန်အားပေးခြင်းတို့ကို အဓိကထားပါ။",
+    "wealth.WATER.strategy": "ခိုင်မာသောဆက်ဆံရေးတည်ဆောက်ခြင်း၊ အဖွဲ့သားများကို နားလည်မှုဖြင့် ဂရုစိုက်ခြင်းနှင့် ရေရှည်ယုံကြည်မှုတည်ဆောက်ခြင်းတို့ကို အဓိကထားပါ။",
+    "wealth.EARTH.strategy": "ခိုင်မာသောစနစ်များ တည်ထောင်ခြင်း၊ အဆင့်ဆင့် လေ့ကျင့်သင်ကြားပေးခြင်းနှင့် လက်တွေ့ကျသော ရလဒ်များမှတစ်ဆင့် ယုံကြည်စိတ်ချရမှု တည်ဆောက်ခြင်းတို့ကို အဓိကထားပါ။",
+    "wealth.AIR.strategy": "ဒစ်ဂျစ်တယ်ကိရိယာများနှင့် နည်းပညာများကို အသုံးပြုခြင်း၊ လူမှုမီဒီယာမှတစ်ဆင့် လူများထံ ရောက်ရှိစေခြင်းနှင့် ဆန်းသစ်တီထွင်မှုဖြင့် ထင်ရှားပေါ်လွင်စေခြင်းတို့ကို အဓိကထားပါ။",
+    "common.back": "ပင်မစာမျက်နှာသို့",
+    "common.select_lang": "ဘာသာစကားရွေးချယ်ပါ",
+    "common.more_info": "အသေးစိတ်ကြည့်ရန်",
+    "common.footer_desc": "Unicorn Global Link Co., Ltd. - ဒစ်ဂျစ်တယ်စီးပွားရေးလုပ်ငန်းရှင်များအတွက် ရွေးချယ်မှုအသစ်",
+    "common.contact_now": "ยခုပင် ဆက်သွယ်လိုက်ပါ",
+    "nav.dashboard": "ထိန်းချုပ်မှုဘုတ်",
+    "nav.register": "အကောင့်ဖွင့်ရန်",
+    "hero.headline_1": "သင့်စီးပွားရေးကို မြှင့်တင်ပါ",
+    "hero.headline_2": "ပိုမိုကောင်းမွန်သောအနာဂတ်သို့",
+    "hero.desc": "Unicorn Biz Coach များအတွက် အထူးဒီဇိုင်းထုတ်ထားသော စမတ်ပလပ်ဖောင်းဖြစ်ပြီး သင်၏စီးပွားရေးအောင်မြင်မှုကို မြန်ဆန်စေရန် AI နည်းပညာနှင့် ခေတ်မီသင်ယူမှုစနစ်များကို ပေါင်းစပ်ထားပါသည်။",
+    "hero.start": "စတင်အသုံးပြုရန်",
+    "hero.go_dashboard": "ထိန်းချုပ်မှုဘုတ်သို့သွားရန်",
+    "menu.main": "ပင်မမီနူး",
+    "menu.profile": "ပရိုဖိုင်",
+    "nav.missions": "မစ်ရှင်များ",
+    "nav.profile": "ဒစ်ဂျစ်တယ်နံမည်ကတ်",
+    "nav.referral": "ညွှန်းဆိုမှုလင့်ခ်"
+  }
+};
+const LanguageContext = createContext(void 0);
+const LanguageProvider = ({ children }) => {
+  const [language, setLanguageState] = useState("th");
+  useEffect(() => {
+    const savedLang = localStorage.getItem("app-language");
+    if (savedLang && (savedLang === "th" || savedLang === "en" || savedLang === "mm")) {
+      setLanguageState(savedLang);
+    }
+  }, []);
+  const setLanguage = (lang) => {
+    setLanguageState(lang);
+    localStorage.setItem("app-language", lang);
+  };
+  const t = (key) => {
+    const langDic = translations[language] || translations.th;
+    return langDic[key] || key;
+  };
+  return /* @__PURE__ */ jsx(LanguageContext.Provider, { value: { language, setLanguage, t }, children });
+};
+const useLanguage = () => {
+  const context = useContext(LanguageContext);
+  if (context === void 0) {
+    throw new Error("useLanguage must be used within a LanguageProvider");
+  }
+  return context;
+};
 function meta$j() {
   return [{
     title: "Unicorn Smart AI | สถาบันสอนธุรกิจและนวัตกรรม"
@@ -87,8 +625,20 @@ async function loader$i(_) {
 function Layout({
   children
 }) {
+  return /* @__PURE__ */ jsx(LanguageProvider, {
+    children: /* @__PURE__ */ jsx(HtmlLayout, {
+      children
+    })
+  });
+}
+function HtmlLayout({
+  children
+}) {
+  const {
+    language
+  } = useLanguage();
   return /* @__PURE__ */ jsxs("html", {
-    lang: "th",
+    lang: language === "mm" ? "my" : language,
     children: [/* @__PURE__ */ jsxs("head", {
       children: [/* @__PURE__ */ jsx("meta", {
         charSet: "utf-8"
@@ -220,6 +770,11 @@ const home = UNSAFE_withComponentProps(function HomePage() {
   const {
     user
   } = useLoaderData();
+  const {
+    language,
+    setLanguage,
+    t
+  } = useLanguage();
   return /* @__PURE__ */ jsxs("main", {
     className: "min-h-screen relative overflow-hidden bg-bg-page font-body text-text-primary",
     children: [/* @__PURE__ */ jsxs("div", {
@@ -255,29 +810,42 @@ const home = UNSAFE_withComponentProps(function HomePage() {
           })]
         }), /* @__PURE__ */ jsxs("div", {
           className: "flex items-center gap-6",
-          children: [/* @__PURE__ */ jsx("a", {
-            href: "https://unicorngloballink.com/",
-            target: "_blank",
-            rel: "noopener noreferrer",
-            className: "text-text-secondary hover:text-brand-gold transition-colors text-xs font-bold flex items-center gap-1",
-            children: "🌐 เว็บไซต์บริษัท UGL"
-          }), /* @__PURE__ */ jsx("div", {
-            className: "h-4 w-px bg-border-default/80"
+          children: [/* @__PURE__ */ jsxs("div", {
+            className: "flex items-center gap-1.5 border-r border-border-default/80 pr-4 mr-1",
+            children: [/* @__PURE__ */ jsx("button", {
+              type: "button",
+              onClick: () => setLanguage("th"),
+              className: `px-2 py-1 text-xs font-bold rounded transition-all ${language === "th" ? "bg-brand-gold text-white shadow-sm" : "text-text-secondary hover:bg-bg-input"}`,
+              title: "ภาษาไทย",
+              children: "TH"
+            }), /* @__PURE__ */ jsx("button", {
+              type: "button",
+              onClick: () => setLanguage("en"),
+              className: `px-2 py-1 text-xs font-bold rounded transition-all ${language === "en" ? "bg-brand-gold text-white shadow-sm" : "text-text-secondary hover:bg-bg-input"}`,
+              title: "English",
+              children: "EN"
+            }), /* @__PURE__ */ jsx("button", {
+              type: "button",
+              onClick: () => setLanguage("mm"),
+              className: `px-2 py-1 text-xs font-bold rounded transition-all ${language === "mm" ? "bg-brand-gold text-white shadow-sm" : "text-text-secondary hover:bg-bg-input"}`,
+              title: "မြန်မာဘာသာ",
+              children: "MM"
+            })]
           }), /* @__PURE__ */ jsx("div", {
             className: "flex items-center gap-4",
             children: user ? /* @__PURE__ */ jsx(Link, {
               to: "/dashboard",
               className: "btn-gold px-6 text-sm",
-              children: "เข้าสู่หน้าควบคุม"
+              children: t("hero.go_dashboard")
             }) : /* @__PURE__ */ jsxs(Fragment, {
               children: [/* @__PURE__ */ jsx(Link, {
                 to: "/auth/login",
                 className: "text-text-secondary hover:text-text-primary transition-colors text-sm font-semibold",
-                children: "เข้าสู่ระบบ"
+                children: t("hero.login")
               }), /* @__PURE__ */ jsx(Link, {
                 to: "/auth/register",
                 className: "btn-gold px-6 text-sm",
-                children: "สมัครสมาชิก"
+                children: t("nav.register")
               })]
             })
           })]
@@ -299,44 +867,41 @@ const home = UNSAFE_withComponentProps(function HomePage() {
           className: "space-y-6",
           children: [/* @__PURE__ */ jsxs("h1", {
             className: "font-display font-bold text-5xl md:text-8xl text-text-primary leading-[1.1] tracking-tight",
-            children: ["ยกระดับธุรกิจ ", /* @__PURE__ */ jsx("br", {}), /* @__PURE__ */ jsx("span", {
+            children: [t("hero.headline_1"), " ", /* @__PURE__ */ jsx("br", {}), /* @__PURE__ */ jsx("span", {
               className: "text-transparent bg-clip-text bg-gradient-to-r from-brand-gold via-brand-gold-muted to-brand-gold-hover",
-              children: "สู่อนาคตที่เหนือกว่า"
+              children: t("hero.headline_2")
             })]
-          }), /* @__PURE__ */ jsxs("p", {
+          }), /* @__PURE__ */ jsx("p", {
             className: "text-text-secondary text-base md:text-lg max-w-3xl mx-auto leading-relaxed font-light",
-            children: ["สมาร์ทแพลตฟอร์มเพื่อ ", /* @__PURE__ */ jsx("span", {
-              className: "font-semibold text-brand-gold",
-              children: "Unicorn Biz Coach"
-            }), " ที่ออกแบบมาเพื่อคุณโดยเฉพาะ ผสานเทคโนโลยีปัญญาประดิษฐ์ AI และระบบการเรียนรู้แบบสมัยใหม่ เพื่อเร่งความสำเร็จให้ธุรกิจของคุณ"]
+            children: t("hero.desc")
           })]
         }), /* @__PURE__ */ jsx("div", {
           className: "flex justify-center pt-4",
           children: /* @__PURE__ */ jsx(Link, {
             to: user ? "/dashboard" : "/auth/login",
             className: "btn-gold px-14 py-4 text-base rounded-xl shadow-lg shadow-brand-gold/10 hover:scale-[1.03] transition-transform duration-200",
-            children: user ? "เข้าสู่แดชบอร์ด" : "เริ่มต้นใช้งานระบบ"
+            children: user ? t("hero.go_dashboard") : t("hero.start")
           })
         }), /* @__PURE__ */ jsx("div", {
           className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 pt-24 text-left",
           children: [{
-            title: "Eco-system",
-            desc: "ระบบนิเวศทางธุรกิจที่ครบวงจรที่สุด เพื่อความมั่นคงและยั่งยืนในระยะยาว",
+            title: t("strategy.eco.title"),
+            desc: t("strategy.eco.desc"),
             icon: "⚡",
             bg: "bg-[#fffcf6] border-brand-gold/10"
           }, {
-            title: "Product Strength",
-            desc: "นวัตกรรมสินค้าชั้นเลิศที่ตอบโจทย์ความต้องการของผู้บริโภคยุคใหม่",
+            title: t("strategy.product.title"),
+            desc: t("strategy.product.desc"),
             icon: "🏆",
             bg: "bg-white"
           }, {
-            title: "AI & Digital Tools",
-            desc: "เครื่องมืออัจฉริยะและน้องยูนิ AI Coach ที่ช่วยย่อเวลาการเรียนรู้และขยายธุรกิจ",
+            title: t("strategy.ai.title"),
+            desc: t("strategy.ai.desc"),
             icon: "✨",
             bg: "bg-white"
           }, {
-            title: "High Reward",
-            desc: "แผนรายได้และผลตอบแทนที่คุ้มค่า ออกแบบมาเพื่อความสำเร็จของทุกคน",
+            title: t("strategy.reward.title"),
+            desc: t("strategy.reward.desc"),
             icon: "⭐",
             bg: "bg-white"
           }].map((f, i) => /* @__PURE__ */ jsxs("div", {
@@ -607,16 +1172,15 @@ const auth_login = UNSAFE_withComponentProps(function LoginPage() {
           })]
         }), /* @__PURE__ */ jsx("div", {
           className: "text-center",
-          children: /* @__PURE__ */ jsxs("p", {
-            className: "text-xs text-text-secondary font-medium",
-            children: ["ยังไม่ได้เป็นสมาชิก?", " ", /* @__PURE__ */ jsxs(Link, {
-              to: "/auth/register",
-              className: "text-brand-gold font-bold hover:text-brand-gold-hover transition-colors inline-flex items-center gap-1 hover:underline",
-              children: [/* @__PURE__ */ jsx(Gem, {
-                size: 12,
-                className: "animate-pulse"
-              }), "ลงทะเบียนฟรี"]
-            })]
+          children: /* @__PURE__ */ jsxs("a", {
+            href: "https://www.uglplatform.com/Account/Login",
+            target: "_blank",
+            rel: "noopener noreferrer",
+            className: "text-xs text-brand-gold font-bold hover:text-brand-gold-hover transition-colors inline-flex items-center gap-1 hover:underline",
+            children: [/* @__PURE__ */ jsx(Gem, {
+              size: 12,
+              className: "animate-pulse"
+            }), "เข้าสู่ระบบสมาชิก UGL Platform"]
           })
         })]
       })]
@@ -630,94 +1194,15 @@ const route2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
 }, Symbol.toStringTag, { value: "Module" }));
 function meta$g() {
   return [{
-    title: "สมัครสมาชิก — Unicorn Smart AI"
+    title: "ขั้นตอนเข้าร่วมธุรกิจ — Unicorn Smart AI"
   }, {
     name: "description",
-    content: "สมัครสมาชิกใหม่ในระบบ Unicorn Smart AI"
+    content: "ขั้นตอนการร่วมธุรกิจและเข้าใช้งานระบบสมาชิก Unicorn Global Link"
   }];
 }
 function RegisterForm() {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const supabase = createClient();
-  const [fullName, setFullName] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const refSlug = searchParams.get("ref");
-  const passwordChecks = [{
-    label: "อย่างน้อย 6 ตัวอักษร",
-    valid: password.length >= 6
-  }, {
-    label: "รหัสผ่านสองช่องตรงกัน",
-    valid: password === confirmPassword && confirmPassword.length > 0
-  }];
-  const handleSubmit = async (e) => {
-    var _a, _b;
-    e.preventDefault();
-    setError("");
-    if (!fullName || !username || !password || !confirmPassword) {
-      setError("กรุณากรอกข้อมูลให้ครบทุกช่อง");
-      return;
-    }
-    if (username.length < 3) {
-      setError("Username ต้องมีอย่างน้อย 3 ตัวอักษร");
-      return;
-    }
-    if (password.length < 6) {
-      setError("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError("รหัสผ่านไม่ตรงกัน กรุณาตรวจสอบอีกครั้ง");
-      return;
-    }
-    setIsLoading(true);
-    try {
-      const cleanUsername = username.toLowerCase().replace(/\s+/g, "");
-      const fakeEmail = `${cleanUsername}@unicorn.systems`;
-      const {
-        data: data2,
-        error: signUpError
-      } = await supabase.auth.signUp({
-        email: fakeEmail,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-            username: cleanUsername,
-            phone: ""
-          }
-        }
-      });
-      if (signUpError) throw signUpError;
-      if (data2.user) {
-        const {
-          error: profileError
-        } = await supabase.from("profiles").update({
-          username: cleanUsername
-        }).eq("id", data2.user.id);
-        if (profileError) {
-          console.error("Error setting referral slug:", profileError);
-        }
-        navigate("/dashboard");
-      } else {
-        setError("สมัครสมาชิกเสร็จสิ้น กรุณาเช็คกล่องข้อความเพื่อยืนยันตัวตนหรือลองเข้าสู่ระบบ");
-      }
-    } catch (err) {
-      console.error("Register error:", err);
-      if (((_a = err.message) == null ? void 0 : _a.includes("already registered")) || ((_b = err.message) == null ? void 0 : _b.includes("already been registered"))) {
-        setError("ชื่อผู้ใช้นี้ถูกลงทะเบียนไปแล้ว กรุณาเข้าสู่ระบบแทน");
-      } else {
-        setError(err.message || "เกิดข้อผิดพลาดในการลงทะเบียน กรุณาลองใหม่อีกครั้ง");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
   return /* @__PURE__ */ jsxs("div", {
     className: "min-h-screen bg-bg-page flex items-center justify-center p-4 relative overflow-hidden font-body",
     children: [/* @__PURE__ */ jsxs("div", {
@@ -728,7 +1213,7 @@ function RegisterForm() {
         className: "absolute bottom-1/4 left-1/4 w-60 h-60 bg-brand-gold/10 rounded-full blur-[100px]"
       })]
     }), /* @__PURE__ */ jsxs("div", {
-      className: "relative z-10 w-full max-w-md my-8",
+      className: "relative z-10 w-full max-w-lg my-8",
       children: [/* @__PURE__ */ jsxs(Link, {
         to: "/",
         className: "group flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary mb-6 transition-colors font-semibold",
@@ -739,167 +1224,109 @@ function RegisterForm() {
           children: "กลับหน้าแรก"
         })]
       }), /* @__PURE__ */ jsxs("div", {
-        className: "glass p-8 md:p-10 shadow-card border-border-default relative overflow-hidden bg-white/95",
+        className: "glass p-8 md:p-10 shadow-card border-border-default relative overflow-hidden bg-white/95 rounded-3xl",
         children: [/* @__PURE__ */ jsx("div", {
           className: "absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-brand-gold/40 to-transparent"
         }), refSlug && /* @__PURE__ */ jsxs("div", {
-          className: "bg-brand-gold-light/50 border border-brand-gold-muted text-brand-gold px-4 py-2.5 rounded-xl text-xs font-semibold text-center mb-6 animate-pulse",
-          children: ["🤝 ยินดีต้อนรับ! คุณกำลังเข้าร่วมทีมของ ", /* @__PURE__ */ jsxs("strong", {
+          className: "bg-brand-gold-light/50 border border-brand-gold-muted text-brand-gold px-4 py-2.5 rounded-xl text-xs font-semibold text-center mb-6 select-none",
+          children: ["🤝 ผู้แนะนำของคุณคือ: ", /* @__PURE__ */ jsxs("strong", {
             children: ["@", refSlug]
           })]
         }), /* @__PURE__ */ jsxs("div", {
-          className: "bg-brand-gold-light/30 border border-brand-gold-muted/50 text-text-primary px-4 py-3.5 rounded-xl text-xs font-medium mb-6 flex flex-col gap-1.5 shadow-sm text-left",
-          children: [/* @__PURE__ */ jsx("span", {
-            className: "font-bold text-brand-gold text-xs flex items-center gap-1.5",
-            children: "📢 ประกาศสำหรับสมาชิก UGL"
-          }), /* @__PURE__ */ jsxs("p", {
-            className: "text-text-secondary leading-relaxed text-[11px]",
-            children: ["สำหรับสมาชิกของบริษัท ", /* @__PURE__ */ jsx("strong", {
-              children: "Unicorn Global Link"
-            }), " ไม่จำเป็นต้องลงทะเบียนใหม่ที่นี่! สามารถใช้ ", /* @__PURE__ */ jsx("strong", {
-              children: "Username (เช่น TH546415)"
-            }), " และรหัสผ่าน UGL เข้าสู่ระบบที่หน้า Login ได้ทันที ระบบจะเปิดบัญชีสมาชิกใหม่และเชื่อมต่อสายงานให้ท่านโดยอัตโนมัติ"]
-          })]
-        }), /* @__PURE__ */ jsxs("div", {
-          className: "text-center mb-6",
+          className: "text-center mb-10",
           children: [/* @__PURE__ */ jsx("div", {
-            className: "w-14 h-14 bg-brand-gold rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md text-white",
-            children: /* @__PURE__ */ jsx(Gem, {
-              size: 24
-            })
+            className: "w-14 h-14 bg-brand-gold rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md text-white select-none",
+            children: "🦄"
           }), /* @__PURE__ */ jsx("h1", {
             className: "text-2xl font-bold font-display text-text-primary tracking-tight",
-            children: "เข้าร่วม Unicorn Academy 🦄"
+            children: "ขั้นตอนการเข้าร่วมธุรกิจ"
           }), /* @__PURE__ */ jsx("p", {
             className: "text-xs text-text-muted mt-1.5 font-medium",
-            children: "ลงทะเบียนสมาชิกใหม่เพื่อเริ่มต้นเส้นทางนักธุรกิจ AI"
+            children: "เริ่มต้นเส้นทางนักธุรกิจยุคดิจิทัลกับพวกเรา"
           })]
-        }), error && /* @__PURE__ */ jsx("div", {
-          className: "bg-red-50 border border-red-200 rounded-xl p-4 mb-6",
-          children: /* @__PURE__ */ jsx("p", {
-            className: "text-xs text-red-700 font-semibold text-center",
-            children: error
-          })
-        }), /* @__PURE__ */ jsxs("form", {
-          onSubmit: handleSubmit,
-          className: "space-y-4",
+        }), /* @__PURE__ */ jsxs("div", {
+          className: "space-y-5 text-left",
           children: [/* @__PURE__ */ jsxs("div", {
-            className: "space-y-1.5",
-            children: [/* @__PURE__ */ jsx("label", {
-              className: "block text-[10px] font-black text-text-secondary uppercase tracking-widest",
-              children: "ชื่อ - นามสกุล"
+            className: "flex gap-4 p-4.5 rounded-2xl bg-white border border-border-default shadow-sm hover:border-brand-gold/30 transition-colors",
+            children: [/* @__PURE__ */ jsx("div", {
+              className: "w-10 h-10 rounded-xl bg-brand-gold-light/30 flex items-center justify-center shrink-0 text-brand-gold font-bold select-none text-sm",
+              children: "1"
             }), /* @__PURE__ */ jsxs("div", {
-              className: "relative",
-              children: [/* @__PURE__ */ jsx(User, {
-                size: 16,
-                className: "absolute left-4 top-1/2 -translate-y-1/2 text-text-muted"
-              }), /* @__PURE__ */ jsx("input", {
-                type: "text",
-                value: fullName,
-                onChange: (e) => setFullName(e.target.value),
-                placeholder: "สมชาย ใจดี",
-                className: "w-full pl-10 pr-4 py-3.5 bg-bg-input border border-border-default rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-brand-gold-muted focus:ring-1 focus:ring-brand-gold-muted/20 transition-all text-sm font-semibold"
+              className: "space-y-1",
+              children: [/* @__PURE__ */ jsx("h4", {
+                className: "text-sm font-bold text-text-primary",
+                children: "สมัครสมาชิกร่วมธุรกิจ"
+              }), /* @__PURE__ */ jsx("p", {
+                className: "text-xs text-text-secondary leading-relaxed font-semibold",
+                children: "สมัครสมาชิกร่วมธุรกิจกับทาง บริษัท ยูนิคอร์น โกลบอล ลิ้งค์ จำกัด"
               })]
             })]
           }), /* @__PURE__ */ jsxs("div", {
-            className: "space-y-1.5",
-            children: [/* @__PURE__ */ jsx("label", {
-              className: "block text-[10px] font-black text-text-secondary uppercase tracking-widest",
-              children: "Username (สำหรับลิงก์แนะนำ)"
+            className: "flex gap-4 p-4.5 rounded-2xl bg-[#fffcf6] border border-brand-gold/15 shadow-sm hover:border-brand-gold/30 transition-colors",
+            children: [/* @__PURE__ */ jsx("div", {
+              className: "w-10 h-10 rounded-xl bg-brand-gold text-white flex items-center justify-center shrink-0 font-bold select-none text-sm",
+              children: "2"
             }), /* @__PURE__ */ jsxs("div", {
-              className: "relative",
-              children: [/* @__PURE__ */ jsx("div", {
-                className: "absolute left-4 top-1/2 -translate-y-1/2 text-text-muted font-bold text-sm",
-                children: "@"
-              }), /* @__PURE__ */ jsx("input", {
-                type: "text",
-                value: username,
-                onChange: (e) => setUsername(e.target.value.toLowerCase().replace(/\s+/g, "")),
-                placeholder: "yourname",
-                className: "w-full pl-10 pr-4 py-3.5 bg-bg-input border border-border-default rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-brand-gold-muted focus:ring-1 focus:ring-brand-gold-muted/20 transition-all text-sm font-semibold"
+              className: "space-y-2.5 flex-1",
+              children: [/* @__PURE__ */ jsxs("div", {
+                className: "space-y-1",
+                children: [/* @__PURE__ */ jsx("h4", {
+                  className: "text-sm font-bold text-text-primary",
+                  children: "เข้าใช้งานระบบสมาชิก"
+                }), /* @__PURE__ */ jsx("p", {
+                  className: "text-xs text-text-secondary leading-relaxed font-semibold",
+                  children: "เข้าใช้งานผ่านระบบสนับสนุนสมาชิก UGL Platform"
+                })]
+              }), /* @__PURE__ */ jsx("div", {
+                children: /* @__PURE__ */ jsxs("a", {
+                  href: "https://www.uglplatform.com/Account/Login",
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                  className: "inline-flex items-center gap-1.5 text-xs text-brand-gold font-bold hover:text-brand-gold-hover hover:underline transition-colors bg-white border border-brand-gold-muted/20 px-3.5 py-2 rounded-xl shadow-2xs",
+                  children: [/* @__PURE__ */ jsx("span", {
+                    children: "ไปยังหน้าระบบสมาชิก UGL"
+                  }), /* @__PURE__ */ jsx(ArrowRight, {
+                    size: 12
+                  })]
+                })
               })]
             })]
           }), /* @__PURE__ */ jsxs("div", {
-            className: "space-y-4",
-            children: [/* @__PURE__ */ jsxs("div", {
-              className: "space-y-1.5",
-              children: [/* @__PURE__ */ jsx("label", {
-                className: "block text-[10px] font-black text-text-secondary uppercase tracking-widest",
-                children: "รหัสผ่าน"
-              }), /* @__PURE__ */ jsxs("div", {
-                className: "relative",
-                children: [/* @__PURE__ */ jsx(Lock, {
-                  size: 16,
-                  className: "absolute left-4 top-1/2 -translate-y-1/2 text-text-muted"
-                }), /* @__PURE__ */ jsx("input", {
-                  type: showPassword ? "text" : "password",
-                  value: password,
-                  onChange: (e) => setPassword(e.target.value),
-                  placeholder: "••••••••",
-                  className: "w-full pl-10 pr-12 py-3.5 bg-bg-input border border-border-default rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-brand-gold-muted focus:ring-1 focus:ring-brand-gold-muted/20 transition-all text-sm font-semibold"
-                }), /* @__PURE__ */ jsx("button", {
-                  type: "button",
-                  onClick: () => setShowPassword(!showPassword),
-                  className: "absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition-colors",
-                  children: showPassword ? /* @__PURE__ */ jsx(EyeOff, {
-                    size: 16
-                  }) : /* @__PURE__ */ jsx(Eye, {
-                    size: 16
-                  })
-                })]
-              })]
+            className: "flex gap-4 p-4.5 rounded-2xl bg-white border border-border-default shadow-sm hover:border-brand-gold/30 transition-colors",
+            children: [/* @__PURE__ */ jsx("div", {
+              className: "w-10 h-10 rounded-xl bg-brand-gold-light/30 flex items-center justify-center shrink-0 text-brand-gold font-bold select-none text-sm",
+              children: "3"
             }), /* @__PURE__ */ jsxs("div", {
-              className: "space-y-1.5",
-              children: [/* @__PURE__ */ jsx("label", {
-                className: "block text-[10px] font-black text-text-secondary uppercase tracking-widest",
-                children: "ยืนยันรหัสผ่าน"
-              }), /* @__PURE__ */ jsxs("div", {
-                className: "relative",
-                children: [/* @__PURE__ */ jsx(Lock, {
-                  size: 16,
-                  className: "absolute left-4 top-1/2 -translate-y-1/2 text-text-muted"
-                }), /* @__PURE__ */ jsx("input", {
-                  type: showPassword ? "text" : "password",
-                  value: confirmPassword,
-                  onChange: (e) => setConfirmPassword(e.target.value),
-                  placeholder: "••••••••",
-                  className: "w-full pl-10 pr-4 py-3.5 bg-bg-input border border-border-default rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-brand-gold-muted focus:ring-1 focus:ring-brand-gold-muted/20 transition-all text-sm font-semibold"
-                })]
+              className: "space-y-1",
+              children: [/* @__PURE__ */ jsx("h4", {
+                className: "text-sm font-bold text-text-primary",
+                children: "ติดต่อผู้แนะนำธุรกิจ"
+              }), /* @__PURE__ */ jsx("p", {
+                className: "text-xs text-text-secondary leading-relaxed font-semibold",
+                children: "หรือติดต่อผู้แนะนำธุรกิจยูนิคอร์นนี้ให้กับท่านเพื่อขอความช่วยเหลือในการเริ่มต้น"
               })]
             })]
+          })]
+        }), /* @__PURE__ */ jsxs("div", {
+          className: "flex items-center gap-3 my-8",
+          children: [/* @__PURE__ */ jsx("div", {
+            className: "flex-1 h-px bg-border-default"
+          }), /* @__PURE__ */ jsx("span", {
+            className: "text-[10px] text-text-muted font-black uppercase tracking-widest select-none",
+            children: "หรือ"
           }), /* @__PURE__ */ jsx("div", {
-            className: "flex gap-4 pt-1 bg-bg-hover p-3.5 rounded-xl border border-border-default",
-            children: passwordChecks.map((check, idx) => /* @__PURE__ */ jsxs("div", {
-              className: "flex items-center gap-1.5 text-[10px] font-semibold text-text-secondary",
-              children: [/* @__PURE__ */ jsx(CheckCircle2, {
-                size: 12,
-                className: check.valid ? "text-emerald-600" : "text-text-muted"
-              }), /* @__PURE__ */ jsx("span", {
-                className: check.valid ? "text-emerald-700 font-bold" : "text-text-muted",
-                children: check.label
-              })]
-            }, idx))
-          }), /* @__PURE__ */ jsx("button", {
-            type: "submit",
-            disabled: isLoading,
-            className: "w-full py-4 btn-gold rounded-xl hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm uppercase tracking-wider font-semibold mt-2",
-            children: isLoading ? /* @__PURE__ */ jsx(Loader2, {
-              className: "w-5 h-5 animate-spin text-white"
-            }) : /* @__PURE__ */ jsxs(Fragment, {
-              children: [/* @__PURE__ */ jsx(UserPlus, {
-                size: 16
-              }), /* @__PURE__ */ jsx("span", {
-                children: "สมัครสมาชิก"
-              })]
-            })
+            className: "flex-1 h-px bg-border-default"
           })]
-        }), /* @__PURE__ */ jsxs("p", {
-          className: "text-center text-xs text-text-secondary mt-6 font-medium",
-          children: ["มีบัญชีสมาชิกแล้ว?", " ", /* @__PURE__ */ jsx(Link, {
-            to: "/auth/login",
-            className: "text-brand-gold font-bold hover:text-brand-gold-hover hover:underline",
-            children: "เข้าสู่ระบบที่นี่"
-          })]
+        }), /* @__PURE__ */ jsx("div", {
+          className: "text-center",
+          children: /* @__PURE__ */ jsxs("p", {
+            className: "text-xs text-text-secondary font-medium",
+            children: ["มีบัญชีผู้ใช้งานแล้ว?", " ", /* @__PURE__ */ jsx(Link, {
+              to: "/auth/login",
+              className: "text-brand-gold font-bold hover:text-brand-gold-hover hover:underline transition-colors",
+              children: "เข้าสู่ระบบที่นี่"
+            })]
+          })
         })]
       })]
     })]
@@ -2033,58 +2460,168 @@ const route6 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
   meta: meta$e
 }, Symbol.toStringTag, { value: "Module" }));
 const scenariosByArea = {
-  STARTUP: [{
-    label: "วิธีแชร์ความประทับใจสินค้า",
-    message: "วิธีแชร์ความประทับใจสินค้า U4 Innovation ให้น่าสนใจและดึงดูดผู้มุ่งหวัง"
-  }, {
-    label: "แนะนำ Unicorn Link ให้คนใหม่",
-    message: "วิธีแนะนำระบบ Unicorn Link และ One Link ให้กับคนใหม่อย่างมืออาชีพ"
-  }, {
-    label: "ฝึกการนัดหมายผู้มุ่งหวัง",
-    message: "ฝึกพูดเพื่อโทรนัดหมายผู้มุ่งหวังเข้าร่วมการนำเสนอโอกาสทางธุรกิจ"
-  }, {
-    label: "การสะสม PV ให้ถึงเป้า",
-    message: "วิธีการและกลยุทธ์การสะสม PV ให้ถึงเป้าหมายระดับผู้เชี่ยวชาญ"
-  }],
-  SYSTEM456: [{
-    label: "ฝึกพูด 5 Why เพื่อเปิดใจ",
-    message: "ช่วยสอนและฝึกพูด '5 Why' เพื่อเปิดใจเปิดทางแก้ไขข้อสงสัยผู้มุ่งหวัง"
-  }, {
-    label: "ตอบข้อโต้แย้งเรื่องราคา",
-    message: "วิธีตอบข้อโต้แย้งอย่างชาญฉลาดและนุ่มนวล เมื่อลูกค้าบอกว่าสินค้าแพงเกินไป"
-  }, {
-    label: "การทำ STP (เปิดโอกาสธุรกิจ)",
-    message: "อธิบายวิธีกระบวนการทำ STP เพื่อเปิดใจคนใหม่ โดยเน้นการเล่าคุณค่ามากกว่าการขายตรง"
-  }, {
-    label: "เทคนิคการติดตาม (Follow-up)",
-    message: "เทคนิคการติดตามผู้มุ่งหวังหลังจากส่งข้อมูลให้ศึกษา โดยไม่ทำให้พวกเขารู้สึกรำคาญ"
-  }],
-  LEADERSHIP: [{
-    label: "วิธีการทำ AAR (After Action)",
-    message: "วิธีการทำ AAR (After Action Review) กับทีมงานเพื่อสะท้อนผลลัพธ์และเติบโต"
-  }, {
-    label: "การทำ 1 on 1 กับทีมงาน",
-    message: "วิธีการทำ 1 on 1 เพื่อเคลียร์เป้าหมายและสร้างพลังใจให้กับพาร์ทเนอร์ในทีม"
-  }, {
-    label: "การโค้ชทีมงานให้มีแรงใจ",
-    message: "เทคนิคการโค้ชพาร์ทเนอร์ในระบบเพื่อดึงศักยภาพสูงสุดของพวกเขาออกมา"
-  }, {
-    label: "จัด House Meeting ให้มีพลัง",
-    message: "วิธีการรันกิจกรรมกลุ่ม House Meeting ให้ตื่นเต้นและทรงพลังเพื่อปิดการขายระดับองค์กร"
-  }],
-  PERSONAL_BRAND: [{
-    label: "ร่าง Bio ให้น่าเชื่อถือ",
-    message: "ช่วยคิดไอเดียและร่างประวัติ Bio สั้นๆ ให้น่าดึงดูดสำหรับใส่ in นามบัตรดิจิทัล"
-  }, {
-    label: "คิดคำคม (Quote) ประจำตัว",
-    message: "ช่วยแต่งสโลแกนหรือคำคม (Quote) ทางธุรกิจส่วนตัวสไตล์ผู้นำที่หรูหรา"
-  }, {
-    label: "แนะนำจุดเด่น (Expertise)",
-    message: "ช่วยคิดคำโปรยบอกเล่าจุดเด่นและความเชี่ยวชาญพิเศษ (Expertise) ของฉัน"
-  }, {
-    label: "ร่างโปรไฟล์แบบ 3 ภาษา",
-    message: "ช่วยร่างแนะนำตัวฉบับย่อ 3 ภาษา (ไทย/อังกฤษ/พม่า) สำหรับโปรโมทความเป็นมืออาชีพระดับสากล"
-  }]
+  th: {
+    STARTUP: [{
+      label: "วิธีแชร์ความประทับใจสินค้า",
+      message: "วิธีแชร์ความประทับใจสินค้า U4 Innovation ให้น่าสนใจและดึงดูดผู้มุ่งหวัง"
+    }, {
+      label: "แนะนำ Unicorn Link ให้คนใหม่",
+      message: "วิธีแนะนำระบบ Unicorn Link และ One Link ให้กับคนใหม่อย่างมืออาชีพ"
+    }, {
+      label: "ฝึกการนัดหมายผู้มุ่งหวัง",
+      message: "ฝึกพูดเพื่อโทรนัดหมายผู้มุ่งหวังเข้าร่วมการนำเสนอโอกาสทางธุรกิจ"
+    }, {
+      label: "การสะสม PV ให้ถึงเป้า",
+      message: "วิธีการและกลยุทธ์การสะสม PV ให้ถึงเป้าหมายระดับผู้เชี่ยวชาญ"
+    }],
+    SYSTEM456: [{
+      label: "ฝึกพูด 5 Why เพื่อเปิดใจ",
+      message: "ช่วยสอนและฝึกพูด '5 Why' เพื่อเปิดใจเปิดทางแก้ไขข้อสงสัยผู้มุ่งหวัง"
+    }, {
+      label: "ตอบข้อโต้แย้งเรื่องราคา",
+      message: "วิธีตอบข้อโต้แย้งอย่างชาญฉลาดและนุ่มนวล เมื่อลูกค้าบอกว่าสินค้าแพงเกินไป"
+    }, {
+      label: "การทำ STP (เปิดโอกาสธุรกิจ)",
+      message: "อธิบายวิธีกระบวนการทำ STP เพื่อเปิดใจคนใหม่ โดยเน้นการเล่าคุณค่ามากกว่าการขายตรง"
+    }, {
+      label: "เทคนิคการติดตาม (Follow-up)",
+      message: "เทคนิคการติดตามผู้มุ่งหวังหลังจากส่งข้อมูลให้ศึกษา โดยไม่ทำให้พวกเขารู้สึกรำคาญ"
+    }],
+    LEADERSHIP: [{
+      label: "วิธีการทำ AAR (After Action)",
+      message: "วิธีการทำ AAR (After Action Review) กับทีมงานเพื่อสะท้อนผลลัพธ์และเติบโต"
+    }, {
+      label: "การทำ 1 on 1 กับทีมงาน",
+      message: "วิธีการทำ 1 on 1 เพื่อเคลียร์เป้าหมายและสร้างพลังใจให้กับพาร์ทเนอร์ในทีม"
+    }, {
+      label: "การโค้ชทีมงานให้มีแรงใจ",
+      message: "เทคนิคการโค้ชพาร์ทเนอร์ในระบบเพื่อดึงศักยภาพสูงสุดของพวกเขาออกมา"
+    }, {
+      label: "จัด House Meeting ให้มีพลัง",
+      message: "วิธีการรันกิจกรรมกลุ่ม House Meeting ให้ตื่นเต้นและทรงพลังเพื่อปิดการขายระดับองค์กร"
+    }],
+    PERSONAL_BRAND: [{
+      label: "ร่าง Bio ให้น่าเชื่อถือ",
+      message: "ช่วยคิดไอเดียและร่างประวัติ Bio สั้นๆ ให้น่าดึงดูดสำหรับใส่ in นามบัตรดิจิทัล"
+    }, {
+      label: "คิดคำคม (Quote) ประจำตัว",
+      message: "ช่วยแต่งสโลแกนหรือคำคม (Quote) ทางธุรกิจส่วนตัวสไตล์ผู้นำที่หรูหรา"
+    }, {
+      label: "แนะนำจุดเด่น (Expertise)",
+      message: "ช่วยคิดคำโปรยบอกเล่าจุดเด่นและความเชี่ยวชาญพิเศษ (Expertise) ของฉัน"
+    }, {
+      label: "ร่างโปรไฟล์แบบ 3 ภาษา",
+      message: "ช่วยร่างแนะนำตัวฉบับย่อ 3 ภาษา (ไทย/อังกฤษ/พม่า) สำหรับโปรโมทความเป็นมืออาชีพระดับสากล"
+    }]
+  },
+  en: {
+    STARTUP: [{
+      label: "How to share product impressions",
+      message: "How to share impressions of U4 Innovation products in an interesting way to attract prospects"
+    }, {
+      label: "Introduce Unicorn Link to new members",
+      message: "How to introduce the Unicorn Link and One Link system to new members professionally"
+    }, {
+      label: "Practice scheduling prospects",
+      message: "Practice calling to make appointments with prospects to attend business opportunity presentations"
+    }, {
+      label: "Accumulating PV to target",
+      message: "Methods and strategies for accumulating PV to reach expert-level targets"
+    }],
+    SYSTEM456: [{
+      label: "Objection: 5 Why to open mind",
+      message: "Teach and practice speaking '5 Why' to open minds and resolve doubts for prospects"
+    }, {
+      label: "Respond to price objections",
+      message: "How to respond smartly and gently when clients say products are too expensive"
+    }, {
+      label: "Perform STP (business presentation)",
+      message: "Explain how to do STP to open new members' minds, focusing on value rather than direct selling"
+    }, {
+      label: "Follow-up techniques",
+      message: "Follow-up techniques after sending information to prospects without annoying them"
+    }],
+    LEADERSHIP: [{
+      label: "How to do AAR",
+      message: "How to do AAR (After Action Review) with the team to reflect on results and grow"
+    }, {
+      label: "1 on 1 coaching session",
+      message: "How to do 1 on 1 sessions to clear goals and build morale for team partners"
+    }, {
+      label: "Morale coaching for partners",
+      message: "Coaching techniques to bring out the maximum potential of partners in the system"
+    }, {
+      label: "Powerful House Meetings",
+      message: "How to run House Meeting group activities to be exciting and powerful to close sales at the organizational level"
+    }],
+    PERSONAL_BRAND: [{
+      label: "Draft a credible Bio",
+      message: "Help generate ideas and draft a short, attractive Bio for digital name cards"
+    }, {
+      label: "Create personal Quote",
+      message: "Help compose a personal business slogan or Quote in a luxurious leader style"
+    }, {
+      label: "Introduce Expertise",
+      message: "Help draft a tagline describing my special strengths and expertise"
+    }, {
+      label: "Draft profile in 3 languages",
+      message: "Help draft a short profile in 3 languages (Thai/English/Burmese) to promote professional global image"
+    }]
+  },
+  mm: {
+    STARTUP: [{
+      label: "ထုတ်ကုန်အပေါ် အကြံပြုချက်များကို မျှဝေနည်း",
+      message: "အလားအလာရှိသူများကို ဆွဲဆောင်ရန် U4 Innovation ထုတ်ကုန်များအပေါ် အကြံပြုချက်များကို စိတ်ဝင်စားဖွယ်မျှဝေနည်း"
+    }, {
+      label: "အသစ်များအား Unicorn Link မိတ်ဆက်ပေးခြင်း",
+      message: "Unicorn Link နှင့် One Link စနစ်ကို အသစ်များအား ကျွမ်းကျင်စွာ မိတ်ဆက်ပေးနည်း"
+    }, {
+      label: "အလားအလာရှိသူများနှင့် ရက်ချိန်းယူခြင်း လေ့ကျင့်ရန်",
+      message: "စီးပွားရေးအခွင့်အလမ်းမိတ်ဆက်ပွဲများသို့ တက်ရောက်ရန် အလားအလာရှိသူများနှင့် ရက်ချိန်းယူရန် ဖုန်းခေါ်ဆိုခြင်းကို လေ့ကျင့်ရန်"
+    }, {
+      label: "ပန်းတိုင်သို့ရောက်ရန် PV စုဆောင်းခြင်း",
+      message: "ကျွမ်းကျင်မှုအဆင့် ပန်းတိုင်များသို့ ရောက်ရှိရန် PV စုဆောင်းခြင်း နည်းလမ်းများနှင့် ဗျူဟာများ"
+    }],
+    SYSTEM456: [{
+      label: "စိတ်ဖွင့်ရန် 5 Why ပြောဆိုခြင်း လေ့ကျင့်ရန်",
+      message: "အလားအလာရှိသူများ၏ သံသယများကို ဖြေရှင်းရန်နှင့် စိတ်ဖွင့်ရန် '5 Why' ပြောဆိုခြင်းကို သင်ကြားပေးပြီး လေ့ကျင့်ပေးရန်"
+    }, {
+      label: "စျေးနှုန်းကန့်ကွက်မှုများကို ဖြေရှင်းခြင်း",
+      message: "ဖောက်သည်များက ထုတ်ကုန်စျေးကြီးသည်ဟု ပြောလာသောအခါ စမတ်ကျကျနှင့် ညင်သာစွာ ဖြေရှင်းနည်း"
+    }, {
+      label: "STP (စီးပွားရေးမိတ်ဆက်ခြင်း) လုပ်ဆောင်ပုံ",
+      message: "တိုက်ရိုက်ရောင်းချခြင်းထက် တန်ဖိုးကို อဓိကထားပြီး အသစ်များ၏ စိတ်ကိုဖွင့်ရန် STP လုပ်ဆောင်ပုံကို ရှင်းပြပါ"
+    }, {
+      label: "နောက်ဆက်တွဲ (Follow-up) นည်းပညာများ",
+      message: "အလားအလာရှိသူများအား စိတ်အနှောင့်အယှက်မဖြစ်စေဘဲ သတင်းအချက်အလက်များ ပေးပို့ပြီးနောက် နောက်ဆက်တွဲ ဆက်သွယ်နည်း"
+    }],
+    LEADERSHIP: [{
+      label: "How to do AAR (AAR ပြုလုပ်ပုံ)",
+      message: "ရလဒ်များကို ပြန်လည်သုံးသပ်ပြီး တိုးတက်စေရန် အဖွဲ့သားများနှင့် AAR (After Action Review) ပြုလုပ်နည်း"
+    }, {
+      label: "အဖွဲ့သားများနှင့် တစ်ဦးချင်း (1 on 1) ဆွေးနွေးခြင်း",
+      message: "အဖွဲ့သားများအတွက် ပန်းတိုင်များကို ရှင်းလင်းစေပြီး စိတ်အားထက်သန်မှုဖြစ်စေရန် တစ်ဦးချင်းဆွေးနွေးနည်း"
+    }, {
+      label: "အဖွဲ့သားများအား စိတ်အားတက်ကြွစေရန် သင်ကြားပေးခြင်း",
+      message: "စနစ်အတွင်းရှိ မိတ်ဖက်များ၏ အလားအလာများကို အမြင့်မားဆုံး ထုတ်ယူနိုင်ရန် သင်ကြားပေးခြင်း နည်းစနစ်များ"
+    }, {
+      label: "အိမ်တွင်းအစည်းအဝေး (House Meeting) ကို အားကောင်းစွာ ပြုလုပ်ခြင်း",
+      message: "အဖွဲ့အစည်းအဆင့် ရောင်းအားပိတ်နိုင်ရန် စိတ်လှုပ်ရှားဖွယ်နှင့် အားကောင်းသော အိမ်တွင်းအစည်းအဝေးများ ပြုလုပ်နည်း"
+    }],
+    PERSONAL_BRAND: [{
+      label: "ယုံကြည်စိတ်ချရသော Bio ရေးဆွဲရန်",
+      message: "ဒစ်ဂျစ်တယ်နံမည်ကတ်များအတွက် စိတ်ဝင်စားဖွယ်ကောင်းပြီး တိုတောင်းသော Bio ရေးဆွဲရန် စိတ်ကူးများ ပံ့ပိုးပေးပါ"
+    }, {
+      label: "ကိုယ်ပိုင်ဆောင်ပုဒ် (Quote) စဉ်းစားရန်",
+      message: "ခေါင်းဆောင်ကောင်းစတိုင်ဖြင့် ကိုယ်ပိုင်စီးပွားရေး ဆောင်ပုဒ် သို့မဟုတ် Quote ကို ရေးဖွဲ့ရန် ကူညီပေးပါ"
+    }, {
+      label: "ထူးခြားသော အားသာချက်များ (Expertise) မိတ်ဆက်ရန်",
+      message: "ကျွန်ုပ်၏ အထူးအားသာချက်များနှင့် ကျွမ်းကျင်မှုများကို ဖော်ပြသည့် စာသားများ ရေးဆွဲရန် ကူညီပေးပါ"
+    }, {
+      label: "ပရိုဖိုင်ကို ၃ ဘာသာဖြင့် ရေးဆွဲရန်",
+      message: "နိုင်ငံတကာအဆင့် လုပ်ငန်းကျွမ်းကျင်မှုကို မြှင့်တင်ရန် ပရိုဖိုင်ကို ၃ ဘာသာ (ထိုင်း/အင်္ဂလိပ်/မြန်မာ) ဖြင့် ရေးဆွဲရန် ကူညီပေးပါ"
+    }]
+  }
 };
 const focusOptions = [{
   id: "STARTUP",
@@ -2297,11 +2834,32 @@ const aiCoach = UNSAFE_withComponentProps(function AICoachPage() {
   const {
     profile: profile2
   } = useLoaderData();
+  const {
+    language,
+    t
+  } = useLanguage();
   const scrollRef = useRef(null);
+  const welcomeMessage = useMemo(() => {
+    if (language === "th") {
+      return "สวัสดีค่ะพาร์ทเนอร์ ยินดีต้อนรับสู่ห้องฝึกฝนอัจฉริยะของ Unicorn Academy นะคะ วันนี้น้องยูนิพร้อมเป็นคู่หูร่วมคิดและคู่ซ้อมตอบข้อโต้แย้ง ฝึก STP หรือร่างข้อมูลแบรนดิ้งส่วนตัวให้คุณพี่แล้วค่ะ ลองเลือกหัวข้อตัวอย่างด้านบน หรือพิมพ์คุยกับน้องยูนิได้เลยนะคะ";
+    } else if (language === "en") {
+      return "Hello partner! Welcome to Unicorn Academy's smart practice room. Today, Nong Uni is ready to be your thinking partner and practice responder for handling objections, training STP, or drafting personal branding information for you. Try selecting a topic from above or typing to chat with Nong Uni.";
+    } else {
+      return "မင်္ဂလာပါ မိတ်ဖက်။ Unicorn Academy ၏ စမတ်ကျသော လေ့ကျင့်ရေးခန်းမှ ကြိုဆိုပါသည်။ ယနေ့တွင် နောင်ယူနီသည် သင်၏ စဉ်းစားတွေးခေါ်ဖော်နှင့် ကန့်ကွက်မှုများကို ကိုင်တွယ်ဖြေရှင်းခြင်း၊ STP လေ့ကျင့်ခြင်း သို့မဟုတ် သင့်အတွက် ကိုယ်ပိုင်အမှတ်တံဆိပ် အချက်အလက်များကို ရေးဆွဲခြင်းတို့တွင် ကူညီပေးရန် အဆင်သင့်ရှိနေပါသည်။ အထက်ပါ အကြောင်းအရာတစ်ခုကို ရွေးချယ်ပါ သို့မဟုတ် စကားပြောရန် စาရိုက်ပါ။";
+    }
+  }, [language]);
   const [messages, setMessages] = useState([{
     role: "model",
     content: "สวัสดีค่ะพาร์ทเนอร์ ยินดีต้อนรับสู่ห้องฝึกฝนอัจฉริยะของ Unicorn Academy นะคะ วันนี้น้องยูนิพร้อมเป็นคู่หูร่วมคิดและคู่ซ้อมตอบข้อโต้แย้ง ฝึก STP หรือร่างข้อมูลแบรนดิ้งส่วนตัวให้คุณพี่แล้วค่ะ ลองเลือกหัวข้อตัวอย่างด้านบน หรือพิมพ์คุยกับน้องยูนิได้เลยนะคะ"
   }]);
+  useEffect(() => {
+    if (messages.length === 1 && messages[0].role === "model") {
+      setMessages([{
+        role: "model",
+        content: welcomeMessage
+      }]);
+    }
+  }, [welcomeMessage]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [focusArea, setFocusArea] = useState("SYSTEM456");
@@ -2317,7 +2875,10 @@ const aiCoach = UNSAFE_withComponentProps(function AICoachPage() {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, isLoading]);
-  const currentScenarios = useMemo(() => scenariosByArea[focusArea], [focusArea]);
+  const currentScenarios = useMemo(() => {
+    var _a2;
+    return ((_a2 = scenariosByArea[language]) == null ? void 0 : _a2[focusArea]) || scenariosByArea["th"][focusArea];
+  }, [focusArea, language]);
   const handleSendMessage = async (textToOverride) => {
     var _a2, _b, _c, _d, _e;
     const textToSend = textToOverride || inputText;
@@ -2342,7 +2903,8 @@ const aiCoach = UNSAFE_withComponentProps(function AICoachPage() {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          messages: formattedHistory
+          messages: formattedHistory,
+          lang: language
         })
       });
       if (!res.ok) {
@@ -2370,17 +2932,19 @@ const aiCoach = UNSAFE_withComponentProps(function AICoachPage() {
     }
   };
   const handleClearChat = () => {
-    if (confirm("คุณแน่ใจหรือไม่ที่จะล้างการสนทนาทั้งหมด?")) {
+    const confirmMsg = language === "th" ? "คุณแน่ใจหรือไม่ที่จะล้างการสนทนาทั้งหมด?" : language === "en" ? "Are you sure you want to clear all conversation?" : "စကားပြောဆိုမှုအားလုံးကို ဖျက်ပစ်ရန် သေချာပါသလား?";
+    const clearedMsg = language === "th" ? "ล้างห้องแชทเรียบร้อยแล้วค่ะ! 🦄 วันนี้น้องยูนิพร้อมช่วยให้พาร์ทเนอร์เก่งขึ้นแล้วค่ะ ลองพิมพ์คำถามหรือเลือกสถานการณ์ซ้อมได้เลยนะคะ ✨" : language === "en" ? "Chat room cleared! 🦄 Today, Nong Uni is ready to help you grow. Try typing a question or selecting a scenario to practice. ✨" : "စကားပြောခန်းကို ဖျက်လိုက်ပါပြီ။ 🦄 ယနေ့တွင် နောင်ယူနီသည် သင့်အား တိုးတက်စေရန် ကူညီပေးရန် အဆင်သင့်ရှိနေပါသည်။ မေးခွန်းတစ်ခုရိုက်ထည့်ရန် သို့မဟုတ် လေ့ကျင့်ရန် အခြေအနေတစ်ခုကို ရွေးချယ်ပါ။ ✨";
+    if (confirm(confirmMsg)) {
       setMessages([{
         role: "model",
-        content: "ล้างห้องแชทเรียบร้อยแล้วค่ะ! 🦄 วันนี้น้องยูนิพร้อมช่วยให้พาร์ทเนอร์เก่งขึ้นแล้วค่ะ ลองพิมพ์คำถามหรือเลือกสถานการณ์ซ้อมได้เลยนะคะ ✨"
+        content: clearedMsg
       }]);
     }
   };
   return /* @__PURE__ */ jsx(MemberLayout, {
     profile: profile2,
-    title: "น้องยูนิ (AI Coach)",
-    subtitle: "— คู่ซ้อมตอบข้อโต้แย้ง ฝึกพูด STP และร่างแบรนดิ้งของพาร์ทเนอร์อัจฉริยะ",
+    title: t("nav.ai_coach_nong_uni") || "น้องยูนิ (AI Coach)",
+    subtitle: language === "th" ? "— คู่ซ้อมตอบข้อโต้แย้ง ฝึกพูด STP และร่างแบรนดิ้งของพาร์ทเนอร์อัจฉริยะ" : language === "en" ? "— Your smart objection partner, STP coach, and branding assistant" : "— ကန့်ကွက်မှုဖြေရှင်းခြင်း၊ STP နှင့် ကိုယ်ပိုင်အမှတ်တံဆိပ် တည်ဆောက်ခြင်း လေ့ကျင့်ရေးအဖော်",
     children: /* @__PURE__ */ jsxs("div", {
       className: "flex flex-col h-[calc(100vh-180px)] bg-bg-card border border-border-default rounded-3xl overflow-hidden shadow-md relative font-body",
       children: [/* @__PURE__ */ jsxs("header", {
@@ -2393,13 +2957,13 @@ const aiCoach = UNSAFE_withComponentProps(function AICoachPage() {
             children: [/* @__PURE__ */ jsx(ChevronLeft, {
               size: 16
             }), /* @__PURE__ */ jsx("span", {
-              children: "แดชบอร์ด"
+              children: t("nav.dashboard") || "แดชบอร์ด"
             })]
           }), /* @__PURE__ */ jsxs("span", {
             className: "text-emerald-700 font-bold text-[11px] bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full flex items-center gap-1.5 shrink-0 select-none",
             children: [/* @__PURE__ */ jsx("span", {
               className: "w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"
-            }), "น้องยูนิ ออนไลน์ 24 ชม."]
+            }), language === "th" ? "น้องยูนิ ออนไลน์ 24 ชม." : language === "en" ? "Nong Uni Online 24/7" : "နောင်ယူနီ ၂၄ နာရီအွန်လိုင်း"]
           })]
         }), /* @__PURE__ */ jsx("div", {
           className: "flex bg-bg-input p-1 rounded-xl border border-border-default overflow-x-auto no-scrollbar w-full justify-between gap-1",
@@ -2465,7 +3029,7 @@ const aiCoach = UNSAFE_withComponentProps(function AICoachPage() {
           className: "bg-white border-t border-border-default p-3 overflow-x-auto whitespace-nowrap no-scrollbar flex items-center gap-2 shrink-0",
           children: [/* @__PURE__ */ jsxs("span", {
             className: "text-[10px] font-bold text-brand-gold bg-brand-gold-light/40 px-2.5 py-1 rounded-md border border-brand-gold-muted/20 uppercase tracking-wider shrink-0 select-none",
-            children: ["สถานการณ์ซ้อม ", (_a = focusOptions.find((f) => f.id === focusArea)) == null ? void 0 : _a.emoji]
+            children: [language === "th" ? "สถานการณ์ซ้อม" : language === "en" ? "Scenarios" : "လေ့ကျင့်ရေးအခြေအနေ", " ", (_a = focusOptions.find((f) => f.id === focusArea)) == null ? void 0 : _a.emoji]
           }), currentScenarios.map((s, idx) => /* @__PURE__ */ jsx("button", {
             onClick: () => handleSendMessage(s.message),
             className: "px-3.5 py-1.5 bg-white border border-border-default rounded-full text-xs font-semibold text-text-secondary hover:border-brand-gold hover:bg-brand-gold-light/20 hover:text-brand-gold transition-all duration-200 shadow-sm shrink-0",
@@ -2476,7 +3040,7 @@ const aiCoach = UNSAFE_withComponentProps(function AICoachPage() {
           children: [/* @__PURE__ */ jsx("button", {
             onClick: handleClearChat,
             className: "p-3 bg-white border border-border-strong rounded-xl text-text-muted hover:text-red-600 hover:bg-red-50 hover:border-red-200 transition-all shrink-0",
-            title: "ล้างประวัติการสนทนา",
+            title: language === "th" ? "ล้างประวัติการสนทนา" : language === "en" ? "Clear conversation history" : "ပြောဆိုမှုမှတ်တမ်းကိုဖျက်ပါ",
             children: /* @__PURE__ */ jsx(RefreshCw, {
               size: 16
             })
@@ -2487,7 +3051,7 @@ const aiCoach = UNSAFE_withComponentProps(function AICoachPage() {
               value: inputText,
               onChange: (e) => setInputText(e.target.value),
               onKeyDown: (e) => e.key === "Enter" && handleSendMessage(),
-              placeholder: "พิมพ์สิ่งที่ต้องการซ้อมพูด หรือซ้อมตอบข้อโต้แย้ง...",
+              placeholder: language === "th" ? "พิมพ์สิ่งที่ต้องการซ้อมพูด หรือซ้อมตอบข้อโต้แย้ง..." : language === "en" ? "Type what you want to practice or handle objections..." : "လေ့ကျင့်လိုသည့်စကားလုံး သို့မဟုတ် ကန့်ကွက်မှုကိုရိုက်ပါ...",
               className: "flex-1 bg-transparent border-none text-xs md:text-sm font-semibold text-text-primary placeholder-text-muted focus:ring-0 outline-none"
             }), /* @__PURE__ */ jsx("button", {
               onClick: () => handleSendMessage(),
@@ -7799,7 +8363,8 @@ async function action$5({
       supabase
     } = await requireUser(request, responseHeaders);
     const {
-      messages
+      messages,
+      lang
     } = await request.json();
     if (!messages || messages.length === 0) {
       return new Response(JSON.stringify({
@@ -7811,6 +8376,7 @@ async function action$5({
         }
       });
     }
+    const language = lang || "th";
     const {
       data: profile2
     } = await supabase.from("profiles").select("full_name, ubc_level, wealth_element").eq("id", user.id).single();
@@ -7826,12 +8392,32 @@ async function action$5({
     } catch (ragErr) {
       console.error("RAG search failed in API:", ragErr);
     }
+    let languageInstruction = "";
+    if (language === "en") {
+      languageInstruction = `
+- Language requirement: You MUST reply entirely in English.
+- Use friendly English terms, referencing the user as "Partner" or "You" and yourself as "Nong Uni" in a polite, professional tone.
+- In <Header>, <Body>, <Script>, <Prompt>, and <Mission> tags, write all contents in English.
+`;
+    } else if (language === "mm") {
+      languageInstruction = `
+- Language requirement: You MUST reply entirely in Burmese (Myanmar) language.
+- Use friendly Burmese terms, referencing the user as "ပါတနာ" or "မိတ်ဖက်" and yourself as "နောင်ယူနီ" in a polite, professional tone.
+- In <Header>, <Body>, <Script>, <Prompt>, and <Mission> tags, write all contents in Burmese (Myanmar) language.
+`;
+    } else {
+      languageInstruction = `
+- Language requirement: You MUST reply entirely in Thai language.
+- แทนตัวเองว่า "น้องยูนิ" และเรียกผู้ใช้ว่า "คุณพี่" หรือ "พาร์ทเนอร์" ลงท้ายด้วย "ค่ะ" หรือ "นะคะ" เสมอ
+- ในแท็ก <Header>, <Body>, <Script>, <Prompt>, และ <Mission> ต้องเขียนข้อความเป็นภาษาไทย
+`;
+    }
     const systemPrompt = `คุณคือ "น้องยูนิ" พี่เลี้ยงและที่ปรึกษาธุรกิจเครือข่ายอัจฉริยะของ Unicorn Academy 🦄
 ผู้ใช้ที่คุยกับคุณคือคุณ: "${name}" มีระดับความเชี่ยวชาญ: UBC Level ${ubcLevel} และมีธาตุทางธุรกิจ (Wealth DNA): ${element}
 
 แนวทางและกฎเหล็กในการสื่อสารของน้องยูนิ:
-1. การพูดคุย: แทนตัวเองว่า "น้องยูนิ" และเรียกผู้ใช้ว่า "คุณพี่" หรือ "พาร์ทเนอร์" ลงท้ายด้วย "ค่ะ" หรือ "นะคะ" เสมอ มีทัศนคติพลังบวก สุภาพ และมีระดับความเป็นมืออาชีพสูง
-2. ภาษาที่เข้าใจง่าย: หลีกเลี่ยงภาษาเทคนิคทางคอมพิวเตอร์ที่ยากเกินไป หรือคำศัพท์เครือข่ายยุคเก่า (เช่น รวยเร็ว, ต้นสาย, แพ็คเกจ) ให้ใช้คำเช่น "การสร้างสินทรัพย์ดิจิทัล", "ที่ปรึกษาทางการตลาด (UBC)", "แพลตฟอร์มสนับสนุน"
+1. การสื่อสารและภาษาที่ต้องการ (สำคัญมาก): ${languageInstruction}
+2. ภาษาที่เข้าใจง่าย: หลีกเลี่ยงภาษาเทคนิคทางคอมพิวเตอร์ที่ยากเกินไป หรือคำศัพท์เครือข่ายยุคเก่า (เช่น รวยเร็ว, ต้นสาย, แพ็คเกจ) ให้ใช้คำที่เหมาะสมในแต่ละภาษา
 3. กฎเหล็กเรื่องสัญลักษณ์: งดการใช้เครื่องหมาย Markdown สำหรับหัวข้อหรือรายการที่รกรุงรัง เช่น "###", "##", "*", "-" หรือไอคอน/อิโมจิที่กระจัดกระจายแบบ AI (เช่น 🤖, 🦄, ✨) ให้ใช้ข้อความที่สะอาดตา เว้นวรรคและขึ้นบรรทัดใหม่อย่างสวยงาม
 4. การดึงจุดเด่น Wealth DNA (${element}) มาช่วยเหลือ:
    - FIRE (ธาตุไฟ): เน้นการส่งต่อวิสัยทัศน์ที่ทรงพลัง แรงบันดาลใจ และการขับเคลื่อนเป้าหมาย
@@ -7843,8 +8429,8 @@ async function action$5({
 คำตอบของน้องยูนิจะต้องอยู่ภายใต้แท็ก XML ต่อไปนี้ เพื่อให้ระบบนำไปแสดงผลเป็นการ์ด Flex Message ที่สวยงามและพรีเมียมบนหน้าจอเว็บแอปพลิเคชัน:
 - <Header>ใส่หัวข้อการโค้ชสั้นๆ ที่น่าสนใจและชัดเจน</Header>
 - <Body>ใส่คำแนะนำ คำอธิบาย หรือข้อความวิเคราะห์สั้นกระชับเข้าใจง่าย หลีกเลี่ยงการใช้สัญลักษณ์ Markdown หรือ Bullet point รกๆ</Body>
-- <Script title="ชื่อสคริปต์บทสนทนา">ใส่ตัวอย่างบทพูดหรือสคริปต์จริงสำหรับนำไปใช้ตอบโต้แย้งหรือปิดการขาย ที่พาร์ทเนอร์สามารถ Copy-Paste ไปใช้งานได้ทันที (ใช้แท็กนี้เมื่อมีการแนะนำบทพูดจริง)<\/Script>
-- <Prompt title="ชื่อคำสั่ง AI Prompt">ใส่ชุดคำสั่ง Prompt ภาษาอังกฤษสำหรับนำไปรันต่อใน ChatGPT/Gemini เพื่อสร้างสื่อหรือวางแผนต่อ (ใช้แท็กนี้เมื่อมีการแนะนำการใช้ AI)</Prompt>
+- <Script title="ชื่อสคริปต์บทสนทนา / Script Title">ใส่ตัวอย่างบทพูดหรือสคริปต์จริงสำหรับนำไปใช้ตอบโต้แย้งหรือปิดการขาย ที่พาร์ทเนอร์สามารถ Copy-Paste ไปใช้งานได้ทันที (ใช้แท็กนี้เมื่อมีการแนะนำบทพูดจริง)<\/Script>
+- <Prompt title="ชื่อคำสั่ง AI Prompt / AI Prompt Title">ใส่ชุดคำสั่ง Prompt ภาษาอังกฤษสำหรับนำไปรันต่อใน ChatGPT/Gemini เพื่อสร้างสื่อหรือวางแผนต่อ (ใช้แท็กนี้เมื่อมีการแนะนำการใช้ AI)</Prompt>
 - <Mission>ระบุภารกิจหรือ Action Plan ถัดไปที่พาร์ทเนอร์ต้องลงมือทำ 1-3 ข้อ เพื่อให้เห็นผลลัพธ์ที่เป็นรูปธรรม</Mission>
 
 ตัวอย่างโครงสร้างคำตอบ:
@@ -7877,40 +8463,22 @@ ${ragContext}`;
       })
     });
     if (!res.ok) {
-      const errBody = await res.text();
-      console.error("Worker error response:", res.status, errBody);
-      throw new Error(`Workers proxy error ${res.status}: ${errBody}`);
+      const errText = await res.text();
+      throw new Error(`Proxy error (${res.status}): ${errText}`);
     }
-    const workerData = await res.json();
-    if (workerData.error) {
-      throw new Error(`Gemini API error: ${workerData.error}`);
-    }
-    const reply = workerData.reply ?? "ขออภัย ไม่สามารถตอบได้ในขณะนี้";
-    return new Response(JSON.stringify({
-      candidates: [{
-        content: {
-          parts: [{
-            text: reply
-          }]
-        }
-      }]
-    }), {
+    const data2 = await res.json();
+    return new Response(JSON.stringify(data2), {
       headers: {
         "Content-Type": "application/json",
-        ...Object.fromEntries(responseHeaders.entries())
+        ...responseHeaders
       }
     });
-  } catch (err) {
-    console.error("api/ai-coach error:", err);
+  } catch (error) {
+    console.error("AI Coach API Action Error:", error);
     return new Response(JSON.stringify({
-      candidates: [{
-        content: {
-          parts: [{
-            text: `ขออภัยค่ะพาร์ทเนอร์ น้องยูนิมึนงงชั่วคราวเนื่องจาก: ${err.message || "การเชื่อมต่อระบบล้มเหลว"} กรุณาลองส่งคำถามใหม่อีกครั้งนะคะ 🥺`
-          }]
-        }
-      }]
+      error: error.message || "Internal Server Error"
     }), {
+      status: 500,
       headers: {
         "Content-Type": "application/json"
       }
@@ -8253,7 +8821,7 @@ const route27 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePrope
   __proto__: null,
   action
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-DA1MqMBr.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": true, "module": "/assets/root-DL_aI5OS.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js"], "css": ["/assets/root-NDdxgKPt.css"], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/home": { "id": "routes/home", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/home-BjX_G8b1.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.login": { "id": "routes/auth.login", "parentId": "root", "path": "auth/login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/auth.login-BCYPVODk.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/supabase-Bgahf4s8.js", "/assets/lock-tg-j5y1W.js", "/assets/loader-circle-ClugHvzK.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/gem-BB8tObDz.js", "/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.register": { "id": "routes/auth.register", "parentId": "root", "path": "auth/register", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/auth.register-BOzRetID.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/supabase-Bgahf4s8.js", "/assets/loader-circle-ClugHvzK.js", "/assets/lock-tg-j5y1W.js", "/assets/gem-BB8tObDz.js", "/assets/user-CiFcqzNc.js", "/assets/circle-check-dz77gtWt.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.callback": { "id": "routes/auth.callback", "parentId": "root", "path": "auth/callback", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/auth.callback-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/dashboard": { "id": "routes/dashboard", "parentId": "root", "path": "dashboard", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/dashboard-BoEEepcG.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/zap-BCq1-vgo.js", "/assets/users-CEjQd4Da.js", "/assets/circle-check-dz77gtWt.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/rocket-Dz8LTkED.js", "/assets/link-DPJHJpuY.js", "/assets/gem-BB8tObDz.js", "/assets/chevron-left-CKKzi769.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/profile": { "id": "routes/profile", "parentId": "root", "path": "profile", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/profile-CgRI2LlO.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/user-CiFcqzNc.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/loader-circle-ClugHvzK.js", "/assets/link-DPJHJpuY.js", "/assets/circle-check-dz77gtWt.js", "/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/ai-coach": { "id": "routes/ai-coach", "parentId": "root", "path": "ai-coach", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/ai-coach-BFKDObTS.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/rocket-Dz8LTkED.js", "/assets/shield-BRU8tImN.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/user-CiFcqzNc.js", "/assets/send-BpXsP_Uv.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/dna": { "id": "routes/dna", "parentId": "root", "path": "dna", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/dna-BP7jKbXp.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/shield-BRU8tImN.js", "/assets/zap-BCq1-vgo.js", "/assets/gem-BB8tObDz.js", "/assets/circle-check-dz77gtWt.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/missions": { "id": "routes/missions", "parentId": "root", "path": "missions", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/missions-DwntiwZZ.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/circle-check-dz77gtWt.js", "/assets/loader-circle-ClugHvzK.js", "/assets/send-BpXsP_Uv.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/startup": { "id": "routes/startup", "parentId": "root", "path": "startup", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/startup-BnqnW56R.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/products": { "id": "routes/products", "parentId": "root", "path": "products", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/products-Be-ntIXf.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/search-C1mijbOb.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/knowledge": { "id": "routes/knowledge", "parentId": "root", "path": "knowledge", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/knowledge-Bxs3jaTy.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/search-C1mijbOb.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/functions": { "id": "routes/functions", "parentId": "root", "path": "functions", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/functions-BE9P6aLW.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/users-CEjQd4Da.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/referral.$slug": { "id": "routes/referral.$slug", "parentId": "root", "path": "r/:slug", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/referral._slug-eQubS5cJ.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.dashboard": { "id": "routes/admin.dashboard", "parentId": "root", "path": "admin", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.dashboard-Dzq4cQny.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/AdminLayout-DEw3PqKp.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.index": { "id": "routes/admin.products.index", "parentId": "root", "path": "admin/products", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.index-DJM-9Q4S.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/AdminLayout-DEw3PqKp.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.new": { "id": "routes/admin.products.new", "parentId": "root", "path": "admin/products/new", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.new-Cs_z3k1L.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/AdminLayout-DEw3PqKp.js", "/assets/ProductForm-Cz_7Fz2b.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.edit": { "id": "routes/admin.products.edit", "parentId": "root", "path": "admin/products/:id", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.edit-CKhOpx1x.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/AdminLayout-DEw3PqKp.js", "/assets/ProductForm-Cz_7Fz2b.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.categories": { "id": "routes/admin.categories", "parentId": "root", "path": "admin/categories", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.categories-CFH2H94f.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/AdminLayout-DEw3PqKp.js", "/assets/lib-D1UVQ_Lx.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.knowledge": { "id": "routes/admin.knowledge", "parentId": "root", "path": "admin/knowledge", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.knowledge-733g_LCe.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/AdminLayout-DEw3PqKp.js", "/assets/lib-D1UVQ_Lx.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.auth.login": { "id": "routes/api.auth.login", "parentId": "root", "path": "api/auth/login", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.auth.login-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.ai-coach": { "id": "routes/api.ai-coach", "parentId": "root", "path": "api/ai-coach", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.ai-coach-CeQpOKCs.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.contact": { "id": "routes/api.contact", "parentId": "root", "path": "api/contact", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.contact-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.notify": { "id": "routes/api.notify", "parentId": "root", "path": "api/notify", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.notify-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.upload": { "id": "routes/api.upload", "parentId": "root", "path": "api/upload", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.upload-D-72jSv7.js", "imports": ["/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.referral.track": { "id": "routes/api.referral.track", "parentId": "root", "path": "api/referral/track", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.referral.track-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.referral.claim": { "id": "routes/api.referral.claim", "parentId": "root", "path": "api/referral/claim", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.referral.claim-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 } }, "url": "/assets/manifest-4f343b50.js", "version": "4f343b50", "sri": void 0 };
+const serverManifest = { "entry": { "module": "/assets/entry.client-BNyMe5MR.js", "imports": ["/assets/jsx-runtime-Da833xQg.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": true, "module": "/assets/root-Dq4fqALg.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/useLanguage-BXTQqiGo.js"], "css": ["/assets/root-CWkzhvka.css"], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/home": { "id": "routes/home", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/home-zT9Nl0B_.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/useLanguage-BXTQqiGo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.login": { "id": "routes/auth.login", "parentId": "root", "path": "auth/login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/auth.login-Dy9TZrtg.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/supabase-Bgahf4s8.js", "/assets/arrow-left-mPcs7UjD.js", "/assets/createLucideIcon-B4AJ8RJS.js", "/assets/loader-circle-CKncAx3u.js", "/assets/gem-BQEN5Pd6.js", "/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.register": { "id": "routes/auth.register", "parentId": "root", "path": "auth/register", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/auth.register-BqBlY2e4.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/loader-circle-CKncAx3u.js", "/assets/arrow-left-mPcs7UjD.js", "/assets/arrow-right-Dv1HJYFs.js", "/assets/createLucideIcon-B4AJ8RJS.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.callback": { "id": "routes/auth.callback", "parentId": "root", "path": "auth/callback", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/auth.callback-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/dashboard": { "id": "routes/dashboard", "parentId": "root", "path": "dashboard", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/dashboard-D4occ_e9.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-CFmkT2by.js", "/assets/zap-DAwmCkS6.js", "/assets/users-CVV068Co.js", "/assets/circle-check-FaoLOc7D.js", "/assets/createLucideIcon-B4AJ8RJS.js", "/assets/rocket-EKELsxJl.js", "/assets/link-BbpXfkf4.js", "/assets/gem-BQEN5Pd6.js", "/assets/chevron-left-BPwY-gvl.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/profile": { "id": "routes/profile", "parentId": "root", "path": "profile", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/profile-zNa4jghK.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-CFmkT2by.js", "/assets/chevron-left-BPwY-gvl.js", "/assets/user-BhT6ha9z.js", "/assets/createLucideIcon-B4AJ8RJS.js", "/assets/loader-circle-CKncAx3u.js", "/assets/link-BbpXfkf4.js", "/assets/circle-check-FaoLOc7D.js", "/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/ai-coach": { "id": "routes/ai-coach", "parentId": "root", "path": "ai-coach", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/ai-coach-qctHuWWO.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-CFmkT2by.js", "/assets/useLanguage-BXTQqiGo.js", "/assets/chevron-left-BPwY-gvl.js", "/assets/rocket-EKELsxJl.js", "/assets/shield-Dgfw_bCt.js", "/assets/createLucideIcon-B4AJ8RJS.js", "/assets/user-BhT6ha9z.js", "/assets/send-D2heuPzR.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/dna": { "id": "routes/dna", "parentId": "root", "path": "dna", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/dna-D8HyzQBU.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-CFmkT2by.js", "/assets/chevron-left-BPwY-gvl.js", "/assets/createLucideIcon-B4AJ8RJS.js", "/assets/shield-Dgfw_bCt.js", "/assets/zap-DAwmCkS6.js", "/assets/arrow-right-Dv1HJYFs.js", "/assets/gem-BQEN5Pd6.js", "/assets/circle-check-FaoLOc7D.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/missions": { "id": "routes/missions", "parentId": "root", "path": "missions", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/missions-CiwaOtNx.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-CFmkT2by.js", "/assets/chevron-left-BPwY-gvl.js", "/assets/createLucideIcon-B4AJ8RJS.js", "/assets/circle-check-FaoLOc7D.js", "/assets/loader-circle-CKncAx3u.js", "/assets/send-D2heuPzR.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/startup": { "id": "routes/startup", "parentId": "root", "path": "startup", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/startup-Cl7aBmXQ.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-CFmkT2by.js", "/assets/chevron-left-BPwY-gvl.js", "/assets/createLucideIcon-B4AJ8RJS.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/products": { "id": "routes/products", "parentId": "root", "path": "products", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/products-CcunKw05.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-CFmkT2by.js", "/assets/chevron-left-BPwY-gvl.js", "/assets/search-DxX9_Qgt.js", "/assets/createLucideIcon-B4AJ8RJS.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/knowledge": { "id": "routes/knowledge", "parentId": "root", "path": "knowledge", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/knowledge-BndqBsgF.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-CFmkT2by.js", "/assets/chevron-left-BPwY-gvl.js", "/assets/search-DxX9_Qgt.js", "/assets/createLucideIcon-B4AJ8RJS.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/functions": { "id": "routes/functions", "parentId": "root", "path": "functions", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/functions-bX3nE4oz.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-CFmkT2by.js", "/assets/chevron-left-BPwY-gvl.js", "/assets/createLucideIcon-B4AJ8RJS.js", "/assets/users-CVV068Co.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/referral.$slug": { "id": "routes/referral.$slug", "parentId": "root", "path": "r/:slug", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/referral._slug-Bpb5FvIo.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.dashboard": { "id": "routes/admin.dashboard", "parentId": "root", "path": "admin", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.dashboard-9cZzwBfd.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/AdminLayout-D3cZtEU6.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.index": { "id": "routes/admin.products.index", "parentId": "root", "path": "admin/products", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.index-DN7ArFjj.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/AdminLayout-D3cZtEU6.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.new": { "id": "routes/admin.products.new", "parentId": "root", "path": "admin/products/new", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.new-CoYjs7Zd.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/AdminLayout-D3cZtEU6.js", "/assets/ProductForm-DC8MQAJv.js", "/assets/chevron-left-BPwY-gvl.js", "/assets/createLucideIcon-B4AJ8RJS.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.edit": { "id": "routes/admin.products.edit", "parentId": "root", "path": "admin/products/:id", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.edit-DKy4kLCC.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/lib-BiNu9AM9.js", "/assets/AdminLayout-D3cZtEU6.js", "/assets/ProductForm-DC8MQAJv.js", "/assets/chevron-left-BPwY-gvl.js", "/assets/createLucideIcon-B4AJ8RJS.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.categories": { "id": "routes/admin.categories", "parentId": "root", "path": "admin/categories", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.categories-padc_5D5.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/AdminLayout-D3cZtEU6.js", "/assets/lib-BiNu9AM9.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.knowledge": { "id": "routes/admin.knowledge", "parentId": "root", "path": "admin/knowledge", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.knowledge-DDoi5DkB.js", "imports": ["/assets/jsx-runtime-Da833xQg.js", "/assets/AdminLayout-D3cZtEU6.js", "/assets/lib-BiNu9AM9.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.auth.login": { "id": "routes/api.auth.login", "parentId": "root", "path": "api/auth/login", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.auth.login-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.ai-coach": { "id": "routes/api.ai-coach", "parentId": "root", "path": "api/ai-coach", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.ai-coach-CeQpOKCs.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.contact": { "id": "routes/api.contact", "parentId": "root", "path": "api/contact", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.contact-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.notify": { "id": "routes/api.notify", "parentId": "root", "path": "api/notify", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.notify-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.upload": { "id": "routes/api.upload", "parentId": "root", "path": "api/upload", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.upload-D-72jSv7.js", "imports": ["/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.referral.track": { "id": "routes/api.referral.track", "parentId": "root", "path": "api/referral/track", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.referral.track-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.referral.claim": { "id": "routes/api.referral.claim", "parentId": "root", "path": "api/referral/claim", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.referral.claim-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 } }, "url": "/assets/manifest-59bd53dc.js", "version": "59bd53dc", "sri": void 0 };
 const assetsBuildDirectory = "build\\client";
 const basename = "/";
 const future = { "unstable_optimizeDeps": false };

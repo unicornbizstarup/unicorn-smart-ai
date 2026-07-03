@@ -14,13 +14,15 @@ export async function action({ request }: ActionFunctionArgs) {
     const responseHeaders = new Headers();
     const { user, supabase } = await requireUser(request, responseHeaders);
 
-    const { messages } = await request.json();
+    const { messages, lang } = await request.json();
     if (!messages || messages.length === 0) {
       return new Response(JSON.stringify({ error: "No messages provided" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
+
+    const language = lang || "th";
 
     // 1. Fetch user profile
     const { data: profile } = await supabase
@@ -45,13 +47,35 @@ export async function action({ request }: ActionFunctionArgs) {
       console.error("RAG search failed in API:", ragErr);
     }
 
-    // 3. Build AI System Instruction
+    // 3. Construct dynamic language instruction
+    let languageInstruction = "";
+    if (language === "en") {
+      languageInstruction = `
+- Language requirement: You MUST reply entirely in English.
+- Use friendly English terms, referencing the user as "Partner" or "You" and yourself as "Nong Uni" in a polite, professional tone.
+- In <Header>, <Body>, <Script>, <Prompt>, and <Mission> tags, write all contents in English.
+`;
+    } else if (language === "mm") {
+      languageInstruction = `
+- Language requirement: You MUST reply entirely in Burmese (Myanmar) language.
+- Use friendly Burmese terms, referencing the user as "ပါတနာ" or "မိတ်ဖက်" and yourself as "နောင်ယူနီ" in a polite, professional tone.
+- In <Header>, <Body>, <Script>, <Prompt>, and <Mission> tags, write all contents in Burmese (Myanmar) language.
+`;
+    } else {
+      languageInstruction = `
+- Language requirement: You MUST reply entirely in Thai language.
+- แทนตัวเองว่า "น้องยูนิ" และเรียกผู้ใช้ว่า "คุณพี่" หรือ "พาร์ทเนอร์" ลงท้ายด้วย "ค่ะ" หรือ "นะคะ" เสมอ
+- ในแท็ก <Header>, <Body>, <Script>, <Prompt>, และ <Mission> ต้องเขียนข้อความเป็นภาษาไทย
+`;
+    }
+
+    // 4. Build AI System Instruction
     const systemPrompt = `คุณคือ "น้องยูนิ" พี่เลี้ยงและที่ปรึกษาธุรกิจเครือข่ายอัจฉริยะของ Unicorn Academy 🦄
 ผู้ใช้ที่คุยกับคุณคือคุณ: "${name}" มีระดับความเชี่ยวชาญ: UBC Level ${ubcLevel} และมีธาตุทางธุรกิจ (Wealth DNA): ${element}
 
 แนวทางและกฎเหล็กในการสื่อสารของน้องยูนิ:
-1. การพูดคุย: แทนตัวเองว่า "น้องยูนิ" และเรียกผู้ใช้ว่า "คุณพี่" หรือ "พาร์ทเนอร์" ลงท้ายด้วย "ค่ะ" หรือ "นะคะ" เสมอ มีทัศนคติพลังบวก สุภาพ และมีระดับความเป็นมืออาชีพสูง
-2. ภาษาที่เข้าใจง่าย: หลีกเลี่ยงภาษาเทคนิคทางคอมพิวเตอร์ที่ยากเกินไป หรือคำศัพท์เครือข่ายยุคเก่า (เช่น รวยเร็ว, ต้นสาย, แพ็คเกจ) ให้ใช้คำเช่น "การสร้างสินทรัพย์ดิจิทัล", "ที่ปรึกษาทางการตลาด (UBC)", "แพลตฟอร์มสนับสนุน"
+1. การสื่อสารและภาษาที่ต้องการ (สำคัญมาก): ${languageInstruction}
+2. ภาษาที่เข้าใจง่าย: หลีกเลี่ยงภาษาเทคนิคทางคอมพิวเตอร์ที่ยากเกินไป หรือคำศัพท์เครือข่ายยุคเก่า (เช่น รวยเร็ว, ต้นสาย, แพ็คเกจ) ให้ใช้คำที่เหมาะสมในแต่ละภาษา
 3. กฎเหล็กเรื่องสัญลักษณ์: งดการใช้เครื่องหมาย Markdown สำหรับหัวข้อหรือรายการที่รกรุงรัง เช่น "###", "##", "*", "-" หรือไอคอน/อิโมจิที่กระจัดกระจายแบบ AI (เช่น 🤖, 🦄, ✨) ให้ใช้ข้อความที่สะอาดตา เว้นวรรคและขึ้นบรรทัดใหม่อย่างสวยงาม
 4. การดึงจุดเด่น Wealth DNA (${element}) มาช่วยเหลือ:
    - FIRE (ธาตุไฟ): เน้นการส่งต่อวิสัยทัศน์ที่ทรงพลัง แรงบันดาลใจ และการขับเคลื่อนเป้าหมาย
@@ -63,8 +87,8 @@ export async function action({ request }: ActionFunctionArgs) {
 คำตอบของน้องยูนิจะต้องอยู่ภายใต้แท็ก XML ต่อไปนี้ เพื่อให้ระบบนำไปแสดงผลเป็นการ์ด Flex Message ที่สวยงามและพรีเมียมบนหน้าจอเว็บแอปพลิเคชัน:
 - <Header>ใส่หัวข้อการโค้ชสั้นๆ ที่น่าสนใจและชัดเจน</Header>
 - <Body>ใส่คำแนะนำ คำอธิบาย หรือข้อความวิเคราะห์สั้นกระชับเข้าใจง่าย หลีกเลี่ยงการใช้สัญลักษณ์ Markdown หรือ Bullet point รกๆ</Body>
-- <Script title="ชื่อสคริปต์บทสนทนา">ใส่ตัวอย่างบทพูดหรือสคริปต์จริงสำหรับนำไปใช้ตอบโต้แย้งหรือปิดการขาย ที่พาร์ทเนอร์สามารถ Copy-Paste ไปใช้งานได้ทันที (ใช้แท็กนี้เมื่อมีการแนะนำบทพูดจริง)</Script>
-- <Prompt title="ชื่อคำสั่ง AI Prompt">ใส่ชุดคำสั่ง Prompt ภาษาอังกฤษสำหรับนำไปรันต่อใน ChatGPT/Gemini เพื่อสร้างสื่อหรือวางแผนต่อ (ใช้แท็กนี้เมื่อมีการแนะนำการใช้ AI)</Prompt>
+- <Script title="ชื่อสคริปต์บทสนทนา / Script Title">ใส่ตัวอย่างบทพูดหรือสคริปต์จริงสำหรับนำไปใช้ตอบโต้แย้งหรือปิดการขาย ที่พาร์ทเนอร์สามารถ Copy-Paste ไปใช้งานได้ทันที (ใช้แท็กนี้เมื่อมีการแนะนำบทพูดจริง)</Script>
+- <Prompt title="ชื่อคำสั่ง AI Prompt / AI Prompt Title">ใส่ชุดคำสั่ง Prompt ภาษาอังกฤษสำหรับนำไปรันต่อใน ChatGPT/Gemini เพื่อสร้างสื่อหรือวางแผนต่อ (ใช้แท็กนี้เมื่อมีการแนะนำการใช้ AI)</Prompt>
 - <Mission>ระบุภารกิจหรือ Action Plan ถัดไปที่พาร์ทเนอร์ต้องลงมือทำ 1-3 ข้อ เพื่อให้เห็นผลลัพธ์ที่เป็นรูปธรรม</Mission>
 
 ตัวอย่างโครงสร้างคำตอบ:
@@ -76,7 +100,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 ${ragContext}`;
 
-    // 4. Format history for Workers Endpoint
+    // 5. Format history for Workers Endpoint
     const history = messages.slice(0, messages.length - 1).map((m: any) => ({
       role: m.role === "user" ? "user" : "model",
       content: m.parts?.[0]?.text || m.content || ""
@@ -84,7 +108,7 @@ ${ragContext}`;
 
     const message = lastMsg.parts?.[0]?.text || lastMsg.content || "";
 
-    // 5. Query Workers Proxy chat endpoint
+    // 6. Query Workers Proxy chat endpoint
     // @ts-ignore
     const cfEnv = (typeof globalThis !== "undefined" ? (globalThis as any).CF_ENV : null) || {};
     const workersUrl = cfEnv.WORKERS_URL || process.env.WORKERS_URL || "https://unicorn-smart-ai-proxy.unicornbizstarup.workers.dev";
@@ -99,46 +123,25 @@ ${ragContext}`;
     });
 
     if (!res.ok) {
-      const errBody = await res.text();
-      console.error("Worker error response:", res.status, errBody);
-      throw new Error(`Workers proxy error ${res.status}: ${errBody}`);
+      const errText = await res.text();
+      throw new Error(`Proxy error (${res.status}): ${errText}`);
     }
 
-    const workerData = await res.json() as { reply?: string; error?: string };
-    if (workerData.error) {
-      throw new Error(`Gemini API error: ${workerData.error}`);
-    }
-    const reply = workerData.reply ?? "ขออภัย ไม่สามารถตอบได้ในขณะนี้";
-
-    return new Response(JSON.stringify({
-      candidates: [
-        {
-          content: {
-            parts: [{ text: reply }]
-          }
-        }
-      ]
-    }), {
-      headers: { 
+    const data = await res.json();
+    return new Response(JSON.stringify(data), {
+      headers: {
         "Content-Type": "application/json",
-        ...Object.fromEntries(responseHeaders.entries())
+        ...responseHeaders,
+      },
+    });
+  } catch (error: any) {
+    console.error("AI Coach API Action Error:", error);
+    return new Response(
+      JSON.stringify({ error: error.message || "Internal Server Error" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
       }
-    });
-
-  } catch (err: any) {
-    console.error("api/ai-coach error:", err);
-    return new Response(JSON.stringify({
-      candidates: [
-        {
-          content: {
-            parts: [{
-              text: `ขออภัยค่ะพาร์ทเนอร์ น้องยูนิมึนงงชั่วคราวเนื่องจาก: ${err.message || "การเชื่อมต่อระบบล้มเหลว"} กรุณาลองส่งคำถามใหม่อีกครั้งนะคะ 🥺`
-            }]
-          }
-        }
-      ]
-    }), {
-      headers: { "Content-Type": "application/json" }
-    });
+    );
   }
 }

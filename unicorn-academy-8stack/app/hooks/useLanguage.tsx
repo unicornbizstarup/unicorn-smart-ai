@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { translations, TranslationKey } from '../lib/translations';
+import { translations, type TranslationKey } from '../lib/translations';
 
 type Language = 'th' | 'en' | 'mm';
 

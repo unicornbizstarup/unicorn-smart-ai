@@ -15,35 +15,90 @@ import {
 import { createServerSupabase, requireUser } from "@/lib/supabase-server";
 import type { Profile } from "@/types";
 import MemberLayout from "@/components/layout/MemberLayout";
+import { useLanguage } from "@/hooks/useLanguage";
 
 type FocusArea = "STARTUP" | "SYSTEM456" | "LEADERSHIP" | "PERSONAL_BRAND";
 type Scenario = { label: string; message: string };
 
-const scenariosByArea: Record<FocusArea, Scenario[]> = {
-  STARTUP: [
-    { label: "วิธีแชร์ความประทับใจสินค้า", message: "วิธีแชร์ความประทับใจสินค้า U4 Innovation ให้น่าสนใจและดึงดูดผู้มุ่งหวัง" },
-    { label: "แนะนำ Unicorn Link ให้คนใหม่", message: "วิธีแนะนำระบบ Unicorn Link และ One Link ให้กับคนใหม่อย่างมืออาชีพ" },
-    { label: "ฝึกการนัดหมายผู้มุ่งหวัง", message: "ฝึกพูดเพื่อโทรนัดหมายผู้มุ่งหวังเข้าร่วมการนำเสนอโอกาสทางธุรกิจ" },
-    { label: "การสะสม PV ให้ถึงเป้า", message: "วิธีการและกลยุทธ์การสะสม PV ให้ถึงเป้าหมายระดับผู้เชี่ยวชาญ" },
-  ],
-  SYSTEM456: [
-    { label: "ฝึกพูด 5 Why เพื่อเปิดใจ", message: "ช่วยสอนและฝึกพูด '5 Why' เพื่อเปิดใจเปิดทางแก้ไขข้อสงสัยผู้มุ่งหวัง" },
-    { label: "ตอบข้อโต้แย้งเรื่องราคา", message: "วิธีตอบข้อโต้แย้งอย่างชาญฉลาดและนุ่มนวล เมื่อลูกค้าบอกว่าสินค้าแพงเกินไป" },
-    { label: "การทำ STP (เปิดโอกาสธุรกิจ)", message: "อธิบายวิธีกระบวนการทำ STP เพื่อเปิดใจคนใหม่ โดยเน้นการเล่าคุณค่ามากกว่าการขายตรง" },
-    { label: "เทคนิคการติดตาม (Follow-up)", message: "เทคนิคการติดตามผู้มุ่งหวังหลังจากส่งข้อมูลให้ศึกษา โดยไม่ทำให้พวกเขารู้สึกรำคาญ" },
-  ],
-  LEADERSHIP: [
-    { label: "วิธีการทำ AAR (After Action)", message: "วิธีการทำ AAR (After Action Review) กับทีมงานเพื่อสะท้อนผลลัพธ์และเติบโต" },
-    { label: "การทำ 1 on 1 กับทีมงาน", message: "วิธีการทำ 1 on 1 เพื่อเคลียร์เป้าหมายและสร้างพลังใจให้กับพาร์ทเนอร์ในทีม" },
-    { label: "การโค้ชทีมงานให้มีแรงใจ", message: "เทคนิคการโค้ชพาร์ทเนอร์ในระบบเพื่อดึงศักยภาพสูงสุดของพวกเขาออกมา" },
-    { label: "จัด House Meeting ให้มีพลัง", message: "วิธีการรันกิจกรรมกลุ่ม House Meeting ให้ตื่นเต้นและทรงพลังเพื่อปิดการขายระดับองค์กร" },
-  ],
-  PERSONAL_BRAND: [
-    { label: "ร่าง Bio ให้น่าเชื่อถือ", message: "ช่วยคิดไอเดียและร่างประวัติ Bio สั้นๆ ให้น่าดึงดูดสำหรับใส่ in นามบัตรดิจิทัล" },
-    { label: "คิดคำคม (Quote) ประจำตัว", message: "ช่วยแต่งสโลแกนหรือคำคม (Quote) ทางธุรกิจส่วนตัวสไตล์ผู้นำที่หรูหรา" },
-    { label: "แนะนำจุดเด่น (Expertise)", message: "ช่วยคิดคำโปรยบอกเล่าจุดเด่นและความเชี่ยวชาญพิเศษ (Expertise) ของฉัน" },
-    { label: "ร่างโปรไฟล์แบบ 3 ภาษา", message: "ช่วยร่างแนะนำตัวฉบับย่อ 3 ภาษา (ไทย/อังกฤษ/พม่า) สำหรับโปรโมทความเป็นมืออาชีพระดับสากล" },
-  ]
+const scenariosByArea: Record<string, Record<FocusArea, Scenario[]>> = {
+  th: {
+    STARTUP: [
+      { label: "วิธีแชร์ความประทับใจสินค้า", message: "วิธีแชร์ความประทับใจสินค้า U4 Innovation ให้น่าสนใจและดึงดูดผู้มุ่งหวัง" },
+      { label: "แนะนำ Unicorn Link ให้คนใหม่", message: "วิธีแนะนำระบบ Unicorn Link และ One Link ให้กับคนใหม่อย่างมืออาชีพ" },
+      { label: "ฝึกการนัดหมายผู้มุ่งหวัง", message: "ฝึกพูดเพื่อโทรนัดหมายผู้มุ่งหวังเข้าร่วมการนำเสนอโอกาสทางธุรกิจ" },
+      { label: "การสะสม PV ให้ถึงเป้า", message: "วิธีการและกลยุทธ์การสะสม PV ให้ถึงเป้าหมายระดับผู้เชี่ยวชาญ" },
+    ],
+    SYSTEM456: [
+      { label: "ฝึกพูด 5 Why เพื่อเปิดใจ", message: "ช่วยสอนและฝึกพูด '5 Why' เพื่อเปิดใจเปิดทางแก้ไขข้อสงสัยผู้มุ่งหวัง" },
+      { label: "ตอบข้อโต้แย้งเรื่องราคา", message: "วิธีตอบข้อโต้แย้งอย่างชาญฉลาดและนุ่มนวล เมื่อลูกค้าบอกว่าสินค้าแพงเกินไป" },
+      { label: "การทำ STP (เปิดโอกาสธุรกิจ)", message: "อธิบายวิธีกระบวนการทำ STP เพื่อเปิดใจคนใหม่ โดยเน้นการเล่าคุณค่ามากกว่าการขายตรง" },
+      { label: "เทคนิคการติดตาม (Follow-up)", message: "เทคนิคการติดตามผู้มุ่งหวังหลังจากส่งข้อมูลให้ศึกษา โดยไม่ทำให้พวกเขารู้สึกรำคาญ" },
+    ],
+    LEADERSHIP: [
+      { label: "วิธีการทำ AAR (After Action)", message: "วิธีการทำ AAR (After Action Review) กับทีมงานเพื่อสะท้อนผลลัพธ์และเติบโต" },
+      { label: "การทำ 1 on 1 กับทีมงาน", message: "วิธีการทำ 1 on 1 เพื่อเคลียร์เป้าหมายและสร้างพลังใจให้กับพาร์ทเนอร์ในทีม" },
+      { label: "การโค้ชทีมงานให้มีแรงใจ", message: "เทคนิคการโค้ชพาร์ทเนอร์ในระบบเพื่อดึงศักยภาพสูงสุดของพวกเขาออกมา" },
+      { label: "จัด House Meeting ให้มีพลัง", message: "วิธีการรันกิจกรรมกลุ่ม House Meeting ให้ตื่นเต้นและทรงพลังเพื่อปิดการขายระดับองค์กร" },
+    ],
+    PERSONAL_BRAND: [
+      { label: "ร่าง Bio ให้น่าเชื่อถือ", message: "ช่วยคิดไอเดียและร่างประวัติ Bio สั้นๆ ให้น่าดึงดูดสำหรับใส่ in นามบัตรดิจิทัล" },
+      { label: "คิดคำคม (Quote) ประจำตัว", message: "ช่วยแต่งสโลแกนหรือคำคม (Quote) ทางธุรกิจส่วนตัวสไตล์ผู้นำที่หรูหรา" },
+      { label: "แนะนำจุดเด่น (Expertise)", message: "ช่วยคิดคำโปรยบอกเล่าจุดเด่นและความเชี่ยวชาญพิเศษ (Expertise) ของฉัน" },
+      { label: "ร่างโปรไฟล์แบบ 3 ภาษา", message: "ช่วยร่างแนะนำตัวฉบับย่อ 3 ภาษา (ไทย/อังกฤษ/พม่า) สำหรับโปรโมทความเป็นมืออาชีพระดับสากล" },
+    ]
+  },
+  en: {
+    STARTUP: [
+      { label: "How to share product impressions", message: "How to share impressions of U4 Innovation products in an interesting way to attract prospects" },
+      { label: "Introduce Unicorn Link to new members", message: "How to introduce the Unicorn Link and One Link system to new members professionally" },
+      { label: "Practice scheduling prospects", message: "Practice calling to make appointments with prospects to attend business opportunity presentations" },
+      { label: "Accumulating PV to target", message: "Methods and strategies for accumulating PV to reach expert-level targets" },
+    ],
+    SYSTEM456: [
+      { label: "Objection: 5 Why to open mind", message: "Teach and practice speaking '5 Why' to open minds and resolve doubts for prospects" },
+      { label: "Respond to price objections", message: "How to respond smartly and gently when clients say products are too expensive" },
+      { label: "Perform STP (business presentation)", message: "Explain how to do STP to open new members' minds, focusing on value rather than direct selling" },
+      { label: "Follow-up techniques", message: "Follow-up techniques after sending information to prospects without annoying them" },
+    ],
+    LEADERSHIP: [
+      { label: "How to do AAR", message: "How to do AAR (After Action Review) with the team to reflect on results and grow" },
+      { label: "1 on 1 coaching session", message: "How to do 1 on 1 sessions to clear goals and build morale for team partners" },
+      { label: "Morale coaching for partners", message: "Coaching techniques to bring out the maximum potential of partners in the system" },
+      { label: "Powerful House Meetings", message: "How to run House Meeting group activities to be exciting and powerful to close sales at the organizational level" },
+    ],
+    PERSONAL_BRAND: [
+      { label: "Draft a credible Bio", message: "Help generate ideas and draft a short, attractive Bio for digital name cards" },
+      { label: "Create personal Quote", message: "Help compose a personal business slogan or Quote in a luxurious leader style" },
+      { label: "Introduce Expertise", message: "Help draft a tagline describing my special strengths and expertise" },
+      { label: "Draft profile in 3 languages", message: "Help draft a short profile in 3 languages (Thai/English/Burmese) to promote professional global image" },
+    ]
+  },
+  mm: {
+    STARTUP: [
+      { label: "ထုတ်ကုန်အပေါ် အကြံပြုချက်များကို မျှဝေနည်း", message: "အလားအလာရှိသူများကို ဆွဲဆောင်ရန် U4 Innovation ထုတ်ကုန်များအပေါ် အကြံပြုချက်များကို စိတ်ဝင်စားဖွယ်မျှဝေနည်း" },
+      { label: "အသစ်များအား Unicorn Link မိတ်ဆက်ပေးခြင်း", message: "Unicorn Link နှင့် One Link စနစ်ကို အသစ်များအား ကျွမ်းကျင်စွာ မိတ်ဆက်ပေးနည်း" },
+      { label: "အလားအလာရှိသူများနှင့် ရက်ချိန်းယူခြင်း လေ့ကျင့်ရန်", message: "စီးပွားရေးအခွင့်အလမ်းမိတ်ဆက်ပွဲများသို့ တက်ရောက်ရန် အလားအလာရှိသူများနှင့် ရက်ချိန်းယူရန် ဖုန်းခေါ်ဆိုခြင်းကို လေ့ကျင့်ရန်" },
+      { label: "ပန်းတိုင်သို့ရောက်ရန် PV စုဆောင်းခြင်း", message: "ကျွမ်းကျင်မှုအဆင့် ပန်းတိုင်များသို့ ရောက်ရှိရန် PV စုဆောင်းခြင်း နည်းလမ်းများနှင့် ဗျူဟာများ" },
+    ],
+    SYSTEM456: [
+      { label: "စိတ်ဖွင့်ရန် 5 Why ပြောဆိုခြင်း လေ့ကျင့်ရန်", message: "အလားအလာရှိသူများ၏ သံသယများကို ဖြေရှင်းရန်နှင့် စိတ်ဖွင့်ရန် '5 Why' ပြောဆိုခြင်းကို သင်ကြားပေးပြီး လေ့ကျင့်ပေးရန်" },
+      { label: "စျေးနှုန်းကန့်ကွက်မှုများကို ဖြေရှင်းခြင်း", message: "ဖောက်သည်များက ထုတ်ကုန်စျေးကြီးသည်ဟု ပြောလာသောအခါ စမတ်ကျကျနှင့် ညင်သာစွာ ဖြေရှင်းနည်း" },
+      { label: "STP (စီးပွားရေးမိတ်ဆက်ခြင်း) လုပ်ဆောင်ပုံ", message: "တိုက်ရိုက်ရောင်းချခြင်းထက် တန်ဖိုးကို อဓိကထားပြီး အသစ်များ၏ စိတ်ကိုဖွင့်ရန် STP လုပ်ဆောင်ပုံကို ရှင်းပြပါ" },
+      { label: "နောက်ဆက်တွဲ (Follow-up) นည်းပညာများ", message: "အလားအလာရှိသူများအား စိတ်အနှောင့်အယှက်မဖြစ်စေဘဲ သတင်းအချက်အလက်များ ပေးပို့ပြီးနောက် နောက်ဆက်တွဲ ဆက်သွယ်နည်း" },
+    ],
+    LEADERSHIP: [
+      { label: "How to do AAR (AAR ပြုလုပ်ပုံ)", message: "ရလဒ်များကို ပြန်လည်သုံးသပ်ပြီး တိုးတက်စေရန် အဖွဲ့သားများနှင့် AAR (After Action Review) ပြုလုပ်နည်း" },
+      { label: "အဖွဲ့သားများနှင့် တစ်ဦးချင်း (1 on 1) ဆွေးနွေးခြင်း", message: "အဖွဲ့သားများအတွက် ပန်းတိုင်များကို ရှင်းလင်းစေပြီး စိတ်အားထက်သန်မှုဖြစ်စေရန် တစ်ဦးချင်းဆွေးနွေးနည်း" },
+      { label: "အဖွဲ့သားများအား စိတ်အားတက်ကြွစေရန် သင်ကြားပေးခြင်း", message: "စနစ်အတွင်းရှိ မိတ်ဖက်များ၏ အလားအလာများကို အမြင့်မားဆုံး ထုတ်ယူနိုင်ရန် သင်ကြားပေးခြင်း နည်းစနစ်များ" },
+      { label: "အိမ်တွင်းအစည်းအဝေး (House Meeting) ကို အားကောင်းစွာ ပြုလုပ်ခြင်း", message: "အဖွဲ့အစည်းအဆင့် ရောင်းအားပိတ်နိုင်ရန် စိတ်လှုပ်ရှားဖွယ်နှင့် အားကောင်းသော အိမ်တွင်းအစည်းအဝေးများ ပြုလုပ်နည်း" },
+    ],
+    PERSONAL_BRAND: [
+      { label: "ယုံကြည်စိတ်ချရသော Bio ရေးဆွဲရန်", message: "ဒစ်ဂျစ်တယ်နံမည်ကတ်များအတွက် စိတ်ဝင်စားဖွယ်ကောင်းပြီး တိုတောင်းသော Bio ရေးဆွဲရန် စိတ်ကူးများ ပံ့ပိုးပေးပါ" },
+      { label: "ကိုယ်ပိုင်ဆောင်ပုဒ် (Quote) စဉ်းစားရန်", message: "ခေါင်းဆောင်ကောင်းစတိုင်ဖြင့် ကိုယ်ပိုင်စီးပွားရေး ဆောင်ပုဒ် သို့မဟုတ် Quote ကို ရေးဖွဲ့ရန် ကူညီပေးပါ" },
+      { label: "ထူးခြားသော အားသာချက်များ (Expertise) မိတ်ဆက်ရန်", message: "ကျွန်ုပ်၏ အထူးအားသာချက်များနှင့် ကျွမ်းကျင်မှုများကို ဖော်ပြသည့် စာသားများ ရေးဆွဲရန် ကူညီပေးပါ" },
+      { label: "ပရိုဖိုင်ကို ၃ ဘာသာဖြင့် ရေးဆွဲရန်", message: "နိုင်ငံတကာအဆင့် လုပ်ငန်းကျွမ်းကျင်မှုကို မြှင့်တင်ရန် ပရိုဖိုင်ကို ၃ ဘာသာ (ထိုင်း/အင်္ဂလိပ်/မြန်မာ) ဖြင့် ရေးဆွဲရန် ကူညီပေးပါ" },
+    ]
+  }
 };
 
 const focusOptions = [
@@ -280,7 +335,18 @@ const MessageContentRenderer = ({
 
 export default function AICoachPage() {
   const { profile } = useLoaderData<typeof loader>();
+  const { language, t } = useLanguage();
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const welcomeMessage = useMemo(() => {
+    if (language === "th") {
+      return "สวัสดีค่ะพาร์ทเนอร์ ยินดีต้อนรับสู่ห้องฝึกฝนอัจฉริยะของ Unicorn Academy นะคะ วันนี้น้องยูนิพร้อมเป็นคู่หูร่วมคิดและคู่ซ้อมตอบข้อโต้แย้ง ฝึก STP หรือร่างข้อมูลแบรนดิ้งส่วนตัวให้คุณพี่แล้วค่ะ ลองเลือกหัวข้อตัวอย่างด้านบน หรือพิมพ์คุยกับน้องยูนิได้เลยนะคะ";
+    } else if (language === "en") {
+      return "Hello partner! Welcome to Unicorn Academy's smart practice room. Today, Nong Uni is ready to be your thinking partner and practice responder for handling objections, training STP, or drafting personal branding information for you. Try selecting a topic from above or typing to chat with Nong Uni.";
+    } else {
+      return "မင်္ဂလာပါ မိတ်ဖက်။ Unicorn Academy ၏ စမတ်ကျသော လေ့ကျင့်ရေးခန်းမှ ကြိုဆိုပါသည်။ ယနေ့တွင် နောင်ယူနီသည် သင်၏ စဉ်းစားတွေးခေါ်ဖော်နှင့် ကန့်ကွက်မှုများကို ကိုင်တွယ်ဖြေရှင်းခြင်း၊ STP လေ့ကျင့်ခြင်း သို့မဟုတ် သင့်အတွက် ကိုယ်ပိုင်အမှတ်တံဆိပ် အချက်အလက်များကို ရေးဆွဲခြင်းတို့တွင် ကူညီပေးရန် အဆင်သင့်ရှိနေပါသည်။ အထက်ပါ အကြောင်းအရာတစ်ခုကို ရွေးချယ်ပါ သို့မဟုတ် စကားပြောရန် စาရိုက်ပါ။";
+    }
+  }, [language]);
 
   const [messages, setMessages] = useState<Array<{ role: "user" | "model"; content: string }>>([
     {
@@ -288,6 +354,13 @@ export default function AICoachPage() {
       content: "สวัสดีค่ะพาร์ทเนอร์ ยินดีต้อนรับสู่ห้องฝึกฝนอัจฉริยะของ Unicorn Academy นะคะ วันนี้น้องยูนิพร้อมเป็นคู่หูร่วมคิดและคู่ซ้อมตอบข้อโต้แย้ง ฝึก STP หรือร่างข้อมูลแบรนดิ้งส่วนตัวให้คุณพี่แล้วค่ะ ลองเลือกหัวข้อตัวอย่างด้านบน หรือพิมพ์คุยกับน้องยูนิได้เลยนะคะ",
     }
   ]);
+
+  useEffect(() => {
+    if (messages.length === 1 && messages[0].role === "model") {
+      setMessages([{ role: "model", content: welcomeMessage }]);
+    }
+  }, [welcomeMessage]);
+
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [focusArea, setFocusArea] = useState<FocusArea>("SYSTEM456");
@@ -307,7 +380,9 @@ export default function AICoachPage() {
     }
   }, [messages, isLoading]);
 
-  const currentScenarios = useMemo(() => scenariosByArea[focusArea], [focusArea]);
+  const currentScenarios = useMemo(() => {
+    return scenariosByArea[language]?.[focusArea] || scenariosByArea["th"][focusArea];
+  }, [focusArea, language]);
 
   const handleSendMessage = async (textToOverride?: string) => {
     const textToSend = textToOverride || inputText;
@@ -334,6 +409,7 @@ export default function AICoachPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: formattedHistory,
+          lang: language,
         }),
       });
 
@@ -364,11 +440,23 @@ export default function AICoachPage() {
   };
 
   const handleClearChat = () => {
-    if (confirm("คุณแน่ใจหรือไม่ที่จะล้างการสนทนาทั้งหมด?")) {
+    const confirmMsg = language === "th" 
+      ? "คุณแน่ใจหรือไม่ที่จะล้างการสนทนาทั้งหมด?" 
+      : language === "en" 
+        ? "Are you sure you want to clear all conversation?" 
+        : "စကားပြောဆိုမှုအားလုံးကို ဖျက်ပစ်ရန် သေချာပါသလား?";
+    
+    const clearedMsg = language === "th"
+      ? "ล้างห้องแชทเรียบร้อยแล้วค่ะ! 🦄 วันนี้น้องยูนิพร้อมช่วยให้พาร์ทเนอร์เก่งขึ้นแล้วค่ะ ลองพิมพ์คำถามหรือเลือกสถานการณ์ซ้อมได้เลยนะคะ ✨"
+      : language === "en"
+        ? "Chat room cleared! 🦄 Today, Nong Uni is ready to help you grow. Try typing a question or selecting a scenario to practice. ✨"
+        : "စကားပြောခန်းကို ဖျက်လိုက်ပါပြီ။ 🦄 ယနေ့တွင် နောင်ယူနီသည် သင့်အား တိုးတက်စေရန် ကူညီပေးရန် အဆင်သင့်ရှိနေပါသည်။ မေးခွန်းတစ်ခုရိုက်ထည့်ရန် သို့မဟုတ် လေ့ကျင့်ရန် အခြေအနေတစ်ခုကို ရွေးချယ်ပါ။ ✨";
+
+    if (confirm(confirmMsg)) {
       setMessages([
         {
           role: "model",
-          content: "ล้างห้องแชทเรียบร้อยแล้วค่ะ! 🦄 วันนี้น้องยูนิพร้อมช่วยให้พาร์ทเนอร์เก่งขึ้นแล้วค่ะ ลองพิมพ์คำถามหรือเลือกสถานการณ์ซ้อมได้เลยนะคะ ✨",
+          content: clearedMsg,
         }
       ]);
     }
@@ -377,8 +465,12 @@ export default function AICoachPage() {
   return (
     <MemberLayout
       profile={profile}
-      title="น้องยูนิ (AI Coach)"
-      subtitle="— คู่ซ้อมตอบข้อโต้แย้ง ฝึกพูด STP และร่างแบรนดิ้งของพาร์ทเนอร์อัจฉริยะ"
+      title={t("nav.ai_coach_nong_uni" as any) || "น้องยูนิ (AI Coach)"}
+      subtitle={language === "th" 
+        ? "— คู่ซ้อมตอบข้อโต้แย้ง ฝึกพูด STP และร่างแบรนดิ้งของพาร์ทเนอร์อัจฉริยะ" 
+        : language === "en"
+          ? "— Your smart objection partner, STP coach, and branding assistant"
+          : "— ကန့်ကွက်မှုဖြေရှင်းခြင်း၊ STP နှင့် ကိုယ်ပိုင်အမှတ်တံဆိပ် တည်ဆောက်ခြင်း လေ့ကျင့်ရေးအဖော်"}
     >
       <div className="flex flex-col h-[calc(100vh-180px)] bg-bg-card border border-border-default rounded-3xl overflow-hidden shadow-md relative font-body">
         {/* Header */}
@@ -386,12 +478,12 @@ export default function AICoachPage() {
           <div className="flex items-center justify-between w-full">
             <Link to="/dashboard" className="flex items-center gap-1 text-text-secondary hover:text-brand-gold transition-colors font-semibold text-xs py-1">
               <ChevronLeft size={16} />
-              <span>แดชบอร์ด</span>
+              <span>{t("nav.dashboard" as any) || "แดชบอร์ด"}</span>
             </Link>
 
             <span className="text-emerald-700 font-bold text-[11px] bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full flex items-center gap-1.5 shrink-0 select-none">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              น้องยูนิ ออนไลน์ 24 ชม.
+              {language === "th" ? "น้องยูนิ ออนไลน์ 24 ชม." : language === "en" ? "Nong Uni Online 24/7" : "နောင်ယူနီ ၂၄ နာရီအွန်လိုင်း"}
             </span>
           </div>
 
@@ -477,7 +569,7 @@ export default function AICoachPage() {
           {/* Quick Scenario Buttons */}
           <div className="bg-white border-t border-border-default p-3 overflow-x-auto whitespace-nowrap no-scrollbar flex items-center gap-2 shrink-0">
             <span className="text-[10px] font-bold text-brand-gold bg-brand-gold-light/40 px-2.5 py-1 rounded-md border border-brand-gold-muted/20 uppercase tracking-wider shrink-0 select-none">
-              สถานการณ์ซ้อม {focusOptions.find(f => f.id === focusArea)?.emoji}
+              {language === "th" ? "สถานการณ์ซ้อม" : language === "en" ? "Scenarios" : "လေ့ကျင့်ရေးအခြေအနေ"} {focusOptions.find(f => f.id === focusArea)?.emoji}
             </span>
             {currentScenarios.map((s, idx) => (
               <button
@@ -495,7 +587,7 @@ export default function AICoachPage() {
             <button
               onClick={handleClearChat}
               className="p-3 bg-white border border-border-strong rounded-xl text-text-muted hover:text-red-600 hover:bg-red-50 hover:border-red-200 transition-all shrink-0"
-              title="ล้างประวัติการสนทนา"
+              title={language === "th" ? "ล้างประวัติการสนทนา" : language === "en" ? "Clear conversation history" : "ပြောဆိုမှုမှတ်တမ်းကိုဖျက်ပါ"}
             >
               <RefreshCw size={16} />
             </button>
@@ -506,7 +598,11 @@ export default function AICoachPage() {
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-                placeholder="พิมพ์สิ่งที่ต้องการซ้อมพูด หรือซ้อมตอบข้อโต้แย้ง..."
+                placeholder={language === "th" 
+                  ? "พิมพ์สิ่งที่ต้องการซ้อมพูด หรือซ้อมตอบข้อโต้แย้ง..." 
+                  : language === "en" 
+                    ? "Type what you want to practice or handle objections..." 
+                    : "လေ့ကျင့်လိုသည့်စကားလုံး သို့မဟုတ် ကန့်ကွက်မှုကိုရိုက်ပါ..."}
                 className="flex-1 bg-transparent border-none text-xs md:text-sm font-semibold text-text-primary placeholder-text-muted focus:ring-0 outline-none"
               />
               <button
