@@ -77,7 +77,7 @@ function RegisterForm() {
       if (data.user) {
         const { error: profileError } = await supabase
           .from("profiles")
-          .update({ referral_slug: cleanUsername })
+          .update({ username: cleanUsername })
           .eq("id", data.user.id);
 
         if (profileError) {

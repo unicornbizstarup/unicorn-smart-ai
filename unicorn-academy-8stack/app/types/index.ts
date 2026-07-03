@@ -16,7 +16,7 @@ export interface Profile {
   id:                   string;
   full_name:            string;
   display_name:         string | null;
-  expertise:            string | null;
+  specialization:       string | null;
   quote:                string | null;
   bio:                  string | null;
   avatar_url:           string | null;
@@ -29,7 +29,7 @@ export interface Profile {
   instagram_url:        string | null;
   ai_bio:               string | null;
   ai_tags:              string[];
-  referral_slug:        string;
+  username:             string;
   referred_by:          string | null;
   referral_clicks:      number;
   referral_conversions: number;

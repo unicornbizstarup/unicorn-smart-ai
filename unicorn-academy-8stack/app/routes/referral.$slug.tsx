@@ -26,7 +26,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const { data: profile } = await supabase
     .from("profiles")
     .select("*")
-    .eq("referral_slug", slug)
+    .eq("username", slug)
     .single<Profile>();
 
   if (!profile) {

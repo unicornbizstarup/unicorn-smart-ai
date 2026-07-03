@@ -53,7 +53,7 @@ export default function Sidebar({ profile, isOpen = false, onClose }: Props) {
       title: "PROFILE",
       items: [
         { href: "/profile", label: "Name Card", badge: null, external: false },
-        { href: `/referral/${profile?.referral_slug || ""}`, label: "Referral Link", badge: null, external: false },
+        { href: `/r/${profile?.username || ""}`, label: "Referral Link", badge: null, external: false },
         { href: "https://unicorngloballink.com/#contact", label: "Contact Us", badge: null, external: true },
       ]
     }

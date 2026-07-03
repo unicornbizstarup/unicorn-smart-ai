@@ -36,9 +36,9 @@ export default function ProfilePage() {
     specialization: loadedProfile?.specialization || "",
     bio: loadedProfile?.bio || "",
     line_id: loadedProfile?.line_id || "",
-    line_oa: loadedProfile?.line_oa || "",
+    line_oa: loadedProfile?.line_oa_url || "",
     youtube_url: loadedProfile?.youtube_url || "",
-    referral_slug: loadedProfile?.referral_slug || "",
+    referral_slug: loadedProfile?.username || "",
     avatar_url: loadedProfile?.avatar_url || "",
     photo_urls: loadedProfile?.photo_urls || [],
     photo_captions: loadedProfile?.photo_captions || [],
@@ -82,9 +82,9 @@ export default function ProfilePage() {
 
       if (!res.ok) throw new Error("ไม่สามารถขอ URL อัปโหลดได้");
 
-      const { url, publicUrl } = await res.json();
+      const { uploadUrl, publicUrl } = await res.json();
 
-      const uploadRes = await fetch(url, {
+      const uploadRes = await fetch(uploadUrl, {
         method: "PUT",
         headers: {
           "Content-Type": file.type,
@@ -138,9 +138,9 @@ export default function ProfilePage() {
 
       if (!res.ok) throw new Error("ไม่สามารถขอ URL อัปโหลดได้");
 
-      const { url, publicUrl } = await res.json();
+      const { uploadUrl, publicUrl } = await res.json();
 
-      const uploadRes = await fetch(url, {
+      const uploadRes = await fetch(uploadUrl, {
         method: "PUT",
         headers: {
           "Content-Type": file.type,
@@ -185,9 +185,9 @@ export default function ProfilePage() {
           specialization: profile.specialization,
           bio: profile.bio,
           line_id: profile.line_id,
-          line_oa: profile.line_oa,
+          line_oa_url: profile.line_oa,
           youtube_url: profile.youtube_url,
-          referral_slug: cleanSlug,
+          username: cleanSlug,
           photo_urls: profile.photo_urls,
           photo_captions: profile.photo_captions,
         })
