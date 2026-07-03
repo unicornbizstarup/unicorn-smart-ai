@@ -8,7 +8,7 @@ import MemberLayout from "@/components/layout/MemberLayout";
 
 export function meta() {
   return [
-    { title: "จัดการโปรไฟล์และนามบัตรดิจิทัล — Unicorn Academy" },
+    { title: "จัดการโปรไฟล์และนามบัตรดิจิทัล — Unicorn Smart AI" },
     { name: "description", content: "จัดการข้อมูลส่วนตัว นามบัตรดิจิทัล และลิงก์แนะนำบอกต่อสำหรับพาร์ทเนอร์" },
   ];
 }

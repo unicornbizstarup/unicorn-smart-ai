@@ -8,7 +8,7 @@ export function meta({ data }: { data: any }) {
   const profile = data?.profile as Profile | null;
   const name = profile?.display_name || profile?.full_name || "Unicorn Partner";
   return [
-    { title: `${name} | Unicorn Academy` },
+    { title: `${name} | Unicorn Smart AI` },
     { name: "description", content: profile?.quote || profile?.bio || "นักธุรกิจยูนิคอร์น — เปิดโอกาสร่วมธุรกิจกับเรา" },
   ];
 }

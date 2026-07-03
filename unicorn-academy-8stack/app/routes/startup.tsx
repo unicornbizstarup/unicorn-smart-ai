@@ -53,7 +53,7 @@ const STARTUP_STEPS: StartupStep[] = [
 
 export function meta() {
   return [
-    { title: "5 Start-up (เริ่มต้นทำธุรกิจ) — Unicorn Academy" },
+    { title: "5 Start-up (เริ่มต้นทำธุรกิจ) — Unicorn Smart AI" },
     { name: "description", content: "ขั้นตอนเริ่มต้นสำหรับนักธุรกิจพาร์ทเนอร์มือใหม่สู่อัจฉริยะระบบงาน" },
   ];
 }

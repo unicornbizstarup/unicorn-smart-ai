@@ -8,7 +8,7 @@ import MemberLayout from "@/components/layout/MemberLayout";
 
 export function meta() {
   return [
-    { title: "คลังสินค้าและนวัตกรรม — Unicorn Academy" },
+    { title: "คลังสินค้าและนวัตกรรม — Unicorn Smart AI" },
     { name: "description", content: "คลังสินค้าพาร์ทเนอร์และตารางวิเคราะห์คำนวณกำไรสมาชิก" },
   ];
 }

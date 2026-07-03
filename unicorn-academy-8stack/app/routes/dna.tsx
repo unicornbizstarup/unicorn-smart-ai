@@ -96,7 +96,7 @@ const WEALTH_ELEMENTS = {
 
 export function meta() {
   return [
-    { title: "Wealth DNA (ถอดรหัสความมั่งคั่ง) — Unicorn Academy" },
+    { title: "Wealth DNA (ถอดรหัสความมั่งคั่ง) — Unicorn Smart AI" },
     { name: "description", content: "ถอดรหัสพื้นดวงธาตุเจ้าเรือนเพื่อค้นหา สไตล์การสร้างความมั่งคั่ง ที่ใช่คุณ" },
   ];
 }

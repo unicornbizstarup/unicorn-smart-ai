@@ -14,8 +14,8 @@ import "./app.css";
 
 export function meta() {
   return [
-    { title: "Unicorn Academy | สถาบันสอนธุรกิจและนวัตกรรม" },
-    { name: "description", content: "Unicorn Academy - สถาบันพัฒนาศักยภาพทางธุรกิจและเทคโนโลยี AI เพื่อก้าวสู่การเป็นนักธุรกิจยุคใหม่" },
+    { title: "Unicorn Smart AI | สถาบันสอนธุรกิจและนวัตกรรม" },
+    { name: "description", content: "Unicorn Smart AI - สถาบันพัฒนาศักยภาพทางธุรกิจและเทคโนโลยี AI เพื่อก้าวสู่การเป็นนักธุรกิจยุคใหม่" },
   ];
 }
 
@@ -32,8 +32,19 @@ export const links: Route.LinksFunction = () => [
   },
   {
     rel: "icon",
-    type: "image/jpeg",
-    href: "https://mewjhcheciafyuxkngqn.supabase.co/storage/v1/object/public/media/Logo%20Unicorn%20global%20link.jpg",
+    type: "image/x-icon",
+    href: "/favicon.ico",
+  },
+  {
+    rel: "icon",
+    type: "image/png",
+    sizes: "32x32",
+    href: "/favicon-32x32.png",
+  },
+  {
+    rel: "apple-touch-icon",
+    sizes: "180x180",
+    href: "/apple-touch-icon.png",
   },
 ];
 

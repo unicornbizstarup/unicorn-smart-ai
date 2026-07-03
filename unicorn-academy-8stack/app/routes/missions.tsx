@@ -222,7 +222,7 @@ const LEVEL_SPECIFICATIONS = {
 
 export function meta() {
   return [
-    { title: "โปรแกรมพัฒนา UBC (กระดานภารกิจ) — Unicorn Academy" },
+    { title: "โปรแกรมพัฒนา UBC (กระดานภารกิจ) — Unicorn Smart AI" },
     { name: "description", content: "เส้นทางการเรียนรู้และภารกิจเพื่อก้าวสู่ที่ปรึกษาการตลาดมืออาชีพ" },
   ];
 }

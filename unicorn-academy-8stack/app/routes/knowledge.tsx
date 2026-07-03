@@ -96,7 +96,7 @@ const KNOWLEDGE_ITEMS: KnowledgeItem[] = [
 
 export function meta() {
   return [
-    { title: "คลังความรู้และสื่อการตลาด — Unicorn Academy" },
+    { title: "คลังความรู้และสื่อการตลาด — Unicorn Smart AI" },
     { name: "description", content: "คลังสื่อการสอนและเครื่องมือทางการตลาดเพื่อยกระดับนักธุรกิจมืออาชีพ" },
   ];
 }

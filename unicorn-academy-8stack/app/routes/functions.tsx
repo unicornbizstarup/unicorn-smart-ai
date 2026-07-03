@@ -56,7 +56,7 @@ const FUNCTION_EVENTS: FunctionEvent[] = [
 
 export function meta() {
   return [
-    { title: "Function to Function (ระบบการเคลื่อนคน) — Unicorn Academy" },
+    { title: "Function to Function (ระบบการเคลื่อนคน) — Unicorn Smart AI" },
     { name: "description", content: "ระบบการเคลื่อนและยกระดับผู้คนผ่านงานกิจกรรมของทางบริษัท" },
   ];
 }

@@ -55,7 +55,7 @@ const focusOptions = [
 
 export function meta() {
   return [
-    { title: "น้องยูนิ (AI Coach) — Unicorn Academy" },
+    { title: "น้องยูนิ (AI Coach) — Unicorn Smart AI" },
     { name: "description", content: "คู่ซ้อมตอบข้อโต้แย้ง ฝึกพูด STP และร่างแบรนดิ้งของพาร์ทเนอร์อัจฉริยะ" },
   ];
 }

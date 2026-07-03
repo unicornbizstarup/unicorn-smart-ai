@@ -5,8 +5,8 @@ import { createClient } from "@/lib/supabase";
 
 export function meta() {
   return [
-    { title: "สมัครสมาชิก — Unicorn Academy" },
-    { name: "description", content: "สมัครสมาชิกใหม่ในระบบ Unicorn Academy" },
+    { title: "สมัครสมาชิก — Unicorn Smart AI" },
+    { name: "description", content: "สมัครสมาชิกใหม่ในระบบ Unicorn Smart AI" },
   ];
 }
 

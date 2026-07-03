@@ -24,8 +24,8 @@ import {
 
 export function meta() {
   return [
-    { title: "แดชบอร์ด — Unicorn Academy" },
-    { name: "description", content: "แผงควบคุมระบบสมาชิกและการเรียนรู้ Unicorn Academy" },
+    { title: "แดชบอร์ด — Unicorn Smart AI" },
+    { name: "description", content: "แผงควบคุมระบบสมาชิกและการเรียนรู้ Unicorn Smart AI" },
   ];
 }
 
