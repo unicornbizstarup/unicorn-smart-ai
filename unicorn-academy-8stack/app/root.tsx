@@ -12,6 +12,13 @@ import type { LoaderFunctionArgs } from "react-router";
 import type { Route } from "./+types/root";
 import "./app.css";
 
+export function meta() {
+  return [
+    { title: "Unicorn Academy | สถาบันสอนธุรกิจและนวัตกรรม" },
+    { name: "description", content: "Unicorn Academy - สถาบันพัฒนาศักยภาพทางธุรกิจและเทคโนโลยี AI เพื่อก้าวสู่การเป็นนักธุรกิจยุคใหม่" },
+  ];
+}
+
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -22,6 +29,11 @@ export const links: Route.LinksFunction = () => [
   {
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap",
+  },
+  {
+    rel: "icon",
+    type: "image/jpeg",
+    href: "https://mewjhcheciafyuxkngqn.supabase.co/storage/v1/object/public/media/Logo%20Unicorn%20global%20link.jpg",
   },
 ];
 
