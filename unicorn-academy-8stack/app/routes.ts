@@ -32,6 +32,7 @@ export default [
   route("admin/knowledge", "routes/admin.knowledge.tsx"),
 
   // Standalone API Endpoints
+  route("api/auth/login", "routes/api.auth.login.ts"),
   route("api/ai-coach", "routes/api.ai-coach.ts"),
   route("api/contact", "routes/api.contact.ts"),
   route("api/notify", "routes/api.notify.ts"),

@@ -75,6 +75,9 @@ type Pages = {
   "/admin/knowledge": {
     params: {};
   };
+  "/api/auth/login": {
+    params: {};
+  };
   "/api/ai-coach": {
     params: {};
   };
@@ -98,7 +101,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/auth/login" | "/auth/register" | "/auth/callback" | "/dashboard" | "/profile" | "/ai-coach" | "/dna" | "/missions" | "/startup" | "/products" | "/knowledge" | "/functions" | "/r/:slug" | "/admin" | "/admin/products" | "/admin/products/new" | "/admin/products/:id" | "/admin/categories" | "/admin/knowledge" | "/api/ai-coach" | "/api/contact" | "/api/notify" | "/api/upload" | "/api/referral/track" | "/api/referral/claim";
+    page: "/" | "/auth/login" | "/auth/register" | "/auth/callback" | "/dashboard" | "/profile" | "/ai-coach" | "/dna" | "/missions" | "/startup" | "/products" | "/knowledge" | "/functions" | "/r/:slug" | "/admin" | "/admin/products" | "/admin/products/new" | "/admin/products/:id" | "/admin/categories" | "/admin/knowledge" | "/api/auth/login" | "/api/ai-coach" | "/api/contact" | "/api/notify" | "/api/upload" | "/api/referral/track" | "/api/referral/claim";
   };
   "routes/home.tsx": {
     id: "routes/home";
@@ -180,6 +183,10 @@ type RouteFiles = {
     id: "routes/admin.knowledge";
     page: "/admin/knowledge";
   };
+  "routes/api.auth.login.ts": {
+    id: "routes/api.auth.login";
+    page: "/api/auth/login";
+  };
   "routes/api.ai-coach.ts": {
     id: "routes/api.ai-coach";
     page: "/api/ai-coach";
@@ -228,6 +235,7 @@ type RouteModules = {
   "routes/admin.products.edit": typeof import("./app/routes/admin.products.edit.tsx");
   "routes/admin.categories": typeof import("./app/routes/admin.categories.tsx");
   "routes/admin.knowledge": typeof import("./app/routes/admin.knowledge.tsx");
+  "routes/api.auth.login": typeof import("./app/routes/api.auth.login.ts");
   "routes/api.ai-coach": typeof import("./app/routes/api.ai-coach.ts");
   "routes/api.contact": typeof import("./app/routes/api.contact.ts");
   "routes/api.notify": typeof import("./app/routes/api.notify.ts");

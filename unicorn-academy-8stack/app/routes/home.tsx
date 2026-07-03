@@ -48,21 +48,28 @@ export default function HomePage() {
             </div>
           </div>
           
-          <div className="flex items-center gap-4">
-            {user ? (
-              <Link to="/dashboard" className="btn-gold px-6 text-sm">
-                เข้าสู่หน้าควบคุม
-              </Link>
-            ) : (
-              <>
-                <Link to="/auth/login" className="text-text-secondary hover:text-text-primary transition-colors text-sm font-semibold">
-                  เข้าสู่ระบบ
+          <div className="flex items-center gap-6">
+            <a href="https://unicorngloballink.com/" target="_blank" rel="noopener noreferrer" 
+               className="text-text-secondary hover:text-brand-gold transition-colors text-xs font-bold flex items-center gap-1">
+              🌐 เว็บไซต์บริษัท UGL
+            </a>
+            <div className="h-4 w-px bg-border-default/80" />
+            <div className="flex items-center gap-4">
+              {user ? (
+                <Link to="/dashboard" className="btn-gold px-6 text-sm">
+                  เข้าสู่หน้าควบคุม
                 </Link>
-                <Link to="/auth/register" className="btn-gold px-6 text-sm">
-                  สมัครสมาชิก
-                </Link>
-              </>
-            )}
+              ) : (
+                <>
+                  <Link to="/auth/login" className="text-text-secondary hover:text-text-primary transition-colors text-sm font-semibold">
+                    เข้าสู่ระบบ
+                  </Link>
+                  <Link to="/auth/register" className="btn-gold px-6 text-sm">
+                    สมัครสมาชิก
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </nav>
@@ -147,14 +154,20 @@ export default function HomePage() {
       {/* ── Footer ── */}
       <footer className="relative z-10 py-16 border-t border-border-default/40 bg-white/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md flex items-center justify-center text-white font-black text-xs"
-                 style={{ background: "linear-gradient(135deg, var(--brand-gold), var(--brand-gold-hover))" }}>
-              U
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-md flex items-center justify-center text-white font-black text-xs"
+                   style={{ background: "linear-gradient(135deg, var(--brand-gold), var(--brand-gold-hover))" }}>
+                U
+              </div>
+              <span className="text-xs font-bold uppercase tracking-widest text-text-secondary">
+                Unicorn Academy
+              </span>
             </div>
-            <span className="text-xs font-bold uppercase tracking-widest text-text-secondary">
-              Unicorn Academy
-            </span>
+            <a href="https://unicorngloballink.com/" target="_blank" rel="noopener noreferrer" 
+               className="text-xs text-brand-gold font-bold hover:underline transition-all">
+              🌐 เว็บไซต์บริษัท (Unicorn Global Link)
+            </a>
           </div>
           <div className="text-text-muted text-xs font-medium">
             © 2026 Unicorn Academy. All Rights Reserved.

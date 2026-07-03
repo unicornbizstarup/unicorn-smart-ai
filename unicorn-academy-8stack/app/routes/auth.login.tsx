@@ -35,6 +35,22 @@ export default function LoginPage() {
       const safeUsername = username.toLowerCase().replace(/\s+/g, "");
       const fakeEmail = `${safeUsername}@unicorn.systems`;
 
+      // 1. Verify credentials with UGL Platform and auto-provision in Supabase
+      const checkRes = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: safeUsername, password }),
+      });
+
+      const checkData = await checkRes.json();
+
+      if (!checkRes.ok || !checkData.success) {
+        throw new Error(checkData.error || "ไม่สามารถเข้าสู่ระบบ UGL ได้");
+      }
+
+      // 2. Establish local session with Supabase using synced credentials
       const { error: authError } = await supabase.auth.signInWithPassword({
         email: fakeEmail,
         password,

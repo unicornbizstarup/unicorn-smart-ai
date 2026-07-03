@@ -129,6 +129,15 @@ function RegisterForm() {
             </div>
           )}
 
+          {/* UGL Member Notice Banner */}
+          <div className="bg-brand-gold-light/30 border border-brand-gold-muted/50 text-text-primary px-4 py-3.5 rounded-xl text-xs font-medium mb-6 flex flex-col gap-1.5 shadow-sm text-left">
+            <span className="font-bold text-brand-gold text-xs flex items-center gap-1.5">📢 ประกาศสำหรับสมาชิก UGL</span>
+            <p className="text-text-secondary leading-relaxed text-[11px]">
+              สำหรับสมาชิกของบริษัท <strong>Unicorn Global Link</strong> ไม่จำเป็นต้องลงทะเบียนใหม่ที่นี่! 
+              สามารถใช้ <strong>Username (เช่น TH546415)</strong> และรหัสผ่าน UGL เข้าสู่ระบบที่หน้า Login ได้ทันที ระบบจะเปิดบัญชีสมาชิกใหม่และเชื่อมต่อสายงานให้ท่านโดยอัตโนมัติ
+            </p>
+          </div>
+
           {/* Header */}
           <div className="text-center mb-6">
             <div className="w-14 h-14 bg-brand-gold rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md text-white">
