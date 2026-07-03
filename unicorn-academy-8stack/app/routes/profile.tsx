@@ -40,6 +40,8 @@ export default function ProfilePage() {
     youtube_url: loadedProfile?.youtube_url || "",
     referral_slug: loadedProfile?.referral_slug || "",
     avatar_url: loadedProfile?.avatar_url || "",
+    photo_urls: loadedProfile?.photo_urls || [],
+    photo_captions: loadedProfile?.photo_captions || [],
   });
 
   const [saving, setSaving] = useState(false);
@@ -111,6 +113,57 @@ export default function ProfilePage() {
     }
   };
 
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert("รูปภาพต้องมีขนาดไม่เกิน 2MB ครับ");
+      return;
+    }
+
+    setUploading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          filename: file.name,
+          contentType: file.type,
+          folder: "profiles"
+        }),
+      });
+
+      if (!res.ok) throw new Error("ไม่สามารถขอ URL อัปโหลดได้");
+
+      const { url, publicUrl } = await res.json();
+
+      const uploadRes = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type,
+        },
+        body: file,
+      });
+
+      if (!uploadRes.ok) throw new Error("การอัปโหลดรูปภาพล้มเหลว");
+
+      setProfile((prev: any) => {
+        const newUrls = [...(prev.photo_urls || [])];
+        while (newUrls.length < 5) newUrls.push("");
+        newUrls[index] = publicUrl;
+        return { ...prev, photo_urls: newUrls };
+      });
+    } catch (err: any) {
+      console.error("Photo upload error:", err);
+      setError(err.message || "อัปโหลดรูปภาพล้มเหลว กรุณาลองใหม่อีกครั้ง");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -135,6 +188,8 @@ export default function ProfilePage() {
           line_oa: profile.line_oa,
           youtube_url: profile.youtube_url,
           referral_slug: cleanSlug,
+          photo_urls: profile.photo_urls,
+          photo_captions: profile.photo_captions,
         })
         .eq("id", user.id);
 
@@ -389,6 +444,78 @@ export default function ProfilePage() {
                     placeholder="https://youtube.com/c/yourchannel"
                     className="w-full px-4 py-3 bg-bg-input border border-border-default rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-brand-gold-muted focus:ring-1 focus:ring-brand-gold-muted/20 transition-all text-sm font-semibold"
                   />
+                </div>
+              </div>
+
+              {/* Branding Photos Section */}
+              <div className="border-t border-border-default pt-6 space-y-4">
+                <div className="space-y-1">
+                  <h3 className="text-sm font-display text-brand-gold font-bold">ภาพกิจกรรมและแบรนดิ้งบุคคล (3-5 ภาพ)</h3>
+                  <p className="text-xs text-text-secondary">อัปโหลดรูปภาพที่แสดงถึงความเชี่ยวชาญ ภาพกิจกรรม หรือผลลัพธ์ธุรกิจของคุณเพื่อแสดงบนหน้า Sale Page (แนะนำอัปโหลดอย่างน้อย 3 ภาพ)</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                  {[0, 1, 2, 3, 4].map((idx) => {
+                    const url = profile.photo_urls?.[idx];
+                    const caption = profile.photo_captions?.[idx] || "";
+                    return (
+                      <div key={idx} className="flex flex-col gap-2 p-3 bg-bg-page border border-border-default rounded-xl hover:border-brand-gold-muted transition-all relative">
+                        <span className="text-[10px] font-bold text-text-secondary uppercase">ภาพที่ {idx + 1}</span>
+                        
+                        {/* Image Box */}
+                        <div className="w-full aspect-[4/3] rounded-lg overflow-hidden bg-bg-input border border-border-default relative flex items-center justify-center">
+                          {url ? (
+                            <>
+                              <img src={url} alt={`Branding ${idx + 1}`} className="object-cover w-full h-full" />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setProfile((prev: any) => {
+                                    const newUrls = [...(prev.photo_urls || [])];
+                                    const newCaps = [...(prev.photo_captions || [])];
+                                    newUrls[idx] = "";
+                                    newCaps[idx] = "";
+                                    return { ...prev, photo_urls: newUrls, photo_captions: newCaps };
+                                  });
+                                }}
+                                className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-md p-1 text-[10px] font-bold shadow-md transition-all cursor-pointer"
+                              >
+                                ลบ
+                              </button>
+                            </>
+                          ) : (
+                            <label className="cursor-pointer flex flex-col items-center justify-center w-full h-full text-text-muted hover:text-brand-gold transition-colors">
+                              <Camera size={20} className="mb-0.5 opacity-75" />
+                              <span className="text-[9px] font-bold">อัปโหลด</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => handlePhotoUpload(e, idx)}
+                              />
+                            </label>
+                          )}
+                        </div>
+
+                        {/* Caption Input */}
+                        <input
+                          type="text"
+                          placeholder="คำบรรยายภาพ..."
+                          value={caption}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setProfile((prev: any) => {
+                              const newCaps = [...(prev.photo_captions || [])];
+                              while (newCaps.length < 5) newCaps.push("");
+                              newCaps[idx] = val;
+                              return { ...prev, photo_captions: newCaps };
+                            });
+                          }}
+                          className="w-full px-2.5 py-1.5 bg-white border border-border-default rounded-lg text-[11px] text-text-primary placeholder-text-muted focus:outline-none focus:border-brand-gold-muted font-medium"
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 

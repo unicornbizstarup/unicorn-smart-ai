@@ -1432,7 +1432,9 @@ const profile = UNSAFE_withComponentProps(function ProfilePage() {
     line_oa: (loadedProfile == null ? void 0 : loadedProfile.line_oa) || "",
     youtube_url: (loadedProfile == null ? void 0 : loadedProfile.youtube_url) || "",
     referral_slug: (loadedProfile == null ? void 0 : loadedProfile.referral_slug) || "",
-    avatar_url: (loadedProfile == null ? void 0 : loadedProfile.avatar_url) || ""
+    avatar_url: (loadedProfile == null ? void 0 : loadedProfile.avatar_url) || "",
+    photo_urls: (loadedProfile == null ? void 0 : loadedProfile.photo_urls) || [],
+    photo_captions: (loadedProfile == null ? void 0 : loadedProfile.photo_captions) || []
   });
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -1505,6 +1507,57 @@ const profile = UNSAFE_withComponentProps(function ProfilePage() {
       setUploading(false);
     }
   };
+  const handlePhotoUpload = async (e, index) => {
+    var _a;
+    const file = (_a = e.target.files) == null ? void 0 : _a[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      alert("รูปภาพต้องมีขนาดไม่เกิน 2MB ครับ");
+      return;
+    }
+    setUploading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          filename: file.name,
+          contentType: file.type,
+          folder: "profiles"
+        })
+      });
+      if (!res.ok) throw new Error("ไม่สามารถขอ URL อัปโหลดได้");
+      const {
+        url,
+        publicUrl
+      } = await res.json();
+      const uploadRes = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type
+        },
+        body: file
+      });
+      if (!uploadRes.ok) throw new Error("การอัปโหลดรูปภาพล้มเหลว");
+      setProfile((prev) => {
+        const newUrls = [...prev.photo_urls || []];
+        while (newUrls.length < 5) newUrls.push("");
+        newUrls[index] = publicUrl;
+        return {
+          ...prev,
+          photo_urls: newUrls
+        };
+      });
+    } catch (err) {
+      console.error("Photo upload error:", err);
+      setError(err.message || "อัปโหลดรูปภาพล้มเหลว กรุณาลองใหม่อีกครั้ง");
+    } finally {
+      setUploading(false);
+    }
+  };
   const handleSubmit = async (e) => {
     var _a;
     e.preventDefault();
@@ -1527,7 +1580,9 @@ const profile = UNSAFE_withComponentProps(function ProfilePage() {
         line_id: profile2.line_id,
         line_oa: profile2.line_oa,
         youtube_url: profile2.youtube_url,
-        referral_slug: cleanSlug
+        referral_slug: cleanSlug,
+        photo_urls: profile2.photo_urls,
+        photo_captions: profile2.photo_captions
       }).eq("id", user.id);
       if (updateError) {
         if ((_a = updateError.message) == null ? void 0 : _a.includes("unique")) {
@@ -1798,6 +1853,89 @@ const profile = UNSAFE_withComponentProps(function ProfilePage() {
                   placeholder: "https://youtube.com/c/yourchannel",
                   className: "w-full px-4 py-3 bg-bg-input border border-border-default rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-brand-gold-muted focus:ring-1 focus:ring-brand-gold-muted/20 transition-all text-sm font-semibold"
                 })]
+              })]
+            }), /* @__PURE__ */ jsxs("div", {
+              className: "border-t border-border-default pt-6 space-y-4",
+              children: [/* @__PURE__ */ jsxs("div", {
+                className: "space-y-1",
+                children: [/* @__PURE__ */ jsx("h3", {
+                  className: "text-sm font-display text-brand-gold font-bold",
+                  children: "ภาพกิจกรรมและแบรนดิ้งบุคคล (3-5 ภาพ)"
+                }), /* @__PURE__ */ jsx("p", {
+                  className: "text-xs text-text-secondary",
+                  children: "อัปโหลดรูปภาพที่แสดงถึงความเชี่ยวชาญ ภาพกิจกรรม หรือผลลัพธ์ธุรกิจของคุณเพื่อแสดงบนหน้า Sale Page (แนะนำอัปโหลดอย่างน้อย 3 ภาพ)"
+                })]
+              }), /* @__PURE__ */ jsx("div", {
+                className: "grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4",
+                children: [0, 1, 2, 3, 4].map((idx) => {
+                  var _a, _b;
+                  const url = (_a = profile2.photo_urls) == null ? void 0 : _a[idx];
+                  const caption = ((_b = profile2.photo_captions) == null ? void 0 : _b[idx]) || "";
+                  return /* @__PURE__ */ jsxs("div", {
+                    className: "flex flex-col gap-2 p-3 bg-bg-page border border-border-default rounded-xl hover:border-brand-gold-muted transition-all relative",
+                    children: [/* @__PURE__ */ jsxs("span", {
+                      className: "text-[10px] font-bold text-text-secondary uppercase",
+                      children: ["ภาพที่ ", idx + 1]
+                    }), /* @__PURE__ */ jsx("div", {
+                      className: "w-full aspect-[4/3] rounded-lg overflow-hidden bg-bg-input border border-border-default relative flex items-center justify-center",
+                      children: url ? /* @__PURE__ */ jsxs(Fragment, {
+                        children: [/* @__PURE__ */ jsx("img", {
+                          src: url,
+                          alt: `Branding ${idx + 1}`,
+                          className: "object-cover w-full h-full"
+                        }), /* @__PURE__ */ jsx("button", {
+                          type: "button",
+                          onClick: () => {
+                            setProfile((prev) => {
+                              const newUrls = [...prev.photo_urls || []];
+                              const newCaps = [...prev.photo_captions || []];
+                              newUrls[idx] = "";
+                              newCaps[idx] = "";
+                              return {
+                                ...prev,
+                                photo_urls: newUrls,
+                                photo_captions: newCaps
+                              };
+                            });
+                          },
+                          className: "absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-md p-1 text-[10px] font-bold shadow-md transition-all cursor-pointer",
+                          children: "ลบ"
+                        })]
+                      }) : /* @__PURE__ */ jsxs("label", {
+                        className: "cursor-pointer flex flex-col items-center justify-center w-full h-full text-text-muted hover:text-brand-gold transition-colors",
+                        children: [/* @__PURE__ */ jsx(Camera, {
+                          size: 20,
+                          className: "mb-0.5 opacity-75"
+                        }), /* @__PURE__ */ jsx("span", {
+                          className: "text-[9px] font-bold",
+                          children: "อัปโหลด"
+                        }), /* @__PURE__ */ jsx("input", {
+                          type: "file",
+                          accept: "image/*",
+                          className: "hidden",
+                          onChange: (e) => handlePhotoUpload(e, idx)
+                        })]
+                      })
+                    }), /* @__PURE__ */ jsx("input", {
+                      type: "text",
+                      placeholder: "คำบรรยายภาพ...",
+                      value: caption,
+                      onChange: (e) => {
+                        const val = e.target.value;
+                        setProfile((prev) => {
+                          const newCaps = [...prev.photo_captions || []];
+                          while (newCaps.length < 5) newCaps.push("");
+                          newCaps[idx] = val;
+                          return {
+                            ...prev,
+                            photo_captions: newCaps
+                          };
+                        });
+                      },
+                      className: "w-full px-2.5 py-1.5 bg-white border border-border-default rounded-lg text-[11px] text-text-primary placeholder-text-muted focus:outline-none focus:border-brand-gold-muted font-medium"
+                    })]
+                  }, idx);
+                })
               })]
             }), /* @__PURE__ */ jsx("button", {
               type: "submit",
@@ -4339,6 +4477,9 @@ async function loader$6({
     });
   }
   const {
+    data: categories
+  } = await supabase.from("product_categories").select("*").eq("is_active", true).order("sort_order");
+  const {
     error: rpcError
   } = await supabase.rpc("increment_referral_clicks", {
     profile_id: profile2.id
@@ -4349,7 +4490,8 @@ async function loader$6({
   headers.set("Set-Cookie", `unicorn_referrer=${profile2.id}; Path=/; HttpOnly; Max-Age=${30 * 24 * 60 * 60}; SameSite=Lax; Secure`);
   return data({
     profile: profile2,
-    slug
+    slug,
+    categories: categories || []
   }, {
     headers
   });
@@ -4358,8 +4500,10 @@ const referral_$slug = UNSAFE_withComponentProps(function ReferralPage() {
   var _a;
   const {
     profile: profile2,
-    slug
+    slug,
+    categories
   } = useLoaderData();
+  const [activePhoto, setActivePhoto] = useState(null);
   const levelLabels = {
     1: "Foundation",
     2: "Specialist",
@@ -4372,9 +4516,9 @@ const referral_$slug = UNSAFE_withComponentProps(function ReferralPage() {
   const bioText = profile2.bio || profile2.ai_bio;
   const tags = ((_a = profile2.ai_tags) == null ? void 0 : _a.filter(Boolean)) ?? [];
   return /* @__PURE__ */ jsxs("div", {
-    className: "min-h-screen bg-bg-page text-text-primary font-body text-sm leading-relaxed pb-12",
+    className: "min-h-screen bg-[#f7f4ef] text-text-primary font-body text-sm leading-relaxed pb-16 selection:bg-brand-gold/30",
     children: [/* @__PURE__ */ jsx("div", {
-      className: "h-1 bg-brand-gold"
+      className: "h-1.5 bg-gradient-to-r from-[#c0281e] via-[#e8621a] to-[#f5a623]"
     }), /* @__PURE__ */ jsxs("nav", {
       className: "bg-white border-b border-border-default px-6 py-4 flex items-center justify-between shadow-sm relative z-20",
       children: [/* @__PURE__ */ jsxs("div", {
@@ -4382,7 +4526,7 @@ const referral_$slug = UNSAFE_withComponentProps(function ReferralPage() {
         children: [/* @__PURE__ */ jsx("div", {
           className: "w-9 h-9 rounded-xl flex items-center justify-center text-white font-black text-sm select-none",
           style: {
-            background: "linear-gradient(135deg, var(--brand-dark), var(--brand-gold))"
+            background: "linear-gradient(135deg, #c0281e, #f5a623)"
           },
           children: "U"
         }), /* @__PURE__ */ jsxs("div", {
@@ -4401,71 +4545,98 @@ const referral_$slug = UNSAFE_withComponentProps(function ReferralPage() {
         }), profile2.is_verified ? "Verified Partner" : "Unicorn Partner"]
       })]
     }), /* @__PURE__ */ jsxs("div", {
-      className: "max-w-4xl mx-auto px-4 pt-10 pb-8 text-center relative overflow-hidden",
+      className: "max-w-4xl mx-auto px-4 pt-12 pb-8 text-center relative overflow-hidden",
       children: [/* @__PURE__ */ jsx("div", {
-        className: "absolute inset-0 pointer-events-none bg-gradient-to-b from-brand-gold-light/10 to-transparent"
+        className: "absolute inset-0 pointer-events-none bg-gradient-to-b from-brand-gold-light/15 via-[#f7f4ef]/50 to-transparent"
+      }), /* @__PURE__ */ jsx("div", {
+        className: "absolute top-10 left-10 w-24 h-24 bg-[#c0281e]/5 rounded-full blur-2xl pointer-events-none"
+      }), /* @__PURE__ */ jsx("div", {
+        className: "absolute top-20 right-10 w-32 h-32 bg-[#f5a623]/5 rounded-full blur-3xl pointer-events-none"
       }), /* @__PURE__ */ jsxs("div", {
-        className: "relative inline-block mb-4 z-10 select-none",
+        className: "relative inline-block mb-5 z-10 select-none",
         children: [/* @__PURE__ */ jsx("div", {
-          className: "w-20 h-20 rounded-2xl overflow-hidden border-2 border-brand-gold mx-auto shadow-md",
+          className: "w-24 h-24 rounded-3xl overflow-hidden border-2 border-brand-gold mx-auto shadow-lg hover:rotate-1 transition-transform",
           children: profile2.avatar_url ? /* @__PURE__ */ jsx("img", {
             src: profile2.avatar_url,
             alt: displayName,
             className: "object-cover w-full h-full"
           }) : /* @__PURE__ */ jsx("div", {
-            className: "w-full h-full flex items-center justify-center text-2xl font-black text-white bg-brand-gold",
+            className: "w-full h-full flex items-center justify-center text-3xl font-black text-white bg-brand-gold",
             children: initials
           })
         }), profile2.is_verified && /* @__PURE__ */ jsx("div", {
-          className: "absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full bg-brand-gold border-2 border-white flex items-center justify-center text-[10px] font-black text-white shadow-sm",
+          className: "absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full bg-brand-gold border-2 border-white flex items-center justify-center text-[10px] font-black text-white shadow-md",
           children: "✓"
         })]
-      }), /* @__PURE__ */ jsxs("div", {
-        className: "inline-flex items-center gap-1.5 bg-brand-gold-light/50 border border-brand-gold-muted/20 rounded-full px-3.5 py-1 text-[10px] font-black text-brand-gold uppercase tracking-wider mb-3.5 z-10 relative",
-        children: ["⭐ UBC ", level, " · ", levelLabels[level]]
+      }), /* @__PURE__ */ jsx("div", {
+        children: /* @__PURE__ */ jsxs("div", {
+          className: "inline-flex items-center gap-1.5 bg-brand-gold-light/50 border border-brand-gold-muted/20 rounded-full px-4 py-1 text-[10px] font-black text-brand-gold uppercase tracking-wider mb-4 z-10 relative",
+          children: ["⭐ UBC ", level, " · ", levelLabels[level]]
+        })
       }), /* @__PURE__ */ jsx("h1", {
-        className: "text-2xl font-display font-bold text-text-primary leading-tight mb-2 relative z-10",
+        className: "text-3xl font-display font-bold text-text-primary leading-tight mb-2.5 relative z-10 tracking-tight",
         children: displayName
-      }), profile2.expertise && /* @__PURE__ */ jsx("p", {
-        className: "text-xs text-text-muted font-bold tracking-wider mb-4 relative z-10 uppercase",
-        children: profile2.expertise
+      }), profile2.specialization && /* @__PURE__ */ jsxs("p", {
+        className: "text-xs text-brand-gold font-black tracking-widest mb-5 relative z-10 uppercase",
+        children: ["✨ ", profile2.specialization]
       }), profile2.quote && /* @__PURE__ */ jsxs("div", {
-        className: "text-sm text-text-secondary italic leading-relaxed max-w-md mx-auto px-4 relative z-10",
+        className: "text-sm md:text-base text-text-secondary italic leading-relaxed max-w-lg mx-auto px-6 py-4 bg-white/40 border border-border-default/50 rounded-2xl shadow-sm relative z-10",
         children: [/* @__PURE__ */ jsx("span", {
-          className: "text-brand-gold text-2xl leading-none align-[-0.2em] mr-1 font-display",
+          className: "text-brand-gold text-3xl leading-none align-[-0.2em] mr-1 font-display",
           children: "“"
         }), profile2.quote, /* @__PURE__ */ jsx("span", {
-          className: "text-brand-gold text-2xl leading-none align-[-0.2em] ml-1 font-display",
+          className: "text-brand-gold text-3xl leading-none align-[-0.2em] ml-1 font-display",
           children: "”"
         })]
       })]
-    }), profile2.photo_urls && profile2.photo_urls.length > 0 && /* @__PURE__ */ jsx("div", {
-      className: "max-w-4xl mx-auto px-4 pb-8",
-      children: /* @__PURE__ */ jsx("div", {
-        className: "grid grid-cols-3 gap-3",
-        children: profile2.photo_urls.slice(0, 3).map((url, idx) => {
+    }), profile2.photo_urls && profile2.photo_urls.filter(Boolean).length > 0 && /* @__PURE__ */ jsxs("div", {
+      className: "max-w-4xl mx-auto px-4 pb-12",
+      children: [/* @__PURE__ */ jsxs("div", {
+        className: "text-center pb-6 space-y-1",
+        children: [/* @__PURE__ */ jsxs("div", {
+          className: "inline-flex items-center gap-1.5 bg-brand-gold-light/40 border border-brand-gold-muted/20 rounded-full px-3.5 py-1 text-[9px] font-black text-brand-gold uppercase tracking-widest",
+          children: [/* @__PURE__ */ jsx("span", {
+            className: "w-1.5 h-1.5 rounded-full bg-brand-gold"
+          }), " Activity & Branding"]
+        }), /* @__PURE__ */ jsx("h2", {
+          className: "text-xl font-display font-bold text-text-primary",
+          children: "ภาพกิจกรรมและการทำงานของที่ปรึกษา"
+        }), /* @__PURE__ */ jsx("p", {
+          className: "text-xs text-text-muted",
+          children: "ความมุ่งมั่นและความเชี่ยวชาญผ่านกิจกรรมจริง (คลิกเพื่อขยายภาพ)"
+        })]
+      }), /* @__PURE__ */ jsx("div", {
+        className: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4",
+        children: profile2.photo_urls.filter(Boolean).map((url, idx) => {
           var _a2, _b;
           return /* @__PURE__ */ jsxs("div", {
-            className: "rounded-2xl overflow-hidden aspect-[3/4] relative bg-bg-input border border-border-default shadow-sm hover:border-brand-gold-muted transition-all",
+            onClick: () => setActivePhoto(url),
+            className: "rounded-2xl overflow-hidden aspect-[4/5] relative bg-bg-input border border-border-default shadow-sm hover:border-brand-gold hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-zoom-in group",
             children: [/* @__PURE__ */ jsx("img", {
               src: url,
               alt: ((_a2 = profile2.photo_captions) == null ? void 0 : _a2[idx]) || "",
-              className: "object-cover w-full h-full"
+              className: "object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
             }), /* @__PURE__ */ jsx("div", {
-              className: "absolute inset-0 pointer-events-none bg-gradient-to-t from-black/70 via-transparent to-transparent"
-            }), ((_b = profile2.photo_captions) == null ? void 0 : _b[idx]) && /* @__PURE__ */ jsx("div", {
-              className: "absolute bottom-3 left-3 right-3 text-[10px] font-bold text-white line-clamp-1",
-              children: profile2.photo_captions[idx]
+              className: "absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-90"
+            }), /* @__PURE__ */ jsxs("div", {
+              className: "absolute bottom-4 left-4 right-4 text-left",
+              children: [/* @__PURE__ */ jsxs("div", {
+                className: "text-[9px] font-black text-brand-gold uppercase tracking-widest mb-1",
+                children: ["IMAGE ", idx + 1]
+              }), /* @__PURE__ */ jsx("p", {
+                className: "text-xs font-bold text-white line-clamp-2 leading-relaxed",
+                children: ((_b = profile2.photo_captions) == null ? void 0 : _b[idx]) || "ภาพกิจกรรมและการแบ่งปันโอกาสทางธุรกิจ"
+              })]
             })]
           }, idx);
         })
-      })
+      })]
     }), /* @__PURE__ */ jsx("div", {
-      className: "max-w-4xl mx-auto px-4 mb-8",
+      className: "max-w-4xl mx-auto px-4 mb-10",
       children: (bioText || tags.length > 0) && /* @__PURE__ */ jsxs("div", {
         className: "bg-white border border-border-default rounded-3xl shadow-sm overflow-hidden",
         children: [/* @__PURE__ */ jsxs("div", {
-          className: "px-5 py-4 border-b border-border-default bg-bg-input flex items-center gap-2",
+          className: "px-6 py-4 border-b border-border-default bg-bg-input flex items-center gap-2",
           children: [/* @__PURE__ */ jsx("span", {
             className: "text-base select-none",
             children: "👤"
@@ -4474,20 +4645,20 @@ const referral_$slug = UNSAFE_withComponentProps(function ReferralPage() {
             children: "ผู้แนะนำที่ปรึกษาธุรกิจ"
           })]
         }), /* @__PURE__ */ jsxs("div", {
-          className: "p-5 space-y-4",
+          className: "p-6 space-y-4",
           children: [/* @__PURE__ */ jsx("div", {
-            className: "text-base font-bold text-text-primary",
+            className: "text-lg font-black text-text-primary",
             children: displayName
-          }), profile2.expertise && /* @__PURE__ */ jsxs("div", {
-            className: "flex items-center gap-2 text-xs font-bold text-brand-gold",
+          }), profile2.specialization && /* @__PURE__ */ jsxs("div", {
+            className: "flex items-center gap-2 text-xs font-black text-brand-gold uppercase tracking-wide",
             children: [/* @__PURE__ */ jsx("span", {
               className: "inline-block w-4 h-0.5 rounded bg-brand-gold shrink-0"
-            }), profile2.expertise]
+            }), profile2.specialization]
           }), bioText && /* @__PURE__ */ jsx("p", {
-            className: "text-xs sm:text-sm text-text-secondary leading-relaxed whitespace-pre-wrap",
+            className: "text-xs sm:text-sm text-text-secondary leading-relaxed whitespace-pre-wrap font-medium",
             children: bioText
           }), tags.length > 0 && /* @__PURE__ */ jsx("div", {
-            className: "flex flex-wrap gap-1.5 pt-1.5 border-t border-border-muted",
+            className: "flex flex-wrap gap-1.5 pt-4 border-t border-border-muted",
             children: tags.map((tag, idx) => /* @__PURE__ */ jsxs("span", {
               className: "bg-bg-input border border-border-default rounded-lg px-2.5 py-1 text-[10px] font-bold text-text-secondary",
               children: ["#", tag]
@@ -4496,9 +4667,9 @@ const referral_$slug = UNSAFE_withComponentProps(function ReferralPage() {
         })]
       })
     }), /* @__PURE__ */ jsxs("div", {
-      className: "max-w-4xl mx-auto px-4 mb-8",
+      className: "max-w-4xl mx-auto px-4 mb-12",
       children: [/* @__PURE__ */ jsxs("div", {
-        className: "text-center pb-4 space-y-1",
+        className: "text-center pb-6 space-y-1",
         children: [/* @__PURE__ */ jsxs("div", {
           className: "inline-flex items-center gap-1.5 bg-brand-gold-light/40 border border-brand-gold-muted/20 rounded-full px-3.5 py-1 text-[9px] font-black text-brand-gold uppercase tracking-widest",
           children: [/* @__PURE__ */ jsx("span", {
@@ -4507,35 +4678,43 @@ const referral_$slug = UNSAFE_withComponentProps(function ReferralPage() {
         }), /* @__PURE__ */ jsx("h2", {
           className: "text-xl font-display font-bold text-text-primary",
           children: "ระบบการทำงานอัจฉริยะที่คุณจะได้ใช้"
+        }), /* @__PURE__ */ jsx("p", {
+          className: "text-xs text-text-muted",
+          children: "ขับเคลื่อนธุรกิจด้วยระบบอัตโนมัติระดับโลก"
         })]
       }), /* @__PURE__ */ jsx("div", {
-        className: "flex gap-3 pb-3 overflow-x-auto no-scrollbar scroll-smooth",
+        className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4",
         children: [{
           dot: "#b8924a",
           label: "AI Coach",
-          desc: "น้องยูนิช่วยวางแผนและโค้ชชิ่งธุรกิจ 24 ชม."
+          desc: "น้องยูนิช่วยวางแผนและโค้ชชิ่งธุรกิจส่วนตัว 24 ชม.",
+          bg: "from-amber-500/10 to-transparent border-amber-500/20"
         }, {
           dot: "#e8621a",
           label: "Wealth DNA",
-          desc: "ถอดรหัสศักยภาพและธาตุความมั่งคั่ง"
+          desc: "ถอดรหัสศักยภาพและธาตุความมั่งคั่งตามโฉลก",
+          bg: "from-orange-500/10 to-transparent border-orange-500/20"
         }, {
           dot: "#f5a623",
-          label: "Missions",
-          desc: "ระบบพัฒนาทักษะธุรกิจเป็นขั้นตอนชัดเจน"
+          label: "Missions Board",
+          desc: "ระบบพัฒนาทักษะธุรกิจเป็นขั้นเป็นตอนและเข้าใจง่าย",
+          bg: "from-yellow-500/10 to-transparent border-yellow-500/20"
         }, {
           dot: "#10b981",
-          label: "5 รายได้",
-          desc: "สิทธิ์การรับรายได้ 8 ช่องทางที่รวดเร็วและคุ้มค่า"
+          label: "5 เริ่มต้น 8 รายได้",
+          desc: "แผนการรับรายได้ที่รวดเร็วและคุ้มค่าที่สุดในอุตสาหกรรม",
+          bg: "from-emerald-500/10 to-transparent border-emerald-500/20"
         }, {
           dot: "#8b5cf6",
-          label: "Name Card",
-          desc: "นามบัตรดิจิทัลสร้าง Personal Brand ส่วนตัว"
+          label: "Digital Name Card",
+          desc: "นามบัตรดิจิทัลสร้าง Personal Brand ดูเป็นที่ปรึกษามืออาชีพ",
+          bg: "from-violet-500/10 to-transparent border-violet-500/20"
         }].map((f) => /* @__PURE__ */ jsxs("div", {
-          className: "bg-white border border-border-default rounded-2xl p-4.5 min-w-[150px] shrink-0 shadow-sm",
+          className: `bg-gradient-to-br ${f.bg} bg-white border rounded-2xl p-5 shadow-sm hover:shadow-md transition-all hover:scale-[1.02] duration-300`,
           children: [/* @__PURE__ */ jsxs("div", {
-            className: "flex items-center gap-1.5 mb-1.5",
+            className: "flex items-center gap-2 mb-2",
             children: [/* @__PURE__ */ jsx("span", {
-              className: "w-2 h-2 rounded-full shrink-0",
+              className: "w-2.5 h-2.5 rounded-full shrink-0",
               style: {
                 background: f.dot
               }
@@ -4544,15 +4723,15 @@ const referral_$slug = UNSAFE_withComponentProps(function ReferralPage() {
               children: f.label
             })]
           }), /* @__PURE__ */ jsx("p", {
-            className: "text-[10px] text-text-muted leading-relaxed",
+            className: "text-[11px] text-text-secondary leading-relaxed font-semibold",
             children: f.desc
           })]
         }, f.label))
       })]
     }), /* @__PURE__ */ jsxs("div", {
-      className: "max-w-4xl mx-auto px-4 mb-8",
+      className: "max-w-4xl mx-auto px-4 mb-12",
       children: [/* @__PURE__ */ jsxs("div", {
-        className: "text-center pb-4 space-y-1",
+        className: "text-center pb-6 space-y-1",
         children: [/* @__PURE__ */ jsxs("div", {
           className: "inline-flex items-center gap-1.5 bg-brand-gold-light/40 border border-brand-gold-muted/20 rounded-full px-3.5 py-1 text-[9px] font-black text-brand-gold uppercase tracking-widest",
           children: [/* @__PURE__ */ jsx("span", {
@@ -4566,64 +4745,84 @@ const referral_$slug = UNSAFE_withComponentProps(function ReferralPage() {
           })]
         }), /* @__PURE__ */ jsx("p", {
           className: "text-xs text-text-muted",
-          children: "ครอบคลุมทุกไลฟ์สไตล์ มั่นใจด้วยมาตรฐานระดับสากล"
+          children: "ครอบคลุมทุกความต้องการ มั่นใจด้วยมาตรฐานระดับสากล"
         })]
-      }), /* @__PURE__ */ jsxs("div", {
+      }), /* @__PURE__ */ jsx("div", {
         className: "grid grid-cols-1 sm:grid-cols-2 gap-4",
-        children: [[{
-          icon: "🫀",
-          label: "Health Care",
-          desc: "นวัตกรรมเพื่อสุขภาพ ฟื้นฟูร่างกายและเสริมสร้างภูมิคุ้มกันระดับเซลล์",
-          iconBg: "bg-emerald-50 text-emerald-700 border-emerald-100"
+        children: (categories && categories.length > 0 ? categories : [{
+          name: "U-LIFE BOOST",
+          display_name_th: "ผลิตภัณฑ์เสริมอาหาร (Health Care)",
+          banner_url: null,
+          slug: "u-life-boost",
+          description: "นวัตกรรมเพื่อสุขภาพ ฟื้นฟูร่างกายและเสริมสร้างภูมิคุ้มกันระดับเซลล์"
         }, {
-          icon: "✨",
-          label: "Skin Care",
-          desc: "นวัตกรรมบำรุงผิวพรรณอย่างล้ำลึก ย้อนวัยและคืนความอ่อนเยาว์อย่างธรรมชาติ",
-          iconBg: "bg-pink-50 text-pink-700 border-pink-100"
+          name: "U-SKIN",
+          display_name_th: "ผลิตภัณฑ์สกินแคร์ (Skin Care)",
+          banner_url: null,
+          slug: "u-skin",
+          description: "นวัตกรรมบำรุงผิวพรรณอย่างล้ำลึก ย้อนวัยและคืนความอ่อนเยาว์อย่างธรรมชาติ"
         }, {
-          icon: "🧴",
-          label: "Personal Care",
-          desc: "ผลิตภัณฑ์ทำความสะอาดและดูแลสุขอนามัยในชีวิตประจำวันเพื่อครอบครัว",
-          iconBg: "bg-indigo-50 text-indigo-700 border-indigo-100"
+          name: "U-CARE",
+          display_name_th: "ผลิตภัณฑ์ของใช้ส่วนตัว (Personal Care)",
+          banner_url: null,
+          slug: "u-care",
+          description: "ผลิตภัณฑ์ทำความสะอาดและดูแลสุขอนามัยในชีวิตประจำวันเพื่อครอบครัว"
         }, {
-          icon: "🌱",
-          label: "Agriculture",
-          desc: "นวัตกรรมเพื่อเกษตรกรรมออร์แกนิก ปลอดภัยและเพิ่มผลผลิตยั่งยืน (U PLANT)",
-          iconBg: "bg-lime-50 text-lime-700 border-lime-100"
-        }].map((p) => /* @__PURE__ */ jsxs("div", {
-          className: "bg-white border border-border-default rounded-2xl p-4 flex items-start gap-3.5 shadow-sm",
-          children: [/* @__PURE__ */ jsx("div", {
-            className: `w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0 border ${p.iconBg}`,
-            children: p.icon
-          }), /* @__PURE__ */ jsxs("div", {
+          name: "U-PLANT",
+          display_name_th: "ผลิตภัณฑ์การเกษตร (Agriculture)",
+          banner_url: null,
+          slug: "u-plant",
+          description: "นวัตกรรมเพื่อเกษตรกรรมออร์แกนิก ปลอดภัยและเพิ่มผลผลิตยั่งยืน"
+        }]).map((cat) => {
+          var _a2;
+          const config = {
+            "u-life-boost": {
+              icon: "🫀",
+              bg: "bg-emerald-50 text-emerald-700 border-emerald-100"
+            },
+            "u-skin": {
+              icon: "✨",
+              bg: "bg-pink-50 text-pink-700 border-pink-100"
+            },
+            "u-care": {
+              icon: "🧴",
+              bg: "bg-indigo-50 text-indigo-700 border-indigo-100"
+            },
+            "u-plant": {
+              icon: "🌱",
+              bg: "bg-lime-50 text-lime-700 border-lime-100"
+            },
+            "u-tech": {
+              icon: "💻",
+              bg: "bg-amber-50 text-amber-700 border-amber-100"
+            }
+          };
+          const key = cat.slug || ((_a2 = cat.name) == null ? void 0 : _a2.toLowerCase().replace(/\s+/g, "-")) || "";
+          const theme = config[key] || {
+            icon: cat.icon_url || "📦",
+            bg: "bg-slate-50 text-slate-700 border-slate-100"
+          };
+          return /* @__PURE__ */ jsxs("div", {
+            className: "bg-white border border-border-default rounded-2xl p-5 flex items-start gap-4 shadow-sm hover:shadow-md transition-all hover:border-brand-gold-muted group",
             children: [/* @__PURE__ */ jsx("div", {
-              className: "text-xs font-black text-text-primary mb-0.5",
-              children: p.label
-            }), /* @__PURE__ */ jsx("div", {
-              className: "text-[11px] text-text-secondary leading-relaxed",
-              children: p.desc
+              className: `w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shrink-0 border ${theme.bg} group-hover:scale-105 transition-transform duration-300`,
+              children: theme.icon
+            }), /* @__PURE__ */ jsxs("div", {
+              children: [/* @__PURE__ */ jsx("div", {
+                className: "text-sm font-black text-text-primary mb-1 group-hover:text-brand-gold transition-colors",
+                children: cat.display_name_th || cat.name
+              }), /* @__PURE__ */ jsx("p", {
+                className: "text-xs text-text-secondary leading-relaxed",
+                children: cat.description || `กลุ่มผลิตภัณฑ์คุณภาพสูงและมีมาตรฐานระดับสากลภายใต้แบรนด์ ${cat.name}`
+              })]
             })]
-          })]
-        }, p.label)), /* @__PURE__ */ jsxs("div", {
-          className: "sm:col-span-2 bg-white border border-border-default rounded-2xl p-4 flex items-start gap-3.5 shadow-sm",
-          children: [/* @__PURE__ */ jsx("div", {
-            className: "w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0 border bg-brand-gold-light/40 border-brand-gold-muted/20 text-brand-gold",
-            children: "💻"
-          }), /* @__PURE__ */ jsxs("div", {
-            children: [/* @__PURE__ */ jsx("div", {
-              className: "text-xs font-black text-text-primary mb-0.5",
-              children: "Technology & Digital Tools"
-            }), /* @__PURE__ */ jsx("div", {
-              className: "text-[11px] text-text-secondary leading-relaxed",
-              children: "นวัตกรรมเครื่องมืออัจฉริยะ AI Assistant และโปรแกรมพัฒนาธุรกิจส่วนบุคคลระดับสากลเพื่อการเติบโตรวดเร็ว"
-            })]
-          })]
-        })]
+          }, cat.id || cat.name);
+        })
       })]
     }), /* @__PURE__ */ jsxs("div", {
-      className: "max-w-4xl mx-auto px-4 mb-8",
+      className: "max-w-4xl mx-auto px-4 mb-12",
       children: [/* @__PURE__ */ jsxs("div", {
-        className: "text-center pb-4 space-y-1",
+        className: "text-center pb-6 space-y-1",
         children: [/* @__PURE__ */ jsxs("div", {
           className: "inline-flex items-center gap-1.5 bg-brand-gold-light/40 border border-brand-gold-muted/20 rounded-full px-3.5 py-1 text-[9px] font-black text-brand-gold uppercase tracking-widest",
           children: [/* @__PURE__ */ jsx("span", {
@@ -4635,9 +4834,12 @@ const referral_$slug = UNSAFE_withComponentProps(function ReferralPage() {
             className: "text-brand-gold",
             children: "Unicorn"
           })]
+        }), /* @__PURE__ */ jsx("p", {
+          className: "text-xs text-text-muted",
+          children: "เหตุผลที่ทุกคนเลือกเริ่มต้นและเติบโตกับแพลตฟอร์มของเรา"
         })]
       }), /* @__PURE__ */ jsx("div", {
-        className: "grid grid-cols-2 gap-4",
+        className: "grid grid-cols-1 sm:grid-cols-2 gap-4",
         children: [{
           icon: "⚡",
           label: "Eco-System",
@@ -4659,85 +4861,106 @@ const referral_$slug = UNSAFE_withComponentProps(function ReferralPage() {
           desc: "ผลตอบแทนคุ้มค่าตั้งแต่วันแรกที่สมัคร แผนปันผล 8 ช่องทางที่มั่นคงและโปร่งใส",
           bg: "bg-amber-50 border-amber-100 text-amber-700"
         }].map((a) => /* @__PURE__ */ jsxs("div", {
-          className: "bg-white border border-border-default rounded-2xl p-4.5 shadow-sm",
+          className: "bg-white border border-border-default rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-brand-gold-muted transition-all",
           children: [/* @__PURE__ */ jsxs("div", {
             className: "flex items-center gap-2.5 mb-2",
             children: [/* @__PURE__ */ jsx("div", {
               className: `w-8 h-8 rounded-lg flex items-center justify-center text-sm shrink-0 border ${a.bg}`,
               children: a.icon
             }), /* @__PURE__ */ jsx("span", {
-              className: "text-[10px] font-black text-text-primary uppercase tracking-wider",
+              className: "text-xs font-black text-text-primary uppercase tracking-wider",
               children: a.label
             })]
           }), /* @__PURE__ */ jsx("p", {
-            className: "text-[11px] text-text-secondary leading-relaxed",
+            className: "text-xs text-text-secondary leading-relaxed font-semibold",
             children: a.desc
           })]
         }, a.label))
       })]
     }), /* @__PURE__ */ jsx("div", {
-      className: "max-w-4xl mx-auto px-4",
+      className: "max-w-4xl mx-auto px-4 mb-8",
       children: /* @__PURE__ */ jsxs("div", {
-        className: "rounded-3xl p-6 md:p-10 text-center bg-gradient-to-br from-brand-dark to-[#2c1d0c] text-white border border-brand-gold/30 shadow-md",
-        children: [/* @__PURE__ */ jsx("h2", {
-          className: "text-lg md:text-xl font-display text-white mb-1.5",
+        className: "rounded-3xl p-8 md:p-12 text-center bg-gradient-to-br from-[#1a1209] to-[#2d2112] text-white border border-brand-gold/30 shadow-2xl relative overflow-hidden",
+        children: [/* @__PURE__ */ jsx("div", {
+          className: "absolute top-0 right-0 w-48 h-48 bg-brand-gold/10 rounded-full blur-3xl pointer-events-none"
+        }), /* @__PURE__ */ jsx("h2", {
+          className: "text-xl md:text-2xl font-display text-white mb-2 font-bold tracking-tight",
           children: "พร้อมร่วมสร้างความสำเร็จแล้วหรือยัง?"
         }), /* @__PURE__ */ jsx("p", {
-          className: "text-xs text-gray-300 mb-6 leading-relaxed max-w-md mx-auto",
+          className: "text-xs text-white/60 mb-8 leading-relaxed max-w-md mx-auto font-medium",
           children: "สมัครฟรีวันนี้เพื่อสิทธิ์การใช้เครื่องมือ Smart AI ครบชุด พร้อมรับสิทธิ์ตำแหน่งและการดูแลใกล้ชิดจากผู้แนะนำ"
-        }), /* @__PURE__ */ jsxs(Link, {
+        }), /* @__PURE__ */ jsx(Link, {
           to: `/auth/register?ref=${slug}`,
-          className: "inline-flex items-center justify-center gap-2 w-full sm:w-auto sm:px-12 py-4 bg-brand-gold hover:bg-brand-gold-hover text-white text-sm font-bold rounded-xl mb-3 shadow-md active:scale-95 transition-all",
-          children: [/* @__PURE__ */ jsx("span", {
-            children: "→"
-          }), " สมัครเป็นที่ปรึกษาร่วมธุรกิจ"]
+          className: "inline-flex items-center justify-center gap-2 w-full sm:w-auto sm:px-12 py-4 bg-gradient-to-r from-brand-gold to-brand-gold-muted hover:from-brand-gold-hover hover:to-brand-gold text-white text-sm font-black rounded-xl mb-4 shadow-lg active:scale-95 transition-all text-center uppercase tracking-wider",
+          children: "🚀 สมัครเป็นที่ปรึกษาร่วมธุรกิจ"
         }), /* @__PURE__ */ jsxs("p", {
-          className: "text-[10px] text-gray-400 flex items-center justify-center gap-1.5 mb-4",
+          className: "text-[10px] text-white/40 flex items-center justify-center gap-1.5 mb-6 font-semibold",
           children: [/* @__PURE__ */ jsx("span", {
             className: "text-emerald-500",
             children: "✓"
           }), " สมัครพาร์ทเนอร์ฟรี — ไม่มีค่าใช้จ่ายรายเดือนหรือแรกเข้า"]
-        }), (profile2.line_oa_url || profile2.line_id) && /* @__PURE__ */ jsxs("a", {
-          href: profile2.line_oa_url || `https://line.me/ti/p/~${profile2.line_id}`,
-          target: "_blank",
-          rel: "noopener noreferrer",
-          className: "flex items-center gap-2.5 bg-white/5 border border-white/10 hover:bg-white/10 rounded-xl px-4 py-3 text-xs text-gray-200 text-left transition-colors max-w-md mx-auto",
-          children: [/* @__PURE__ */ jsx("span", {
-            className: "text-[#06c755] text-lg shrink-0",
-            children: "💬"
-          }), /* @__PURE__ */ jsxs("span", {
-            children: ["ติดต่อผ่าน LINE ของ ", /* @__PURE__ */ jsx("strong", {
-              className: "text-white font-bold",
-              children: displayName
-            }), " โดยตรง — ผูกลิงก์รหัสแนะนำพาร์ทเนอร์อัตโนมัติ"]
-          })]
+        }), (profile2.line_oa_url || profile2.line_id) && /* @__PURE__ */ jsx("div", {
+          className: "max-w-md mx-auto border-t border-white/10 pt-6",
+          children: /* @__PURE__ */ jsxs("a", {
+            href: profile2.line_oa_url ? profile2.line_oa_url.trim() : `https://line.me/ti/p/~${profile2.line_id.trim()}`,
+            target: "_blank",
+            rel: "noopener noreferrer",
+            className: "flex items-center gap-3.5 bg-[#06C755] hover:bg-[#05b34d] text-white rounded-2xl px-5 py-4 text-xs font-black transition-all hover:-translate-y-0.5 shadow-lg shadow-emerald-950/20",
+            children: [/* @__PURE__ */ jsx("span", {
+              className: "text-2xl shrink-0",
+              children: "💬"
+            }), /* @__PURE__ */ jsxs("div", {
+              className: "text-left",
+              children: [/* @__PURE__ */ jsxs("p", {
+                className: "font-black text-sm",
+                children: ["ทัก LINE ส่วนตัวกับ ", displayName]
+              }), /* @__PURE__ */ jsx("p", {
+                className: "text-[10px] text-white/80 font-medium",
+                children: "ปรึกษาโอกาสธุรกิจและเครื่องมือ AI เพิ่มเติมได้ทันที"
+              })]
+            })]
+          })
         }), (profile2.facebook_url || profile2.youtube_url || profile2.instagram_url) && /* @__PURE__ */ jsxs("div", {
-          className: "flex gap-2.5 mt-4.5 justify-center flex-wrap",
+          className: "flex gap-2.5 mt-6 justify-center flex-wrap",
           children: [profile2.facebook_url && /* @__PURE__ */ jsx("a", {
             href: profile2.facebook_url,
             target: "_blank",
             rel: "noopener noreferrer",
-            className: "flex items-center gap-1.5 px-3.5 py-2 bg-blue-500/10 border border-blue-500/20 text-blue-300 hover:bg-blue-500/20 rounded-xl text-[10.5px] font-bold transition-all",
+            className: "flex items-center gap-1.5 px-4 py-2 bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl text-[11px] font-bold transition-all",
             children: "Facebook"
           }), profile2.youtube_url && /* @__PURE__ */ jsx("a", {
             href: profile2.youtube_url,
             target: "_blank",
             rel: "noopener noreferrer",
-            className: "flex items-center gap-1.5 px-3.5 py-2 bg-red-500/10 border border-red-500/20 text-red-300 hover:bg-red-500/20 rounded-xl text-[10.5px] font-bold transition-all",
+            className: "flex items-center gap-1.5 px-4 py-2 bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl text-[11px] font-bold transition-all",
             children: "YouTube"
           }), profile2.instagram_url && /* @__PURE__ */ jsx("a", {
             href: profile2.instagram_url,
             target: "_blank",
             rel: "noopener noreferrer",
-            className: "flex items-center gap-1.5 px-3.5 py-2 bg-pink-500/10 border border-pink-500/20 text-pink-300 hover:bg-pink-500/20 rounded-xl text-[10.5px] font-bold transition-all",
+            className: "flex items-center gap-1.5 px-4 py-2 bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl text-[11px] font-bold transition-all",
             children: "Instagram"
           })]
         })]
       })
+    }), activePhoto && /* @__PURE__ */ jsx("div", {
+      className: "fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-4 cursor-zoom-out animate-fade-in",
+      onClick: () => setActivePhoto(null),
+      children: /* @__PURE__ */ jsxs("div", {
+        className: "relative max-w-3xl w-full max-h-[80vh] flex items-center justify-center",
+        children: [/* @__PURE__ */ jsx("img", {
+          src: activePhoto,
+          alt: "Branding enlarged",
+          className: "max-w-full max-h-[75vh] object-contain rounded-xl shadow-2xl"
+        }), /* @__PURE__ */ jsx("button", {
+          className: "absolute -top-10 right-0 text-white font-bold text-xs bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full transition-all",
+          children: "ปิด [X]"
+        })]
+      })
     }), /* @__PURE__ */ jsxs("footer", {
-      className: "max-w-4xl mx-auto px-4 mt-10 text-center select-none",
+      className: "max-w-4xl mx-auto px-4 mt-12 text-center select-none",
       children: [/* @__PURE__ */ jsxs("p", {
-        className: "text-[10px] text-text-muted",
+        className: "text-[10px] text-text-muted font-semibold",
         children: ["Powered by ", /* @__PURE__ */ jsx("span", {
           className: "text-brand-gold font-bold",
           children: "Unicorn Academy"
@@ -7746,7 +7969,7 @@ const route26 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePrope
   __proto__: null,
   action
 }, Symbol.toStringTag, { value: "Module" }));
-const serverManifest = { "entry": { "module": "/assets/entry.client-DA1MqMBr.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": true, "module": "/assets/root-D1s_E_pA.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js"], "css": ["/assets/root-D730iLXL.css"], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/home": { "id": "routes/home", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/home-DW_j7m4j.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.login": { "id": "routes/auth.login", "parentId": "root", "path": "auth/login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/auth.login-dQzojrkV.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/supabase-Bgahf4s8.js", "/assets/lock-tg-j5y1W.js", "/assets/loader-circle-ClugHvzK.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/gem-BB8tObDz.js", "/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.register": { "id": "routes/auth.register", "parentId": "root", "path": "auth/register", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/auth.register-B6nd6lz0.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/supabase-Bgahf4s8.js", "/assets/loader-circle-ClugHvzK.js", "/assets/lock-tg-j5y1W.js", "/assets/gem-BB8tObDz.js", "/assets/user-CiFcqzNc.js", "/assets/circle-check-dz77gtWt.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.callback": { "id": "routes/auth.callback", "parentId": "root", "path": "auth/callback", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/auth.callback-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/dashboard": { "id": "routes/dashboard", "parentId": "root", "path": "dashboard", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/dashboard-CeDMTFTr.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/zap-BCq1-vgo.js", "/assets/users-CEjQd4Da.js", "/assets/circle-check-dz77gtWt.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/rocket-Dz8LTkED.js", "/assets/link-DPJHJpuY.js", "/assets/gem-BB8tObDz.js", "/assets/chevron-left-CKKzi769.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/profile": { "id": "routes/profile", "parentId": "root", "path": "profile", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/profile-DtW0Af6P.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/user-CiFcqzNc.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/loader-circle-ClugHvzK.js", "/assets/link-DPJHJpuY.js", "/assets/circle-check-dz77gtWt.js", "/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/ai-coach": { "id": "routes/ai-coach", "parentId": "root", "path": "ai-coach", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/ai-coach-CU9VV2Qi.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/rocket-Dz8LTkED.js", "/assets/shield-BRU8tImN.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/user-CiFcqzNc.js", "/assets/send-BpXsP_Uv.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/dna": { "id": "routes/dna", "parentId": "root", "path": "dna", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/dna-gSSPOI2s.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/shield-BRU8tImN.js", "/assets/zap-BCq1-vgo.js", "/assets/gem-BB8tObDz.js", "/assets/circle-check-dz77gtWt.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/missions": { "id": "routes/missions", "parentId": "root", "path": "missions", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/missions-CxLMk-WH.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/circle-check-dz77gtWt.js", "/assets/loader-circle-ClugHvzK.js", "/assets/send-BpXsP_Uv.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/startup": { "id": "routes/startup", "parentId": "root", "path": "startup", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/startup-BwIBnPmH.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/products": { "id": "routes/products", "parentId": "root", "path": "products", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/products-BmYEcFx5.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/search-C1mijbOb.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/knowledge": { "id": "routes/knowledge", "parentId": "root", "path": "knowledge", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/knowledge-CAIotNJJ.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/search-C1mijbOb.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/functions": { "id": "routes/functions", "parentId": "root", "path": "functions", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/functions-DVsehIGn.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/users-CEjQd4Da.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/referral.$slug": { "id": "routes/referral.$slug", "parentId": "root", "path": "r/:slug", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/referral._slug-DSTlGMzw.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.dashboard": { "id": "routes/admin.dashboard", "parentId": "root", "path": "admin", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.dashboard-Dzq4cQny.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/AdminLayout-DEw3PqKp.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.index": { "id": "routes/admin.products.index", "parentId": "root", "path": "admin/products", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.index-DJM-9Q4S.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/AdminLayout-DEw3PqKp.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.new": { "id": "routes/admin.products.new", "parentId": "root", "path": "admin/products/new", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.new-Cs_z3k1L.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/AdminLayout-DEw3PqKp.js", "/assets/ProductForm-Cz_7Fz2b.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.edit": { "id": "routes/admin.products.edit", "parentId": "root", "path": "admin/products/:id", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.edit-CKhOpx1x.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/AdminLayout-DEw3PqKp.js", "/assets/ProductForm-Cz_7Fz2b.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.categories": { "id": "routes/admin.categories", "parentId": "root", "path": "admin/categories", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.categories-CFH2H94f.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/AdminLayout-DEw3PqKp.js", "/assets/lib-D1UVQ_Lx.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.knowledge": { "id": "routes/admin.knowledge", "parentId": "root", "path": "admin/knowledge", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.knowledge-733g_LCe.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/AdminLayout-DEw3PqKp.js", "/assets/lib-D1UVQ_Lx.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.ai-coach": { "id": "routes/api.ai-coach", "parentId": "root", "path": "api/ai-coach", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.ai-coach-CeQpOKCs.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.contact": { "id": "routes/api.contact", "parentId": "root", "path": "api/contact", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.contact-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.notify": { "id": "routes/api.notify", "parentId": "root", "path": "api/notify", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.notify-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.upload": { "id": "routes/api.upload", "parentId": "root", "path": "api/upload", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.upload-D-72jSv7.js", "imports": ["/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.referral.track": { "id": "routes/api.referral.track", "parentId": "root", "path": "api/referral/track", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.referral.track-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.referral.claim": { "id": "routes/api.referral.claim", "parentId": "root", "path": "api/referral/claim", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.referral.claim-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 } }, "url": "/assets/manifest-d8b34f55.js", "version": "d8b34f55", "sri": void 0 };
+const serverManifest = { "entry": { "module": "/assets/entry.client-DA1MqMBr.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js"], "css": [] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": true, "module": "/assets/root-CpVM8-kM.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js"], "css": ["/assets/root-BO3x7gEx.css"], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/home": { "id": "routes/home", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/home-DW_j7m4j.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.login": { "id": "routes/auth.login", "parentId": "root", "path": "auth/login", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/auth.login-dQzojrkV.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/supabase-Bgahf4s8.js", "/assets/lock-tg-j5y1W.js", "/assets/loader-circle-ClugHvzK.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/gem-BB8tObDz.js", "/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.register": { "id": "routes/auth.register", "parentId": "root", "path": "auth/register", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/auth.register-B6nd6lz0.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/supabase-Bgahf4s8.js", "/assets/loader-circle-ClugHvzK.js", "/assets/lock-tg-j5y1W.js", "/assets/gem-BB8tObDz.js", "/assets/user-CiFcqzNc.js", "/assets/circle-check-dz77gtWt.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/auth.callback": { "id": "routes/auth.callback", "parentId": "root", "path": "auth/callback", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/auth.callback-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/dashboard": { "id": "routes/dashboard", "parentId": "root", "path": "dashboard", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/dashboard-CeDMTFTr.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/zap-BCq1-vgo.js", "/assets/users-CEjQd4Da.js", "/assets/circle-check-dz77gtWt.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/rocket-Dz8LTkED.js", "/assets/link-DPJHJpuY.js", "/assets/gem-BB8tObDz.js", "/assets/chevron-left-CKKzi769.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/profile": { "id": "routes/profile", "parentId": "root", "path": "profile", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/profile-Be3StMRW.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/user-CiFcqzNc.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/loader-circle-ClugHvzK.js", "/assets/link-DPJHJpuY.js", "/assets/circle-check-dz77gtWt.js", "/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/ai-coach": { "id": "routes/ai-coach", "parentId": "root", "path": "ai-coach", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/ai-coach-CU9VV2Qi.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/rocket-Dz8LTkED.js", "/assets/shield-BRU8tImN.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/user-CiFcqzNc.js", "/assets/send-BpXsP_Uv.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/dna": { "id": "routes/dna", "parentId": "root", "path": "dna", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/dna-gSSPOI2s.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/shield-BRU8tImN.js", "/assets/zap-BCq1-vgo.js", "/assets/gem-BB8tObDz.js", "/assets/circle-check-dz77gtWt.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/missions": { "id": "routes/missions", "parentId": "root", "path": "missions", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/missions-CxLMk-WH.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/supabase-Bgahf4s8.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/circle-check-dz77gtWt.js", "/assets/loader-circle-ClugHvzK.js", "/assets/send-BpXsP_Uv.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/startup": { "id": "routes/startup", "parentId": "root", "path": "startup", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/startup-BwIBnPmH.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/products": { "id": "routes/products", "parentId": "root", "path": "products", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/products-BmYEcFx5.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/search-C1mijbOb.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/knowledge": { "id": "routes/knowledge", "parentId": "root", "path": "knowledge", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/knowledge-CAIotNJJ.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/search-C1mijbOb.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/functions": { "id": "routes/functions", "parentId": "root", "path": "functions", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/functions-DVsehIGn.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/api.ai-coach-CeQpOKCs.js", "/assets/MemberLayout-h5H9qWkb.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js", "/assets/users-CEjQd4Da.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/referral.$slug": { "id": "routes/referral.$slug", "parentId": "root", "path": "r/:slug", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/referral._slug-BsFtZnzd.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.dashboard": { "id": "routes/admin.dashboard", "parentId": "root", "path": "admin", "index": void 0, "caseSensitive": void 0, "hasAction": false, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.dashboard-Dzq4cQny.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/AdminLayout-DEw3PqKp.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.index": { "id": "routes/admin.products.index", "parentId": "root", "path": "admin/products", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.index-DJM-9Q4S.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/AdminLayout-DEw3PqKp.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.new": { "id": "routes/admin.products.new", "parentId": "root", "path": "admin/products/new", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.new-Cs_z3k1L.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/AdminLayout-DEw3PqKp.js", "/assets/ProductForm-Cz_7Fz2b.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.products.edit": { "id": "routes/admin.products.edit", "parentId": "root", "path": "admin/products/:id", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.products.edit-CKhOpx1x.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/lib-D1UVQ_Lx.js", "/assets/AdminLayout-DEw3PqKp.js", "/assets/ProductForm-Cz_7Fz2b.js", "/assets/chevron-left-CKKzi769.js", "/assets/createLucideIcon-DXbFMavo.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.categories": { "id": "routes/admin.categories", "parentId": "root", "path": "admin/categories", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.categories-CFH2H94f.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/AdminLayout-DEw3PqKp.js", "/assets/lib-D1UVQ_Lx.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/admin.knowledge": { "id": "routes/admin.knowledge", "parentId": "root", "path": "admin/knowledge", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": true, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": true, "hasErrorBoundary": false, "module": "/assets/admin.knowledge-733g_LCe.js", "imports": ["/assets/jsx-runtime-CS9HHHez.js", "/assets/AdminLayout-DEw3PqKp.js", "/assets/lib-D1UVQ_Lx.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.ai-coach": { "id": "routes/api.ai-coach", "parentId": "root", "path": "api/ai-coach", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.ai-coach-CeQpOKCs.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.contact": { "id": "routes/api.contact", "parentId": "root", "path": "api/contact", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.contact-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.notify": { "id": "routes/api.notify", "parentId": "root", "path": "api/notify", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.notify-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.upload": { "id": "routes/api.upload", "parentId": "root", "path": "api/upload", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.upload-D-72jSv7.js", "imports": ["/assets/api.ai-coach-CeQpOKCs.js"], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.referral.track": { "id": "routes/api.referral.track", "parentId": "root", "path": "api/referral/track", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.referral.track-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 }, "routes/api.referral.claim": { "id": "routes/api.referral.claim", "parentId": "root", "path": "api/referral/claim", "index": void 0, "caseSensitive": void 0, "hasAction": true, "hasLoader": false, "hasClientAction": false, "hasClientLoader": false, "hasClientMiddleware": false, "hasDefaultExport": false, "hasErrorBoundary": false, "module": "/assets/api.referral.claim-l0sNRNKZ.js", "imports": [], "css": [], "clientActionModule": void 0, "clientLoaderModule": void 0, "clientMiddlewareModule": void 0, "hydrateFallbackModule": void 0 } }, "url": "/assets/manifest-dd8930aa.js", "version": "dd8930aa", "sri": void 0 };
 const assetsBuildDirectory = "build\\client";
 const basename = "/";
 const future = { "unstable_optimizeDeps": false };
