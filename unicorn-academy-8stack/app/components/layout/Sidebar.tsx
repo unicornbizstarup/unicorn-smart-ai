@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router";
 import type { Profile } from "@/types";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface Props {
   profile: Profile | null;
@@ -10,6 +11,7 @@ interface Props {
 
 export default function Sidebar({ profile, isOpen = false, onClose }: Props) {
   const location = useLocation();
+  const { language, setLanguage, t } = useLanguage();
   const pathname = location.pathname;
   const level = (profile?.ubc_level ?? 1) as 1 | 2 | 3 | 4; 
   const element = profile?.wealth_element ?? "FIRE";
@@ -41,20 +43,20 @@ export default function Sidebar({ profile, isOpen = false, onClose }: Props) {
 
   const menuGroups = [
     {
-      title: "MAIN",
+      title: t("menu.main" as any) || "MAIN",
       items: [
-        { href: "/dashboard", label: "Dashboard", badge: null, external: false },
-        { href: "/ai-coach", label: "AI Coach", badge: "3", external: false },
-        { href: "/missions", label: "Missions", badge: null, external: false },
-        { href: "/dna", label: "Wealth DNA", badge: null, external: false },
+        { href: "/dashboard", label: t("nav.dashboard" as any) || "Dashboard", badge: null, external: false },
+        { href: "/ai-coach", label: t("nav.ai_coach" as any) || "AI Coach", badge: "3", external: false },
+        { href: "/missions", label: t("nav.missions" as any) || "Missions", badge: null, external: false },
+        { href: "/dna", label: t("nav.wealth_dna" as any) || "Wealth DNA", badge: null, external: false },
       ]
     },
     {
-      title: "PROFILE",
+      title: t("menu.profile" as any) || "PROFILE",
       items: [
-        { href: "/profile", label: "Name Card", badge: null, external: false },
-        { href: `/r/${profile?.username || ""}`, label: "Referral Link", badge: null, external: false },
-        { href: "https://unicorngloballink.com/#contact", label: "Contact Us", badge: null, external: true },
+        { href: "/profile", label: t("nav.profile" as any) || "Name Card", badge: null, external: false },
+        { href: `/r/${profile?.username || ""}`, label: t("nav.referral" as any) || "Referral Link", badge: null, external: false },
+        { href: "https://unicorngloballink.com/#contact", label: t("nav.contact" as any) || "Contact Us", badge: null, external: true },
       ]
     }
   ];
@@ -176,10 +178,44 @@ export default function Sidebar({ profile, isOpen = false, onClose }: Props) {
               className="w-full py-2 px-3 rounded-xl border border-border-default bg-bg-input text-text-muted text-[11px] font-black uppercase tracking-tighter transition-all hover:bg-white hover:border-brand-gold hover:text-brand-gold hover:shadow-md flex items-center justify-center gap-2"
             >
               <span>⚠️</span>
-              <span>แจ้งระบบ / Support</span>
+              <span>{t("support.report" as any) || (language === "th" ? "แจ้งระบบ / Support" : language === "en" ? "Report / Support" : "စနစ်အစီရင်ခံစာ / ပံ့ပိုးမှု")}</span>
             </button>
           </div>
         </nav>
+
+        {/* Language Switcher */}
+        <div className="mx-3 my-4 p-2.5 rounded-2xl border border-border-default/60 flex items-center justify-between gap-1 bg-white/40 backdrop-blur-sm">
+          <span className="text-[9px] font-black text-text-muted uppercase tracking-wider">Lang</span>
+          <div className="flex gap-1">
+            <button
+              type="button"
+              onClick={() => setLanguage("th")}
+              className={`px-2 py-1 text-[10px] font-black rounded-lg transition-all ${
+                language === "th" ? "bg-brand-gold text-white shadow-sm" : "text-text-secondary hover:bg-bg-input"
+              }`}
+            >
+              TH
+            </button>
+            <button
+              type="button"
+              onClick={() => setLanguage("en")}
+              className={`px-2 py-1 text-[10px] font-black rounded-lg transition-all ${
+                language === "en" ? "bg-brand-gold text-white shadow-sm" : "text-text-secondary hover:bg-bg-input"
+              }`}
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              onClick={() => setLanguage("mm")}
+              className={`px-2 py-1 text-[10px] font-black rounded-lg transition-all ${
+                language === "mm" ? "bg-brand-gold text-white shadow-sm" : "text-text-secondary hover:bg-bg-input"
+              }`}
+            >
+              MM
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="p-4 border-t border-border-muted bg-bg-hover">

@@ -11,6 +11,7 @@ import type { LoaderFunctionArgs } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { LanguageProvider, useLanguage } from "./hooks/useLanguage";
 
 export function meta() {
   return [
@@ -60,7 +61,16 @@ export async function loader(_: LoaderFunctionArgs) {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="th">
+    <LanguageProvider>
+      <HtmlLayout>{children}</HtmlLayout>
+    </LanguageProvider>
+  );
+}
+
+function HtmlLayout({ children }: { children: React.ReactNode }) {
+  const { language } = useLanguage();
+  return (
+    <html lang={language === "mm" ? "my" : language}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

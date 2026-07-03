@@ -1,6 +1,7 @@
 import { Link, useLoaderData } from "react-router";
 import type { LoaderFunctionArgs } from "react-router";
 import { createServerSupabase } from "@/lib/supabase-server";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export function meta() {
   return [
@@ -18,6 +19,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function HomePage() {
   const { user } = useLoaderData<typeof loader>();
+  const { language, setLanguage, t } = useLanguage();
 
   return (
     <main className="min-h-screen relative overflow-hidden bg-bg-page font-body text-text-primary">
@@ -49,23 +51,58 @@ export default function HomePage() {
           </div>
           
           <div className="flex items-center gap-6">
-            <a href="https://unicorngloballink.com/" target="_blank" rel="noopener noreferrer" 
-               className="text-text-secondary hover:text-brand-gold transition-colors text-xs font-bold flex items-center gap-1">
-              🌐 เว็บไซต์บริษัท UGL
-            </a>
-            <div className="h-4 w-px bg-border-default/80" />
+            {/* Language Switcher */}
+            <div className="flex items-center gap-1.5 border-r border-border-default/80 pr-4 mr-1">
+              <button
+                type="button"
+                onClick={() => setLanguage("th")}
+                className={`px-2 py-1 text-xs font-bold rounded transition-all ${
+                  language === "th"
+                    ? "bg-brand-gold text-white shadow-sm"
+                    : "text-text-secondary hover:bg-bg-input"
+                }`}
+                title="ภาษาไทย"
+              >
+                TH
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage("en")}
+                className={`px-2 py-1 text-xs font-bold rounded transition-all ${
+                  language === "en"
+                    ? "bg-brand-gold text-white shadow-sm"
+                    : "text-text-secondary hover:bg-bg-input"
+                }`}
+                title="English"
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage("mm")}
+                className={`px-2 py-1 text-xs font-bold rounded transition-all ${
+                  language === "mm"
+                    ? "bg-brand-gold text-white shadow-sm"
+                    : "text-text-secondary hover:bg-bg-input"
+                }`}
+                title="မြန်မာဘာသာ"
+              >
+                MM
+              </button>
+            </div>
+
             <div className="flex items-center gap-4">
               {user ? (
                 <Link to="/dashboard" className="btn-gold px-6 text-sm">
-                  เข้าสู่หน้าควบคุม
+                  {t("hero.go_dashboard")}
                 </Link>
               ) : (
                 <>
                   <Link to="/auth/login" className="text-text-secondary hover:text-text-primary transition-colors text-sm font-semibold">
-                    เข้าสู่ระบบ
+                    {t("hero.login")}
                   </Link>
                   <Link to="/auth/register" className="btn-gold px-6 text-sm">
-                    สมัครสมาชิก
+                    {t("nav.register")}
                   </Link>
                 </>
               )}
@@ -90,14 +127,13 @@ export default function HomePage() {
           {/* Main Headline */}
           <div className="space-y-6">
             <h1 className="font-display font-bold text-5xl md:text-8xl text-text-primary leading-[1.1] tracking-tight">
-              ยกระดับธุรกิจ <br />
+              {t("hero.headline_1")} <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-gold via-brand-gold-muted to-brand-gold-hover">
-                สู่อนาคตที่เหนือกว่า
+                {t("hero.headline_2")}
               </span>
             </h1>
             <p className="text-text-secondary text-base md:text-lg max-w-3xl mx-auto leading-relaxed font-light">
-              สมาร์ทแพลตฟอร์มเพื่อ <span className="font-semibold text-brand-gold">Unicorn Biz Coach</span> ที่ออกแบบมาเพื่อคุณโดยเฉพาะ 
-              ผสานเทคโนโลยีปัญญาประดิษฐ์ AI และระบบการเรียนรู้แบบสมัยใหม่ เพื่อเร่งความสำเร็จให้ธุรกิจของคุณ
+              {t("hero.desc")}
             </p>
           </div>
 
@@ -105,7 +141,7 @@ export default function HomePage() {
           <div className="flex justify-center pt-4">
             <Link to={user ? "/dashboard" : "/auth/login"}
                   className="btn-gold px-14 py-4 text-base rounded-xl shadow-lg shadow-brand-gold/10 hover:scale-[1.03] transition-transform duration-200">
-              {user ? "เข้าสู่แดชบอร์ด" : "เริ่มต้นใช้งานระบบ"}
+              {user ? t("hero.go_dashboard") : t("hero.start")}
             </Link>
           </div>
 
@@ -113,26 +149,26 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 pt-24 text-left">
             {[
               { 
-                title: "Eco-system", 
-                desc: "ระบบนิเวศทางธุรกิจที่ครบวงจรที่สุด เพื่อความมั่นคงและยั่งยืนในระยะยาว", 
+                title: t("strategy.eco.title" as any), 
+                desc: t("strategy.eco.desc" as any), 
                 icon: "⚡", 
                 bg: "bg-[#fffcf6] border-brand-gold/10" 
               },
               { 
-                title: "Product Strength", 
-                desc: "นวัตกรรมสินค้าชั้นเลิศที่ตอบโจทย์ความต้องการของผู้บริโภคยุคใหม่", 
+                title: t("strategy.product.title" as any), 
+                desc: t("strategy.product.desc" as any), 
                 icon: "🏆", 
                 bg: "bg-white" 
               },
               { 
-                title: "AI & Digital Tools", 
-                desc: "เครื่องมืออัจฉริยะและน้องยูนิ AI Coach ที่ช่วยย่อเวลาการเรียนรู้และขยายธุรกิจ", 
+                title: t("strategy.ai.title" as any), 
+                desc: t("strategy.ai.desc" as any), 
                 icon: "✨", 
                 bg: "bg-white" 
               },
               { 
-                title: "High Reward", 
-                desc: "แผนรายได้และผลตอบแทนที่คุ้มค่า ออกแบบมาเพื่อความสำเร็จของทุกคน", 
+                title: t("strategy.reward.title" as any), 
+                desc: t("strategy.reward.desc" as any), 
                 icon: "⭐", 
                 bg: "bg-white" 
               },

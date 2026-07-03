@@ -206,16 +206,15 @@ export default function LoginPage() {
 
           {/* Register Link */}
           <div className="text-center">
-            <p className="text-xs text-text-secondary font-medium">
-              ยังไม่ได้เป็นสมาชิก?{" "}
-              <Link
-                to="/auth/register"
-                className="text-brand-gold font-bold hover:text-brand-gold-hover transition-colors inline-flex items-center gap-1 hover:underline"
-              >
-                <Gem size={12} className="animate-pulse" />
-                ลงทะเบียนฟรี
-              </Link>
-            </p>
+            <a
+              href="https://www.uglplatform.com/Account/Login"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-brand-gold font-bold hover:text-brand-gold-hover transition-colors inline-flex items-center gap-1 hover:underline"
+            >
+              <Gem size={12} className="animate-pulse" />
+              เข้าสู่ระบบสมาชิก UGL Platform
+            </a>
           </div>
         </div>
       </div>
