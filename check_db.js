@@ -1,5 +1,5 @@
 async function main() {
-  const apiKey = 'AIzaSyDlDlwKy6TC8eStlgB07koTOJE11H78BTc';
+  const apiKey = process.env.GEMINI_API_KEY || '';
   
   // Test with standard v1beta API
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;

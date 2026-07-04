@@ -65,19 +65,62 @@ export async function searchKnowledge(
   const { createServiceSupabase } = await import("@/lib/supabase-server");
   const supabase = createServiceSupabase();
 
-  const embedding = await embedText(query);
+  let results: KnowledgeSearchResult[] = [];
 
-  const { data, error } = await supabase.rpc("search_knowledge", {
-    query_embedding: embedding,
-    match_count:     matchCount,
-    min_score:       minScore,
-  }) as { data: KnowledgeSearchResult[] | null; error: unknown };
+  try {
+    const embedding = await embedText(query);
+    const { data, error } = await supabase.rpc("search_knowledge", {
+      query_embedding: embedding,
+      match_count:     matchCount,
+      min_score:       minScore,
+    }) as { data: KnowledgeSearchResult[] | null; error: unknown };
 
-  if (error) {
-    console.error("searchKnowledge error:", error);
-    return [];
+    if (!error && data && data.length > 0) {
+      results = data;
+    } else if (error) {
+      console.error("searchKnowledge RPC error:", error);
+    }
+  } catch (err) {
+    console.warn("Embedding search failed or returned no results, trying text fallback:", err);
   }
-  return data ?? [];
+
+  // If vector search returned no results, fallback to text search
+  if (results.length === 0) {
+    try {
+      const keywords = query.split(/\s+/).filter(k => k.length > 1);
+      let queryBuilder = supabase
+        .from("knowledge_chunks")
+        .select("id, doc_id, content, metadata");
+
+      if (keywords.length > 0) {
+        const orConditions = keywords.map(kw => `content.ilike.%${kw}%`).join(",");
+        queryBuilder = queryBuilder.or(orConditions);
+      } else {
+        queryBuilder = queryBuilder.ilike("content", `%${query}%`);
+      }
+
+      const { data, error } = await queryBuilder.limit(matchCount) as {
+        data: Array<{ id: string; doc_id: string; content: string; metadata: any }> | null;
+        error: any;
+      };
+
+      if (error) {
+        console.error("searchKnowledge text fallback error:", error);
+      } else if (data) {
+        results = data.map(row => ({
+          id: row.id,
+          doc_id: row.doc_id,
+          content: row.content,
+          metadata: row.metadata,
+          score: 0.8 // Dummy score for text match
+        }));
+      }
+    } catch (fallbackErr) {
+      console.error("searchKnowledge text fallback critical error:", fallbackErr);
+    }
+  }
+
+  return results;
 }
 
 // ── Split text into overlapping chunks ──

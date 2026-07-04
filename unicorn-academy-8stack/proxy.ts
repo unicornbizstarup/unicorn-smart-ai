@@ -36,6 +36,22 @@ export default {
     }
 
     try {
+      // ── Root Path — Show status and endpoints ──
+      if (path === "/" && method === "GET") {
+        return json({
+          status: "running",
+          name: "Unicorn Smart AI Proxy Worker",
+          version: "2.0.0",
+          endpoints: {
+            chat: "/chat (POST)",
+            embed: "/embed (POST)",
+            crawl: "/crawl (POST)",
+            generateBio: "/generate-bio (POST)",
+            health: "/health (GET)"
+          }
+        });
+      }
+
       // ── /chat — Gemini generateContent ──
       if (path === "/chat" && method === "POST") {
         const { systemPrompt, history, message } = await request.json() as {
@@ -44,16 +60,23 @@ export default {
           message: string;
         };
 
+        // Filter out empty content entries to prevent Gemini "empty output" error
+        const filteredHistory = history.filter(
+          h => h.content && h.content.trim().length > 0
+        );
+
+        const safeMessage = message?.trim() || "สวัสดี";
+
         const contents = [
-          ...history.map(h => ({
+          ...filteredHistory.map(h => ({
             role:  h.role === "user" ? "user" : "model",
             parts: [{ text: h.content }],
           })),
-          { role: "user", parts: [{ text: message }] },
+          { role: "user", parts: [{ text: safeMessage }] },
         ];
 
-        const res = await fetch(
-          `${GEMINI_BASE}/models/gemini-2.0-flash:generateContent?key=${env.GEMINI_API_KEY}`,
+        const geminiRes = await fetch(
+          `${GEMINI_BASE}/models/gemini-2.5-flash:generateContent?key=${env.GEMINI_API_KEY}`,
           {
             method:  "POST",
             headers: { "Content-Type": "application/json" },
@@ -64,9 +87,25 @@ export default {
             }),
           }
         );
-        const data = await res.json() as {
-          candidates?: Array<{ content: { parts: Array<{ text: string }> } }>
+
+        // Check HTTP status first
+        if (!geminiRes.ok) {
+          const errText = await geminiRes.text();
+          console.error(`Gemini API error ${geminiRes.status}:`, errText);
+          return json({ error: `Gemini API error: ${geminiRes.status}`, detail: errText }, 502);
+        }
+
+        const data = await geminiRes.json() as {
+          candidates?: Array<{ content: { parts: Array<{ text: string }> } }>;
+          error?: { message: string; code: number };
         };
+
+        // Check for API-level error in response body
+        if (data.error) {
+          console.error("Gemini API body error:", data.error);
+          return json({ error: data.error.message }, 502);
+        }
+
         const reply = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "ขออภัย ไม่สามารถตอบได้ในขณะนี้";
         return json({ reply });
       }
@@ -154,7 +193,7 @@ Wealth DNA Element: ${wealth_element}
 }`;
 
         const res = await fetch(
-          `${GEMINI_BASE}/models/gemini-2.0-flash:generateContent?key=${env.GEMINI_API_KEY}`,
+          `${GEMINI_BASE}/models/gemini-2.5-flash:generateContent?key=${env.GEMINI_API_KEY}`,
           {
             method:  "POST",
             headers: { "Content-Type": "application/json" },

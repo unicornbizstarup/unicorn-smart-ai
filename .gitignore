@@ -54,7 +54,11 @@ Thumbs.db
 .cloudflare/
 .open-next/
 **/ .open-next/
-dist-pages/
-**/dist-pages/
 
+# ============================================
+# 📁 Media & Large Assets
+# ============================================
+library/*.pptx
+library/*.pdf
+library/*.docx
 
