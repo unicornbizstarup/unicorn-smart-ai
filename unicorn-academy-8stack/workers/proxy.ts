@@ -83,7 +83,13 @@ export default {
             body:    JSON.stringify({
               system_instruction: { parts: [{ text: systemPrompt }] },
               contents,
-              generationConfig: { maxOutputTokens: 1024, temperature: 0.7 },
+              generationConfig: { 
+                maxOutputTokens: 4096, 
+                temperature: 0.7,
+                thinkingConfig: {
+                  thinkingBudget: 0
+                }
+              },
             }),
           }
         );
